@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw2741kmyhe68"]
+
+[ext_resource type="Script" path="res://scripts/player_fps.gd" id="1_sfmll"]
+[ext_resource type="Script" path="res://scripts/player/physical_interaction.gd" id="2_3ig20"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kykjl"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="SphereMesh" id="SphereMesh_f1i07"]
+radius = 0.1
+height = 0.215
+
+[node name="player_fps" type="CharacterBody3D"]
+script = ExtResource("1_sfmll")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_kykjl")
+
+[node name="CameraRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraRoot"]
+fov = 70.0
+
+[node name="PhysicalInteraction" type="Node3D" parent="CameraRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+script = ExtResource("2_3ig20")
+
+[node name="HandManipulationRay" type="RayCast3D" parent="CameraRoot/PhysicalInteraction"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57248, 0)
+target_position = Vector3(0, 0, -2.5)
+debug_shape_thickness = 5
+
+[node name="HandManipulationPinPoint" type="Node3D" parent="CameraRoot/PhysicalInteraction"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.25, -1)
+
+[node name="_Gizmo" type="MeshInstance3D" parent="CameraRoot/PhysicalInteraction/HandManipulationPinPoint"]
+visible = false
+mesh = SubResource("SphereMesh_f1i07")

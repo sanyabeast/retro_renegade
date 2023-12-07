@@ -1,0 +1,24 @@
+[gd_scene load_steps=8 format=3 uid="uid://d1tk1d7wk181b"]
+
+[ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
+[ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="1_fury1"]
+[ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="1_ihxl1"]
+[ext_resource type="PackedScene" uid="uid://vn16akq43r0k" path="res://assets/blends/levels/practice_range_a.blend" id="1_p2o55"]
+[ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="3_b1dd5"]
+[ext_resource type="PackedScene" uid="uid://dm21p183edgf2" path="res://scenes/main/world/vaporworld_a1.tscn" id="3_dv8ah"]
+[ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="4_bgqvb"]
+
+[node name="_practice_range" type="Node3D"]
+script = ExtResource("1_a7hcx")
+player_default_class = ExtResource("1_ihxl1")
+
+[node name="Level" type="Node3D" parent="."]
+script = ExtResource("1_fury1")
+
+[node name="practice_range_a" parent="Level" instance=ExtResource("1_p2o55")]
+
+[node name="World" parent="." instance=ExtResource("3_dv8ah")]
+
+[node name="FPSBaseHUD" parent="." instance=ExtResource("3_b1dd5")]
+
+[node name="_DevHUD" parent="." instance=ExtResource("4_bgqvb")]
