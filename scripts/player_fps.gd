@@ -6,6 +6,8 @@ const GRAVITY: float = -32
 
 @onready var camera = $CameraRoot/Camera3D
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var torch: SpotLight3D = $CameraRoot/Torch
+
 var dir = Vector3.ZERO
 
 @export var allow_climbing: bool = true
@@ -142,6 +144,9 @@ func process_user_input():
 	if Input.is_action_just_pressed("ui_cancel"):
 		if (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			
+	if Input.is_action_just_pressed("torch"):
+		torch.visible = !torch.visible
 	
 	
 
