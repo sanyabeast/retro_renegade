@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dm21p183edgf2"]
+[gd_scene load_steps=5 format=3 uid="uid://dm21p183edgf2"]
+
+[ext_resource type="Script" path="res://scripts/singleton/world_manager.gd" id="1_bwygn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3ewly"]
 sky_top_color = Color(0, 0.152941, 0.611765, 1)
@@ -22,8 +24,6 @@ tonemap_mode = 2
 tonemap_white = 0.75
 ssr_enabled = true
 ssao_enabled = true
-ssil_enabled = true
-sdfgi_enabled = true
 sdfgi_use_occlusion = true
 glow_enabled = true
 volumetric_fog_enabled = true
@@ -32,6 +32,7 @@ volumetric_fog_ambient_inject = 0.41
 adjustment_enabled = true
 
 [node name="World" type="Node3D"]
+script = ExtResource("1_bwygn")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_e4b8h")

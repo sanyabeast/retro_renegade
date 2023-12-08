@@ -1,23 +1,65 @@
-[gd_scene load_steps=8 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=11 format=3 uid="uid://d1tk1d7wk181b"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="1_fury1"]
 [ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="1_ihxl1"]
 [ext_resource type="PackedScene" uid="uid://vn16akq43r0k" path="res://assets/blends/levels/practice_range_a.blend" id="1_p2o55"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="3_b1dd5"]
-[ext_resource type="PackedScene" uid="uid://dm21p183edgf2" path="res://scenes/main/world/vaporworld_a1.tscn" id="3_dv8ah"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="4_bgqvb"]
+[ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_qnyal"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wshbf"]
+sky_top_color = Color(0, 0.152941, 0.611765, 1)
+sky_horizon_color = Color(0.811765, 0.486275, 0, 1)
+sky_curve = 0.0699777
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.00784314, 0, 0.34902, 1)
+sun_angle_max = 6.0
+sun_curve = 8.652
+
+[sub_resource type="Sky" id="Sky_wqimg"]
+sky_material = SubResource("ProceduralSkyMaterial_wshbf")
+
+[sub_resource type="Environment" id="Environment_8hcxo"]
+background_mode = 2
+sky = SubResource("Sky_wqimg")
+ambient_light_source = 3
+ambient_light_sky_contribution = 0.25
+reflected_light_source = 2
+tonemap_mode = 2
+tonemap_white = 0.75
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+glow_enabled = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.02
+volumetric_fog_detail_spread = 0.5
+volumetric_fog_ambient_inject = 1.0
+adjustment_enabled = true
 
 [node name="_practice_range" type="Node3D"]
 script = ExtResource("1_a7hcx")
 player_default_class = ExtResource("1_ihxl1")
+game_day_length = 300.0
 
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("1_fury1")
 
 [node name="practice_range_a" parent="Level" instance=ExtResource("1_p2o55")]
 
-[node name="World" parent="." instance=ExtResource("3_dv8ah")]
+[node name="World" type="Node3D" parent="."]
+script = ExtResource("5_qnyal")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment_8hcxo")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 30, 0)
+light_color = Color(1, 0.52549, 0.431373, 1)
+shadow_enabled = true
 
 [node name="FPSBaseHUD" parent="." instance=ExtResource("3_b1dd5")]
 

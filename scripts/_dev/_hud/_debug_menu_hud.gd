@@ -5,7 +5,7 @@ var current_selection = 0
 
 var actions = [
 	{"name": "respawn player", "function": self.respawn_player},
-	{"name": "reset world", "function": self.action_2},
+	{"name": "reload current_scene", "function": self.reload_current_scene},
 	# Add more actions here
 ]
 
@@ -15,7 +15,8 @@ func respawn_player():
 	hide()
 	pass
 
-func action_2():
+func reload_current_scene():
+	tools.reload_scene()
 	pass
 
 func _ready():

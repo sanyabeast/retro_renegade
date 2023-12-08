@@ -10,9 +10,11 @@ var hand_manipulation_close_grip: bool = false
 
 @export var hand_manipulation_pull_force: float = 1000
 @export var hand_manipulation_close_grip_distance: float = 0.2
-@export var hand_manipulation_throw_power: float = 16
+@export var hand_manipulation_throw_power: float = 32
+@export var hand_manipulation_throw_ballistics: float = 0.25
 @export var hand_manipulation_drop_power: float = 2
 @export var hand_manipulation_max_weight: float = 50
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -37,7 +39,7 @@ func _check_physical_object_in_hand(delta):
 	else:
 		if Input.is_action_pressed("throw"):
 			var ray_direction = tools.get_global_forward_vector(self)
-			current_hand_manipulation_target.linear_velocity = ray_direction * hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
+			current_hand_manipulation_target.linear_velocity = (ray_direction + (Vector3.UP * hand_manipulation_throw_ballistics)).normalized() * hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
 			current_hand_manipulation_target.remove_collision_exception_with(player)
 			current_hand_manipulation_target = null
 			

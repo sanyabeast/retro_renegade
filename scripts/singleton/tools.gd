@@ -123,4 +123,6 @@ func change_material(node: MeshInstance3D, index: int, new_material: Material):
 func get_global_forward_vector(node: Node3D) -> Vector3:
 	return -node.global_transform.basis.z.normalized()
 
-
+func reload_scene():
+	var current_scene = get_tree().current_scene
+	get_tree().reload_current_scene()
