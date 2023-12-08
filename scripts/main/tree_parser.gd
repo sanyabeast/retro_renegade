@@ -42,9 +42,9 @@ func process_node(node):
 		process_spawn_node(node, props)
 	
 	if "mass" in props:
-		if node is RigidBody3D:
+		if node.get_parent() is RigidBody3D:
 			print("TreeParser: setting %s rigid body mass to %s" % [node.name, props["mass"]])
-			node.mass = float(props["mass"])
+			node.get_parent().mass = float(props["mass"])
 	
 
 func process_spawn_node(node, props):
