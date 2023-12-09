@@ -35,7 +35,7 @@ sdfgi_enabled = true
 sdfgi_use_occlusion = true
 glow_enabled = true
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.015
+volumetric_fog_density = 0.02
 volumetric_fog_detail_spread = 0.5
 volumetric_fog_ambient_inject = 1.0
 adjustment_enabled = true
@@ -43,7 +43,7 @@ adjustment_enabled = true
 [node name="_practice_range" type="Node3D"]
 script = ExtResource("1_a7hcx")
 player_default_class = ExtResource("1_ihxl1")
-game_day_length = 30.0
+game_day_length = 300.0
 
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("1_fury1")

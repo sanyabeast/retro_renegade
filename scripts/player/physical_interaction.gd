@@ -2,6 +2,10 @@ extends Node3D
 
 class_name PlayerPhysicalInteraction
 @onready var player: Player = $"../.."
+
+@onready var ceil_test_rayset: RaySet = $CeilTestRaySet
+@onready var wall_test_rayset: RaySet = $WallTestRaySet
+
 @onready var hand_manipulation_ray: RayCast3D = $HandManipulationRay
 @onready var hand_manipulation_pin_point: Node3D = $HandManipulationPinPoint
 
@@ -15,15 +19,35 @@ var hand_manipulation_close_grip: bool = false
 @export var hand_manipulation_drop_power: float = 2
 @export var hand_manipulation_max_weight: float = 50
 
+var elevation_allowed: bool = true
+var is_touching_wall: bool = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#ceil_check_cast.add_exception(player)
 	pass # Replace with function body.
 
+func _process(delta):
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	_check_physical_object_in_hand(delta)
+	_check_wall(delta)
+	_check_ceil(delta)
+	
+func _check_wall(delta):
+	if player.is_on_wall() && wall_test_rayset.is_any_colliding():
+		is_touching_wall = true
+	else:
+		is_touching_wall = false
+		
+func _check_ceil(delta):
+	if ceil_test_rayset.is_any_colliding():
+		elevation_allowed = false
+	else:
+		elevation_allowed = true
 			
 func _check_physical_object_in_hand(delta):
 	if current_hand_manipulation_target == null:

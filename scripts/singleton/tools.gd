@@ -126,3 +126,27 @@ func get_global_forward_vector(node: Node3D) -> Vector3:
 func reload_scene():
 	var current_scene = get_tree().current_scene
 	get_tree().reload_current_scene()
+
+func get_forward_vector(node: Node3D):
+	return -node.global_transform.basis.z
+
+func lerp_inverse(current: float, from: float, to: float)-> float:
+	if to - from == 0:
+		return 0 # Avoid division by zero
+
+	var alpha = (current - from) / (to - from)
+	return clamp(alpha, 0.0, 1.0) # Clamping to ensure the result is between 0 and 1
+
+var _timer_gate_date = {}
+
+class TimerGateManager:
+	var _timer_gate_date = {}
+
+	func check(id: String, timeout: float) -> bool:
+		var current_time = Time.get_ticks_msec() / 1000.0
+		if not _timer_gate_date.has(id) or current_time - _timer_gate_date[id] >= timeout:
+			_timer_gate_date[id] = current_time
+			return true
+		return false
+
+var timer_gate: TimerGateManager = TimerGateManager.new()

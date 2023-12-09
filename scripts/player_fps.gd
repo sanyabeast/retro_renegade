@@ -4,9 +4,10 @@ class_name Player
 const MOUSE_SENSITIVITY = 0.1
 const GRAVITY: float = -32
 
-@onready var camera = $CameraRoot/Camera3D
+@onready var camera: FPSCameraManager = $CameraRoot/CameraManager
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var torch: SpotLight3D = $CameraRoot/Torch
+@onready var phys_interaction: PlayerPhysicalInteraction = $CameraRoot/PhysicalInteraction
 
 var dir = Vector3.ZERO
 
@@ -14,55 +15,78 @@ var dir = Vector3.ZERO
 @export var allow_jetpack: bool = false
 @export var allow_sprint: bool = true
 @export var allow_jump: bool = true
+@export var allow_dash: bool = true
 
 @export var walk_speed: float = 4
 @export var climbing_speed: float = 28
 @export var sprint_speed: float = 8
 @export var jetpack_speed: float = 64
 @export var jump_speed: float = 12
+@export var flip_sprint_walk: bool = true
+@export var dash_speed: float = 12
+@export var dash_duration: float = 1
 
 @export var climbing_timeout: float = 2
 
-@export var crouching_walk_penalty: float = 0.5
+@export var crouching_walk_penalty: float = 0.75
+@export var crouching_jump_penalty: float = 0.75
+
+@export var vertical_velocity_min: float = -64
+@export var vertical_velocity_max: float = 64
 
 var current_climbing_power: float = 0
 var current_jetpack_power: float = 0
 var current_sprint_power: float = 0
 var current_jump_power: float = 0
+var current_dash_power: float = 0
 
 var is_climbing: bool = false
 var is_sprinting: bool = false
 var is_jumping: bool = false
 var is_crouching: bool = false
 
+var travelled: float = 0
+var _prev_global_position: Vector3 = Vector3.ZERO
+
 var current_movement_responsivness: float = 1
+var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
 func _ready():
 	print("PlayerFPS: ready")
+	_prev_global_position = global_position
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 func _process(delta):
 	
+	travelled += (global_position - _prev_global_position).length()
+	_prev_global_position = global_position
 	
 	dev.print_screen("player_pos", "player pos: %s" % global_position)
 	dev.print_screen("player_vel", "player vel: %s" % velocity.length())
 	dev.print_screen("player_climb", "player climb power: %s" % current_climbing_power)
 	dev.print_screen("player_crouch", "player crouching: %s" % is_crouching)
-	
+	dev.print_screen("player_travelled", "player travelled: %s" % travelled)
 	
 	current_climbing_power = move_toward(current_climbing_power, 0, (1/climbing_timeout) * delta)
 	
-		
 func _physics_process(delta):
+	if current_jump_power == 1:
+		current_jump_power = 0
+		
+	current_dash_power = move_toward(current_dash_power, 0, (1 / dash_duration) * delta)
+	
 	process_user_input()
 	process_movement(delta)
+	
 	pass
 
 func process_movement(delta):
 	var _walk_speed = walk_speed
+	var _jump_speed = jump_speed
 	
 	if is_crouching:
 		_walk_speed = _walk_speed * crouching_walk_penalty
+		_jump_speed = _jump_speed * crouching_jump_penalty
 	else:
 		_walk_speed = lerpf(walk_speed, sprint_speed, current_sprint_power) 
 	
@@ -71,10 +95,17 @@ func process_movement(delta):
 	velocity.y += GRAVITY * delta
 	velocity.y += current_jetpack_power * (jetpack_speed) * delta
 	velocity.y += current_climbing_power * (climbing_speed) * delta
-	velocity.y += current_jump_power * (jump_speed)
+	velocity.y += current_jump_power * (_jump_speed)
+	
+	velocity.y = clampf(velocity.y, vertical_velocity_min, vertical_velocity_max)
 	
 	velocity.x = target_vel.x
 	velocity.z = target_vel.z
+	
+	velocity += tools.get_forward_vector(self) * dash_speed * current_dash_power
+	
+	
+	
 	move_and_slide()
 
 # INPUT
@@ -82,15 +113,15 @@ func process_user_input():
 	dir = Vector3.ZERO
 
 	if Input.is_action_pressed("forward"):
-		dir -= camera.global_transform.basis.z
+		dir -= global_transform.basis.z
 	if Input.is_action_pressed("backward"):
-		dir += camera.global_transform.basis.z
+		dir += global_transform.basis.z
 	if Input.is_action_pressed("right"):
-		dir += camera.global_transform.basis.x
+		dir += global_transform.basis.x
 	if Input.is_action_pressed("left"):
-		dir -= camera.global_transform.basis.x
+		dir -= global_transform.basis.x
 		
-	#print("is on wall: %s" % is_on_wall())	
+	#print("is on wall: %s" % phys_interaction.is_touching_wall)	
 	#print("is on floor: %s" % is_on_floor())	
 		
 	
@@ -102,44 +133,55 @@ func process_user_input():
 			
 	if allow_climbing:
 		if not is_climbing:
-			if is_on_wall() and Input.is_action_pressed('jump'):
+			if phys_interaction.is_touching_wall and Input.is_action_pressed('jump'):
 				is_climbing = true
 				current_climbing_power = 1
 				dir *= 0.1
 		if is_climbing:
-			if not is_on_wall() or not Input.is_action_pressed('jump'):
+			if not phys_interaction.is_touching_wall or not Input.is_action_pressed('jump'):
 				is_climbing = false;
 				current_climbing_power = 0
 			else:
 				dir *= 0.1
 				
-#		if is_on_wall() and Input.is_action_pressed('jump'):
+#		if phys_interaction.is_touching_wall and Input.is_action_pressed('jump'):
 #			current_climbing_power = 1;
 #		else:
 #			current_climbing_power = move_toward(current_jump_power, 0, (1/climbing_timeout))
 			
 	if allow_jump:
-		if is_on_floor() and Input.is_action_pressed('jump'):
+		if is_on_floor() && Input.is_action_pressed('jump') and _timer_gate.check("jump", 0.25):
 			print('jump')
 			current_jump_power = 1;
-		else:
-			current_jump_power = 0
 		
 	if allow_sprint:
-		if Input.is_action_pressed("sprint"):
-			current_sprint_power = 1
+		if flip_sprint_walk:
+			if Input.is_action_pressed("sprint"):
+				current_sprint_power = 0
+				is_sprinting = false
+			else:
+				current_sprint_power = 1
+				is_sprinting = true
 		else:
-			current_sprint_power = 0
+			if Input.is_action_pressed("sprint"):
+				current_sprint_power = 1
+				is_sprinting = true
+			else:
+				current_sprint_power = 0
+				is_sprinting = false
 			
 	
-	if Input.is_action_just_pressed("crouch"):
-		if not is_crouching:
-			is_crouching = true
-			anim_player.play("CrouchEnter")
-	if Input.is_action_just_released("crouch"):
-		if is_crouching:
-			is_crouching = false
-			anim_player.play("CrouchExit")
+	if Input.is_action_pressed("crouch") and not is_crouching:
+		is_crouching = true
+		anim_player.play("CrouchEnter")
+		
+		if allow_dash and is_sprinting:
+			current_dash_power = 1
+		
+	if not Input.is_action_pressed("crouch") and is_crouching and phys_interaction.elevation_allowed:
+		is_crouching = false
+		current_dash_power = 0
+		anim_player.play("CrouchExit")
 		
 	if Input.is_action_just_pressed("ui_cancel"):
 		if (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):

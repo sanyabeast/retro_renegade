@@ -1,8 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://cw2741kmyhe68"]
+[gd_scene load_steps=10 format=3 uid="uid://cw2741kmyhe68"]
 
 [ext_resource type="Script" path="res://scripts/player_fps.gd" id="1_sfmll"]
 [ext_resource type="Script" path="res://scripts/player/physical_interaction.gd" id="2_3ig20"]
-[ext_resource type="Script" path="res://scripts/misc/fps_camera_manager.gd" id="2_bafxf"]
 [ext_resource type="Script" path="res://scripts/tools/rayset.gd" id="3_j37np"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kykjl"]
@@ -149,10 +148,7 @@ shape = SubResource("CapsuleShape3D_kykjl")
 [node name="CameraRoot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="CameraManager" type="Node3D" parent="CameraRoot"]
-script = ExtResource("2_bafxf")
-
-[node name="Camera3D" type="Camera3D" parent="CameraRoot/CameraManager"]
+[node name="Camera3D" type="Camera3D" parent="CameraRoot"]
 fov = 70.0
 
 [node name="PhysicalInteraction" type="Node3D" parent="CameraRoot"]
@@ -175,38 +171,12 @@ mesh = SubResource("SphereMesh_f1i07")
 script = ExtResource("3_j37np")
 
 [node name="CeilCheckRay" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/CeilTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.572, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57248, 0)
 target_position = Vector3(0, 1, 0)
 debug_shape_thickness = 5
-
-[node name="CeilCheckRay2" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/CeilTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.572, 0.3)
-target_position = Vector3(0, 1, 0)
-debug_shape_thickness = 5
-
-[node name="CeilCheckRay3" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/CeilTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301, 1.572, -0.3)
-target_position = Vector3(0, 1, 0)
-debug_shape_thickness = 5
-
-[node name="CeilCheckRay4" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/CeilTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301, 1.572, 0.3)
-target_position = Vector3(0, 1, 0)
-debug_shape_thickness = 5
-
-[node name="WallTestRaySet" type="Node3D" parent="CameraRoot/PhysicalInteraction"]
-script = ExtResource("3_j37np")
-
-[node name="RayCast3D" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/WallTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 1, -0.4)
-target_position = Vector3(0, 0, -1)
-
-[node name="RayCast3D2" type="RayCast3D" parent="CameraRoot/PhysicalInteraction/WallTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1, -0.4)
-target_position = Vector3(0, 0, -1)
 
 [node name="Torch" type="SpotLight3D" parent="CameraRoot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32068, -0.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0409)
 light_color = Color(1, 0.85098, 0.756863, 1)
 light_energy = 2.0
 shadow_enabled = true
