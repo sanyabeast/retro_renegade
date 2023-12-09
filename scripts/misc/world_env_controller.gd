@@ -2,6 +2,13 @@ extends Node3D
 
 class_name WorldEnvironmentController
 
+
+
+@export var dir_light: DirectionalLight3D
+@export var world_env: WorldEnvironment
+@export var world_ambient_stream: AudioStreamPlayer3D
+
+@export_subgroup("Day Cycle")
 @export var day_cycle_enabled: bool = true
 @export var day_cycle_length: float = 60
 
@@ -17,15 +24,17 @@ class_name WorldEnvironmentController
 @export var sun_saturation_day: float = 0.333
 @export var sun_saturation_night: float = 0.666
 
-@onready var dir_light: DirectionalLight3D = $DirectionalLight3D
-@onready var world_env: WorldEnvironment = $WorldEnvironment
-
-
+@export_subgroup("Sounds")
+@export var default_collision_sound: AudioStreamOggVorbis
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	world.env = self
 	pass # Replace with function body.
 
+func _exit_tree():
+	if world.env == self:
+		world.env = null
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

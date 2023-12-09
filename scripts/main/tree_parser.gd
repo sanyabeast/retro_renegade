@@ -2,7 +2,8 @@ extends Node
 
 class_name TreeParser
 
-var player_spawn_spots: Array = []
+var player_spawn_spots: Array[Node3D] = []
+var rigid_bodies: Array[RigidBody3D]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -28,15 +29,18 @@ func _process(delta):
 func traverse(node):
 	# Call the callback function on the current node
 	process_node(node)
-
+	
 	# Recursively call this function on all children
 	for child in node.get_children():
 		traverse(child)
 		
-func process_node(node):
+func process_node(node: Object):
 	print("TreePraser: processing node: %s, type: %s" % [node.name, node.get_class()])
 	var props = tools.parse_properties(node.name)
 	print(props)
+	
+	if node is RigidBody3D:
+		world.add_rigidbody(node)
 	
 	if "spawn" in props:
 		process_spawn_node(node, props)

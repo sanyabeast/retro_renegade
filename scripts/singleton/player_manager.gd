@@ -2,7 +2,7 @@ extends Node
 
 class_name PlayerManager
 
-var spawn_spots: Array = []
+var spawn_spots: Array[Node3D] = []
 var current: Node3D = null
 
 func add_spawn_spot(node: Node3D):

@@ -1,12 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://3jtylca7f62c"]
+[gd_scene load_steps=14 format=3 uid="uid://3jtylca7f62c"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_outfo"]
 [ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="2_xay72"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="3_bflum"]
-[ext_resource type="PackedScene" uid="uid://bmwnf758ok0mg" path="res://assets/blends/levels/_solarpunk_village.blend" id="4_lm2dd"]
+[ext_resource type="PackedScene" uid="uid://bmwnf758ok0mg" path="res://assets/blends/levels/_solarpunk_village/_solarpunk_village.blend" id="4_lm2dd"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="5_a3f3a"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_pf0ti"]
+[ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_t8rg4"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="6_pm7rn"]
+[ext_resource type="AudioStream" uid="uid://cdwmo4muas8rc" path="res://assets/sound/ambient/683243__saha213131__morning-in-village.ogg" id="7_ajsrg"]
+[ext_resource type="AudioStream" uid="uid://ooyoeqda0kme" path="res://assets/sound/sfx/collision/523770__matrixxx__retro-door-knocking.ogg" id="7_r85kv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)
@@ -50,8 +53,16 @@ script = ExtResource("3_bflum")
 
 [node name="_solarpunk_village" parent="Level" instance=ExtResource("4_lm2dd")]
 
-[node name="World" type="Node3D" parent="."]
+[node name="NetherPortal" parent="Level" instance=ExtResource("5_t8rg4")]
+transform = Transform3D(-0.441287, 0, -0.897366, 0, 1, 0, 0.897366, 0, -0.441287, -9.61317, 0, 1.05921)
+scene_path = "res://scenes/levels/_practice_range.tscn"
+
+[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env", "world_ambient_stream")]
 script = ExtResource("5_pf0ti")
+dir_light = NodePath("DirectionalLight3D")
+world_env = NodePath("WorldEnvironment")
+world_ambient_stream = NodePath("AudioStreamPlayer3D")
+default_collision_sound = ExtResource("7_r85kv")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_xl8aq")
@@ -60,6 +71,14 @@ environment = SubResource("Environment_xl8aq")
 transform = Transform3D(-0.707107, 0.183013, -0.683013, 0, 0.965926, 0.258819, 0.707107, 0.183013, -0.683013, 0, 30, 0)
 light_color = Color(1, 0.698039, 0.631373, 1)
 shadow_enabled = true
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="World"]
+stream = ExtResource("7_ajsrg")
+attenuation_model = 3
+volume_db = -4.0
+max_db = 1.0
+autoplay = true
+panning_strength = 0.1
 
 [node name="FPSBaseHUD" parent="." instance=ExtResource("5_a3f3a")]
 

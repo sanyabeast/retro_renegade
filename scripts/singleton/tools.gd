@@ -130,6 +130,12 @@ func reload_scene():
 func load_scene(scene_path: String):
 	var tree: SceneTree = get_tree()
 	tree.change_scene_to_file(scene_path)
+	
+func load_scene_packed(packed_scene: PackedScene):
+	print("prepare to load scene: %s" % packed_scene)
+	var tree: SceneTree = get_tree()
+	var result = tree.change_scene_to_packed(packed_scene)
+	print("LOADING PACKED SCENE, RESULT: %s" % result)
 
 func get_forward_vector(node: Node3D):
 	return -node.global_transform.basis.z
@@ -140,6 +146,9 @@ func lerp_inverse(current: float, from: float, to: float)-> float:
 
 	var alpha = (current - from) / (to - from)
 	return clamp(alpha, 0.0, 1.0) # Clamping to ensure the result is between 0 and 1
+
+func random_float(min_value: float, max_value: float) -> float:
+	return randf_range(min_value, max_value)
 
 var _timer_gate_date = {}
 

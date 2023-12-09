@@ -13,6 +13,7 @@ var actions = [
 	{"name": "respawn player", "function": self.respawn_player},
 	{"name": "reload current_scene", "function": self.reload_current_scene},
 	{"name": "load random scene", "function": self.load_random_scene},
+	{"name": "remove some rb", "function": self.remove_some_rb},
 	# Add more actions here
 ]
 
@@ -25,6 +26,13 @@ func respawn_player():
 func reload_current_scene():
 	tools.reload_scene()
 	pass
+	
+func remove_some_rb():
+	if world.rigid_bodies.size() > 0:
+		#world.rigid_bodies.remove_at(randi() % world.rigid_bodies.size())	
+		
+		world.rigid_bodies[randi() % world.rigid_bodies.size()].queue_free()
+		
 	
 func load_random_scene():
 	tools.load_scene(tools.get_random_element_from_array(dev_scenes))
