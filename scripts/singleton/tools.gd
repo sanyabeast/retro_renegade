@@ -127,6 +127,10 @@ func reload_scene():
 	var current_scene = get_tree().current_scene
 	get_tree().reload_current_scene()
 
+func load_scene(scene_path: String):
+	var tree: SceneTree = get_tree()
+	tree.change_scene_to_file(scene_path)
+
 func get_forward_vector(node: Node3D):
 	return -node.global_transform.basis.z
 

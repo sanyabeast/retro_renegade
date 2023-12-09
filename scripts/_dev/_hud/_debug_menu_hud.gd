@@ -3,9 +3,16 @@ extends Control
 var menu_items = []
 var current_selection = 0
 
+var dev_scenes = [
+	"res://scenes/levels/_practice_range.tscn",
+	"res://scenes/levels/_practice_range_b.tscn",
+	"res://scenes/levels/_solarpunk_village.tscn"
+]
+
 var actions = [
 	{"name": "respawn player", "function": self.respawn_player},
 	{"name": "reload current_scene", "function": self.reload_current_scene},
+	{"name": "load random scene", "function": self.load_random_scene},
 	# Add more actions here
 ]
 
@@ -18,6 +25,10 @@ func respawn_player():
 func reload_current_scene():
 	tools.reload_scene()
 	pass
+	
+func load_random_scene():
+	tools.load_scene(tools.get_random_element_from_array(dev_scenes))
+	pass	
 
 func _ready():
 	var menu_container = $MenuContainer # Update with your VBoxContainer's name
