@@ -4,6 +4,7 @@ class_name FPSCameraManager
 
 @onready var camera: Camera3D = $Camera3D
 @onready var player: Player = $"../.."
+
 @onready var walk_shaking_angle: float = 0.3
 @onready var walk_shaking_elevation: float = 0.03
 @onready var walk_shaking_speed: float = 1

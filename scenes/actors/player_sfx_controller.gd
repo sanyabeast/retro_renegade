@@ -12,10 +12,8 @@ extends Node3D
 
 @export_subgroup("Jump SFX")
 @export var jump_audiostream: AudioStreamPlayer3D
-@export var jump_audioclips: Array[AudioStreamOggVorbis]
-@export var jump_pitch_min: float = 0.9
-@export var jump_pitch_max: float = 1.1
-@export var jump_play_timeout: float = 1
+@export var jump_audio_fx: RAudioFX
+@export var jump_play_timeout: float = 0.15
 
 var _timer_gate = tools.TimerGateManager.new()
 
@@ -24,12 +22,11 @@ func _ready():
 	footsteps_audiostream.stream = footsteps_audioclip
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 # WALKING
 	if player.is_on_floor():
-		var sprint_progress = clampf(Vector2(player.velocity.x, player.velocity.z).length() / player.sprint_speed, 0, 1)
+		var sprint_progress = clampf(Vector2(player.velocity.x, player.velocity.z).length() / player.props.sprint_speed, 0, 1)
 		#footsteps_audiostream.volume_db = lerpf(footsteps_volume_min, footsteps_volume_max, sprint_progress)
 		footsteps_audiostream.pitch_scale = lerpf(footsteps_pitch_min, footsteps_pitch_max, sprint_progress)
 		
@@ -43,8 +40,6 @@ func _process(delta):
 	
 # JUMPING
 	if player.current_jump_power == 1 and _timer_gate.check("jump", jump_play_timeout):
-		jump_audiostream.stream = tools.get_random_element_from_array(jump_audioclips)
-		jump_audiostream.pitch_scale = randf_range(jump_pitch_min, jump_pitch_max)
-		jump_audiostream.play()
+		tools.play_audio_fx(jump_audiostream, jump_audio_fx)
 	
 	pass

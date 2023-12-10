@@ -56,18 +56,17 @@ func _check_physical_object_in_hand(delta):
 	else:
 		if Input.is_action_pressed("throw"):
 			var ray_direction = tools.get_global_forward_vector(hand_manipulation_ray)
-			current_hand_manipulation_target.linear_velocity = (ray_direction + (Vector3.UP * player.hand_manipulation_throw_ballistics)).normalized() * player.hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
+			current_hand_manipulation_target.linear_velocity = (ray_direction + (Vector3.UP * player.props.hand_manipulation_throw_ballistics)).normalized() * player.props.hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
 			current_hand_manipulation_target.remove_collision_exception_with(player)
 			current_hand_manipulation_target = null
-			
 		else:
 			if Input.is_action_pressed("grab"):
-				current_hand_manipulation_target.linear_velocity = (hand_manipulation_pin_point.global_position - current_hand_manipulation_target.global_position) * player.hand_manipulation_pull_force * get_hand_manipulation_mass_penalty() * delta
+				current_hand_manipulation_target.linear_velocity = (hand_manipulation_pin_point.global_position - current_hand_manipulation_target.global_position) * player.props.hand_manipulation_pull_force * get_hand_manipulation_mass_penalty() * delta
 #				current_hand_manipulation_target.linear_velocity = (current_hand_manipulation_target.global_position.direction_to(hand_manipulation_pin_point.global_position)) * hand_manipulation_pull_force * delta
-				hand_manipulation_close_grip = current_hand_manipulation_target.global_position.distance_to(hand_manipulation_pin_point.global_position) < player.hand_manipulation_close_grip_distance
+				hand_manipulation_close_grip = current_hand_manipulation_target.global_position.distance_to(hand_manipulation_pin_point.global_position) < player.props.hand_manipulation_close_grip_distance
 			else:
 				current_hand_manipulation_target.remove_collision_exception_with(player)
-				current_hand_manipulation_target.linear_velocity = Vector3.UP * player.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
+				current_hand_manipulation_target.linear_velocity = Vector3.UP * player.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
 				current_hand_manipulation_target = null
 				
 	dev.print_screen("hand manipulation", "none" if current_hand_manipulation_target == null else current_hand_manipulation_target.name)	
@@ -76,6 +75,6 @@ func _check_physical_object_in_hand(delta):
 
 func get_hand_manipulation_mass_penalty() -> float:
 	if current_hand_manipulation_target != null:
-		return 1. - clampf((current_hand_manipulation_target.mass / player.hand_manipulation_max_weight), 0, 1)
+		return 1. - clampf((current_hand_manipulation_target.mass / player.props.hand_manipulation_max_weight), 0, 1)
 	else:
 		return 0

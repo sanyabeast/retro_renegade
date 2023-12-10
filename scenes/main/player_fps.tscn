@@ -1,13 +1,12 @@
-[gd_scene load_steps=18 format=3 uid="uid://cw2741kmyhe68"]
+[gd_scene load_steps=17 format=3 uid="uid://cw2741kmyhe68"]
 
 [ext_resource type="Script" path="res://scripts/player_fps.gd" id="1_sfmll"]
 [ext_resource type="Script" path="res://scripts/player/physical_interaction.gd" id="2_3ig20"]
 [ext_resource type="Script" path="res://scripts/misc/fps_camera_manager.gd" id="2_bafxf"]
+[ext_resource type="Resource" uid="uid://b6w6445143jol" path="res://resources/player/default_player.tres" id="2_imjhf"]
 [ext_resource type="Script" path="res://scripts/tools/rayset.gd" id="3_j37np"]
 [ext_resource type="Script" path="res://scenes/actors/player_sfx_controller.gd" id="5_8yvxe"]
-[ext_resource type="AudioStream" uid="uid://begvdd2qgciic" path="res://assets/sound/sfx/jump/345425__artmasterrich__male_jump_02.ogg" id="6_vmyoi"]
-[ext_resource type="AudioStream" uid="uid://cgbxd0icl7rms" path="res://assets/sound/sfx/jump/345437__artmasterrich__male_jump_01.ogg" id="7_bioar"]
-[ext_resource type="AudioStream" uid="uid://b5ovm1wscc6xb" path="res://assets/sound/sfx/jump/345426__artmasterrich__male_jump_03.ogg" id="8_enmy3"]
+[ext_resource type="Resource" uid="uid://dvejhqbrf8a20" path="res://resources/audio_fx/character/_player_jump.tres" id="6_s0cas"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kykjl"]
 radius = 0.35
@@ -184,6 +183,7 @@ loop = true
 floor_block_on_wall = false
 floor_max_angle = 1.0472
 script = ExtResource("1_sfmll")
+props = ExtResource("2_imjhf")
 phys_interaction = NodePath("PhysicalInteraction")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -278,7 +278,7 @@ player = NodePath("..")
 footsteps_audiostream = NodePath("FootstepsAudioStream")
 footsteps_audioclip = SubResource("AudioStreamOggVorbis_4a2x7")
 jump_audiostream = NodePath("JumpAudioStream")
-jump_audioclips = Array[AudioStreamOggVorbis]([ExtResource("6_vmyoi"), ExtResource("7_bioar"), ExtResource("8_enmy3")])
+jump_audio_fx = ExtResource("6_s0cas")
 
 [node name="FootstepsAudioStream" type="AudioStreamPlayer3D" parent="PlayerSFX"]
 stream = SubResource("AudioStreamOggVorbis_ib64y")

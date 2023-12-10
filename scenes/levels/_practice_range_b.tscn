@@ -7,8 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_uo7mq"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="6_7e31n"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="6_cltbw"]
-[ext_resource type="AudioStream" uid="uid://ooyoeqda0kme" path="res://assets/sound/sfx/collision/523770__matrixxx__retro-door-knocking.ogg" id="7_3pcki"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="7_piuni"]
+[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/_vaporworld.tres" id="7_up8xc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)
@@ -65,10 +65,10 @@ scene_path = "res://scenes/levels/_practice_range.tscn"
 
 [node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env", "world_ambient_stream")]
 script = ExtResource("6_7e31n")
+settings = ExtResource("7_up8xc")
 dir_light = NodePath("DirectionalLight3D")
 world_env = NodePath("WorldEnvironment")
 world_ambient_stream = NodePath("AudioStreamPlayer3D")
-default_collision_sound = ExtResource("7_3pcki")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_xl8aq")

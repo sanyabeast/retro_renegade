@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RWorldEnvSettings" load_steps=4 format=3 uid="uid://be1y28xy0m114"]
+
+[ext_resource type="Resource" uid="uid://b7wsaujp22qm7" path="res://resources/audio_fx/ambient/_city_park.tres" id="1_ruwxj"]
+[ext_resource type="Resource" uid="uid://cxkq5pqpxejdp" path="res://resources/audio_fx/_default_collision.tres" id="2_08qwc"]
+[ext_resource type="Script" path="res://scripts/resources/world_env_daycycle_settings.gd" id="3_emgho"]
+
+[resource]
+script = ExtResource("3_emgho")
+day_duration = 300.0
+day_time = 0.5
+day_cycle_enabled = true
+day_cycle_length = 60.0
+fog_density_night = 0.1
+fog_density_day = 0.01
+sky_energy_night = 0.15
+sky_energy_day = 1.0
+sun_hue_day = 1.1
+sun_hue_night = 0.95
+sun_saturation_day = 0.333
+sun_saturation_night = 0.666
+ambient_sound = ExtResource("1_ruwxj")
+default_collision_sound = ExtResource("2_08qwc")

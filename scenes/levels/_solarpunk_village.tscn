@@ -8,8 +8,8 @@
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_pf0ti"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_t8rg4"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="6_pm7rn"]
+[ext_resource type="Resource" uid="uid://bamlgq30fg5h1" path="res://resources/_solarpunk_village.tres" id="7_aeims"]
 [ext_resource type="AudioStream" uid="uid://cdwmo4muas8rc" path="res://assets/sound/ambient/683243__saha213131__morning-in-village.ogg" id="7_ajsrg"]
-[ext_resource type="AudioStream" uid="uid://ooyoeqda0kme" path="res://assets/sound/sfx/collision/523770__matrixxx__retro-door-knocking.ogg" id="7_r85kv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)
@@ -45,8 +45,6 @@ adjustment_enabled = true
 [node name="_practice_range" type="Node3D"]
 script = ExtResource("1_outfo")
 player_default_class = ExtResource("2_xay72")
-game_day_length = 300.0
-game_day_start_time = 0.25
 
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("3_bflum")
@@ -59,10 +57,10 @@ scene_path = "res://scenes/levels/_practice_range.tscn"
 
 [node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env", "world_ambient_stream")]
 script = ExtResource("5_pf0ti")
+settings = ExtResource("7_aeims")
 dir_light = NodePath("DirectionalLight3D")
 world_env = NodePath("WorldEnvironment")
 world_ambient_stream = NodePath("AudioStreamPlayer3D")
-default_collision_sound = ExtResource("7_r85kv")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_xl8aq")

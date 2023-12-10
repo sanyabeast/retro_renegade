@@ -4,43 +4,14 @@ class_name Player
 const MOUSE_SENSITIVITY = 0.1
 const GRAVITY: float = -32
 
+@export var props: RPlayerProperties
+
 @onready var camera: FPSCameraManager = $CameraRoot/CameraManager
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var torch: SpotLight3D = $CameraRoot/Torch
 @export var phys_interaction: PlayerPhysicalInteraction
 
 var dir = Vector3.ZERO
-
-@export var allow_climbing: bool = true
-@export var allow_jetpack: bool = false
-@export var allow_sprint: bool = true
-@export var allow_jump: bool = true
-@export var allow_dash: bool = true
-
-@export var walk_speed: float = 4
-@export var climbing_speed: float = 28
-@export var sprint_speed: float = 8
-@export var jetpack_speed: float = 64
-@export var jump_speed: float = 12
-@export var flip_sprint_walk: bool = false
-@export var dash_speed: float = 12
-@export var dash_duration: float = 1
-
-@export var climbing_timeout: float = 2
-
-@export var crouching_walk_penalty: float = 0.75
-@export var crouching_jump_penalty: float = 0.75
-
-@export var vertical_velocity_min: float = -64
-@export var vertical_velocity_max: float = 64
-
-@export_subgroup("Physical Interaction")
-@export var hand_manipulation_pull_force: float = 1000
-@export var hand_manipulation_close_grip_distance: float = 0.2
-@export var hand_manipulation_throw_power: float = 16
-@export var hand_manipulation_throw_ballistics: float = 0.25
-@export var hand_manipulation_drop_power: float = 2
-@export var hand_manipulation_max_weight: float = 50
 
 var current_climbing_power: float = 0
 var current_jetpack_power: float = 0
@@ -76,13 +47,13 @@ func _process(delta):
 	dev.print_screen("player_crouch", "player crouching: %s" % is_crouching)
 	dev.print_screen("player_travelled", "player travelled: %s" % travelled)
 	
-	current_climbing_power = move_toward(current_climbing_power, 0, (1/climbing_timeout) * delta)
+	current_climbing_power = move_toward(current_climbing_power, 0, (1/props.climbing_timeout) * delta)
 	
 func _physics_process(delta):
 	if current_jump_power == 1:
 		current_jump_power = 0
 		
-	current_dash_power = move_toward(current_dash_power, 0, (1 / dash_duration) * delta)
+	current_dash_power = move_toward(current_dash_power, 0, (1 / props.dash_duration) * delta)
 	
 	process_user_input()
 	process_movement(delta)
@@ -90,28 +61,28 @@ func _physics_process(delta):
 	pass
 
 func process_movement(delta):
-	var _walk_speed = walk_speed
-	var _jump_speed = jump_speed
+	var _walk_speed = props.walk_speed
+	var _jump_speed = props.jump_speed
 	
 	if is_crouching:
-		_walk_speed = _walk_speed * crouching_walk_penalty
-		_jump_speed = _jump_speed * crouching_jump_penalty
+		_walk_speed = _walk_speed * props.crouching_walk_penalty
+		_jump_speed = _jump_speed * props.crouching_jump_penalty
 	else:
-		_walk_speed = lerpf(walk_speed, sprint_speed, current_sprint_power) 
+		_walk_speed = lerpf(props.walk_speed, props.sprint_speed, current_sprint_power) 
 	
 	var target_vel = dir * _walk_speed
 	
 	velocity.y += GRAVITY * delta
-	velocity.y += current_jetpack_power * (jetpack_speed) * delta
-	velocity.y += current_climbing_power * (climbing_speed) * delta
+	velocity.y += current_jetpack_power * (props.jetpack_speed) * delta
+	velocity.y += current_climbing_power * (props.climbing_speed) * delta
 	velocity.y += current_jump_power * (_jump_speed)
 	
-	velocity.y = clampf(velocity.y, vertical_velocity_min, vertical_velocity_max)
+	velocity.y = clampf(velocity.y, props.vertical_velocity_min, props.vertical_velocity_max)
 	
 	velocity.x = target_vel.x
 	velocity.z = target_vel.z
 	
-	velocity += tools.get_forward_vector(self) * dash_speed * current_dash_power
+	velocity += tools.get_forward_vector(self) * props.dash_speed * current_dash_power
 	
 	
 	
@@ -134,13 +105,13 @@ func process_user_input():
 	#print("is on floor: %s" % is_on_floor())	
 		
 	
-	if allow_jetpack:
+	if props.allow_jetpack:
 		if Input.is_action_pressed('jump'):
 			current_jetpack_power = 1;
 		else:
 			current_jetpack_power = 0
 			
-	if allow_climbing:
+	if props.allow_climbing:
 		if not is_climbing:
 			if phys_interaction.is_touching_wall and Input.is_action_pressed('jump'):
 				is_climbing = true
@@ -158,13 +129,13 @@ func process_user_input():
 #		else:
 #			current_climbing_power = move_toward(current_jump_power, 0, (1/climbing_timeout))
 			
-	if allow_jump:
+	if props.allow_jump:
 		if is_on_floor() && Input.is_action_pressed('jump') and _timer_gate.check("jump", 0.25):
 			print('jump')
 			current_jump_power = 1;
 		
-	if allow_sprint:
-		if flip_sprint_walk:
+	if props.allow_sprint:
+		if props.flip_sprint_walk:
 			if Input.is_action_pressed("sprint"):
 				current_sprint_power = 0
 				is_sprinting = false
@@ -184,7 +155,7 @@ func process_user_input():
 		is_crouching = true
 		anim_player.play("CrouchEnter")
 		
-		if allow_dash and is_sprinting:
+		if props.allow_dash and is_sprinting:
 			current_dash_power = 1
 		
 	if not Input.is_action_pressed("crouch") and is_crouching and phys_interaction.elevation_allowed:
