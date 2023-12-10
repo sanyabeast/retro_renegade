@@ -2,6 +2,7 @@ extends CharacterBody3D
 class_name Player
 
 const MOUSE_SENSITIVITY = 0.1
+const MOVEMENT_DEADZONE = 0.1
 const GRAVITY: float = -32
 
 @export var props: RPlayerProperties
@@ -11,10 +12,7 @@ const GRAVITY: float = -32
 @onready var torch: SpotLight3D = $CameraRoot/Torch
 @export var phys_interaction: PlayerPhysicalInteraction
 
-var dir = Vector3.ZERO
-
 var current_climbing_power: float = 0
-var current_jetpack_power: float = 0
 var current_sprint_power: float = 0
 var current_jump_power: float = 0
 var current_dash_power: float = 0
@@ -24,10 +22,16 @@ var is_sprinting: bool = false
 var is_jumping: bool = false
 var is_crouching: bool = false
 
+var current_movement_direction = Vector3.ZERO
+var current_movement_speed: float = 0
+var target_movement_speed: float = 0
+var current_movement_acceleration: float = 0
+
+var climbing_start_distance: float = 0
+
 var travelled: float = 0
 var _prev_global_position: Vector3 = Vector3.ZERO
 
-var current_movement_responsivness: float = 1
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
 func _ready():
@@ -40,14 +44,12 @@ func _process(delta):
 	
 	travelled += (global_position - _prev_global_position).length()
 	_prev_global_position = global_position
-	
+
 	dev.print_screen("player_pos", "player pos: %s" % global_position)
 	dev.print_screen("player_vel", "player vel: %s" % velocity.length())
 	dev.print_screen("player_climb", "player climb power: %s" % current_climbing_power)
 	dev.print_screen("player_crouch", "player crouching: %s" % is_crouching)
 	dev.print_screen("player_travelled", "player travelled: %s" % travelled)
-	
-	current_climbing_power = move_toward(current_climbing_power, 0, (1/props.climbing_timeout) * delta)
 	
 func _physics_process(delta):
 	if current_jump_power == 1:
@@ -61,21 +63,32 @@ func _physics_process(delta):
 	pass
 
 func process_movement(delta):
-	var _walk_speed = props.walk_speed
-	var _jump_speed = props.jump_speed
+	current_movement_acceleration = 0
+	if is_on_floor():	
+		current_movement_acceleration = lerpf(props.walk_acceleration, props.sprint_acceleration, current_sprint_power)
+	
+	current_movement_speed = move_toward(current_movement_speed, target_movement_speed, current_movement_acceleration * delta)
+	var min_movement_speed = props.walk_speed_min
+	
+	if target_movement_speed == 0:
+		current_movement_speed = 0
+		min_movement_speed = 0
+	
+	current_movement_speed = clampf(current_movement_speed, min_movement_speed, props.sprint_speed_max)
+	
+	var jump_speed = props.jump_speed
+	var movement_penalty: float = 1
 	
 	if is_crouching:
-		_walk_speed = _walk_speed * props.crouching_walk_penalty
-		_jump_speed = _jump_speed * props.crouching_jump_penalty
-	else:
-		_walk_speed = lerpf(props.walk_speed, props.sprint_speed, current_sprint_power) 
+		movement_penalty = props.crouching_walk_penalty
+		jump_speed = jump_speed * props.crouching_jump_penalty
 	
-	var target_vel = dir * _walk_speed
+	var target_vel = current_movement_direction * current_movement_speed * movement_penalty
 	
-	velocity.y += GRAVITY * delta
-	velocity.y += current_jetpack_power * (props.jetpack_speed) * delta
+	velocity.y += lerpf(GRAVITY, 0, current_climbing_power) * delta
+	#velocity.y += current_jetpack_power * (props.jetpack_speed) * delta
 	velocity.y += current_climbing_power * (props.climbing_speed) * delta
-	velocity.y += current_jump_power * (_jump_speed)
+	velocity.y += current_jump_power * (jump_speed)
 	
 	velocity.y = clampf(velocity.y, props.vertical_velocity_min, props.vertical_velocity_max)
 	
@@ -84,56 +97,31 @@ func process_movement(delta):
 	
 	velocity += tools.get_forward_vector(self) * props.dash_speed * current_dash_power
 	
-	
-	
 	move_and_slide()
+	
+	if current_climbing_power > 0 and travelled - climbing_start_distance >= props.climbing_max_distance:
+		current_climbing_power = 0
 
 # INPUT
 func process_user_input():
-	dir = Vector3.ZERO
-
-	if Input.is_action_pressed("forward"):
-		dir -= global_transform.basis.z
-	if Input.is_action_pressed("backward"):
-		dir += global_transform.basis.z
-	if Input.is_action_pressed("right"):
-		dir += global_transform.basis.x
-	if Input.is_action_pressed("left"):
-		dir -= global_transform.basis.x
-		
-	#print("is on wall: %s" % phys_interaction.is_touching_wall)	
-	#print("is on floor: %s" % is_on_floor())	
-		
-	
-	if props.allow_jetpack:
-		if Input.is_action_pressed('jump'):
-			current_jetpack_power = 1;
-		else:
-			current_jetpack_power = 0
-			
+	# CLIMBING		
 	if props.allow_climbing:
-		if not is_climbing:
-			if phys_interaction.is_touching_wall and Input.is_action_pressed('jump'):
-				is_climbing = true
-				current_climbing_power = 1
-				dir *= 0.1
-		if is_climbing:
-			if not phys_interaction.is_touching_wall or not Input.is_action_pressed('jump'):
-				is_climbing = false;
-				current_climbing_power = 0
-			else:
-				dir *= 0.1
+		if not is_climbing and Input.is_action_pressed('jump') and phys_interaction.is_touching_wall:
+			is_climbing = true
+			climbing_start_distance = travelled
+			current_climbing_power = 1
 				
-#		if phys_interaction.is_touching_wall and Input.is_action_pressed('jump'):
-#			current_climbing_power = 1;
-#		else:
-#			current_climbing_power = move_toward(current_jump_power, 0, (1/climbing_timeout))
+		if is_on_floor() or not is_on_wall():
+			is_climbing = false;
+			current_climbing_power = 0
 			
+	# JUMPING		
 	if props.allow_jump:
 		if is_on_floor() && Input.is_action_pressed('jump') and _timer_gate.check("jump", 0.25):
 			print('jump')
 			current_jump_power = 1;
 		
+	# SPRINGING	
 	if props.allow_sprint:
 		if props.flip_sprint_walk:
 			if Input.is_action_pressed("sprint"):
@@ -150,7 +138,7 @@ func process_user_input():
 				current_sprint_power = 0
 				is_sprinting = false
 			
-	
+	# CROUCHING
 	if Input.is_action_pressed("crouch") and not is_crouching:
 		is_crouching = true
 		anim_player.play("CrouchEnter")
@@ -163,14 +151,32 @@ func process_user_input():
 		current_dash_power = 0
 		anim_player.play("CrouchExit")
 		
+	
+	# MOVEMENT DIRECTION AND TARGET SPEEDS
+	current_movement_direction = Vector3.ZERO
+	
+	if Input.is_action_pressed("forward"):
+		current_movement_direction -= global_transform.basis.z
+	if Input.is_action_pressed("backward"):
+		current_movement_direction += global_transform.basis.z
+	if Input.is_action_pressed("right"):
+		current_movement_direction += global_transform.basis.x
+	if Input.is_action_pressed("left"):
+		current_movement_direction -= global_transform.basis.x
+	
+	if current_movement_direction.length() > MOVEMENT_DEADZONE:
+		current_movement_direction = current_movement_direction.normalized()
+		target_movement_speed = lerpf(props.walk_speed_max, props.sprint_speed_max, current_sprint_power)
+	else:
+		target_movement_speed = 0
+	
+	# EXTRAS 
 	if Input.is_action_just_pressed("ui_cancel"):
 		if (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 			
 	if Input.is_action_just_pressed("torch"):
 		torch.visible = !torch.visible
-	
-	
 
 func _input(event):
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:

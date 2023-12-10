@@ -159,6 +159,8 @@ func _check_sound_players():
 	var finished_sounds: Array[AudioStreamPlayer3D] = []
 	
 	for item in _sound_players:
+		if item == null:
+			continue
 		if item.finished:
 			finished_sounds.append(item)
 		else:

@@ -6,9 +6,12 @@
 [resource]
 script = ExtResource("1_sdtkt")
 clips = Array[AudioStreamOggVorbis]([ExtResource("1_f5wnb")])
-max_distance = 32.0
+max_distance = 64.0
 volume_min = 0.0
 volume_max = 1.0
+volume_limit_min = 1.0
+volume_limit_max = 1.0
 pitch_min = 1.0
 pitch_max = 1.0
+panning_strength = 0.5
 attenuation_mode = 0

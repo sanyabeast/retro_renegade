@@ -26,7 +26,7 @@ func _ready():
 func _process(delta):
 # WALKING
 	if player.is_on_floor():
-		var sprint_progress = clampf(Vector2(player.velocity.x, player.velocity.z).length() / player.props.sprint_speed, 0, 1)
+		var sprint_progress = clampf(Vector2(player.velocity.x, player.velocity.z).length() / player.props.sprint_speed_max, 0, 1)
 		#footsteps_audiostream.volume_db = lerpf(footsteps_volume_min, footsteps_volume_max, sprint_progress)
 		footsteps_audiostream.pitch_scale = lerpf(footsteps_pitch_min, footsteps_pitch_max, sprint_progress)
 		

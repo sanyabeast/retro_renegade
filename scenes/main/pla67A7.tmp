@@ -223,24 +223,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0275201, 0)
 target_position = Vector3(0, 0, -2.5)
 debug_shape_thickness = 5
 
-[node name="WallTestRaySet" type="Node3D" parent="CameraRoot/PhysicalInteractionCameraSpace"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.27845, 0.223149)
-script = ExtResource("3_j37np")
-
-[node name="RayCast3D" type="RayCast3D" parent="CameraRoot/PhysicalInteractionCameraSpace/WallTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, -0.4)
-target_position = Vector3(0, 0, -1.5)
-
-[node name="RayCast3D2" type="RayCast3D" parent="CameraRoot/PhysicalInteractionCameraSpace/WallTestRaySet"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, -0.4)
-target_position = Vector3(0, 0, -1.5)
-
 [node name="PhysicalInteraction" type="Node3D" parent="." node_paths=PackedStringArray("player", "ceil_test_rayset", "wall_test_rayset", "hand_manipulation_ray", "hand_manipulation_pin_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 script = ExtResource("2_3ig20")
 player = NodePath("..")
 ceil_test_rayset = NodePath("CeilTestRaySet")
-wall_test_rayset = NodePath("../CameraRoot/PhysicalInteractionCameraSpace/WallTestRaySet")
+wall_test_rayset = NodePath("WallTestRaySet")
 hand_manipulation_ray = NodePath("../CameraRoot/PhysicalInteractionCameraSpace/HandManipulationRay")
 hand_manipulation_pin_point = NodePath("../CameraRoot/PhysicalInteractionCameraSpace/HandManipulationPinPoint")
 
@@ -266,6 +254,17 @@ debug_shape_thickness = 5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301, 1.572, 0.3)
 target_position = Vector3(0, 1, 0)
 debug_shape_thickness = 5
+
+[node name="WallTestRaySet" type="Node3D" parent="PhysicalInteraction"]
+script = ExtResource("3_j37np")
+
+[node name="RayCast3D" type="RayCast3D" parent="PhysicalInteraction/WallTestRaySet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, -0.4)
+target_position = Vector3(0, 0, -1)
+
+[node name="RayCast3D2" type="RayCast3D" parent="PhysicalInteraction/WallTestRaySet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, -0.4)
+target_position = Vector3(0, 0, -1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
