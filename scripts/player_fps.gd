@@ -110,6 +110,7 @@ func process_user_input():
 			is_climbing = true
 			climbing_start_distance = travelled
 			current_climbing_power = 1
+			velocity.y = max(0, velocity.y)
 				
 		if is_on_floor() or not is_on_wall():
 			is_climbing = false;
