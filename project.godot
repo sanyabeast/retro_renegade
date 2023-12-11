@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 tools="*res://scripts/singleton/tools.gd"
+app="*res://scripts/singleton/app_manager.gd"
 world="*res://scripts/singleton/world_manager.gd"
 players="*res://scripts/singleton/player_manager.gd"
 hud="*res://scripts/singleton/hud_manager.gd"

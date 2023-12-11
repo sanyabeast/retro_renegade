@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_qnyal"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_wpm5a"]
 [ext_resource type="Script" path="res://scripts/tools/audio_fx_player.gd" id="6_w6av1"]
-[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/_vaporworld.tres" id="7_868w0"]
+[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/environments/_vaporworld.tres" id="7_868w0"]
 [ext_resource type="Resource" uid="uid://5voi0b3q0l2g" path="res://resources/audio_fx/extras/_police_radio.tres" id="7_rq5eu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wshbf"]

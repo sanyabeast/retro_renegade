@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="6_7e31n"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="6_cltbw"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="7_piuni"]
-[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/_vaporworld.tres" id="7_up8xc"]
+[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/environments/_vaporworld.tres" id="7_up8xc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)

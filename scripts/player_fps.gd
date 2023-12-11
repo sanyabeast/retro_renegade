@@ -74,7 +74,7 @@ func process_movement(delta):
 		current_movement_speed = 0
 		min_movement_speed = 0
 	
-	current_movement_speed = clampf(current_movement_speed, min_movement_speed, props.sprint_speed_max)
+	current_movement_speed = clampf(current_movement_speed, min_movement_speed , props.sprint_speed_max)
 	
 	var jump_speed = props.jump_speed
 	var movement_penalty: float = 1

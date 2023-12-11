@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="RGameConfig" load_steps=3 format=3 uid="uid://c3ni3fotpqy7e"]
+
+[ext_resource type="PackedScene" uid="uid://dsoyrkmmgh0q7" path="res://scenes/particles/_particle_system_01.tscn" id="1_hhe5s"]
+[ext_resource type="Script" path="res://scripts/config.gd" id="2_8m6rc"]
+
+[resource]
+script = ExtResource("2_8m6rc")
+default_hit_particle_system = ExtResource("1_hhe5s")

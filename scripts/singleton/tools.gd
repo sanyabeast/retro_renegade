@@ -25,10 +25,11 @@ func spawn_object(template: PackedScene, parent: Node) -> Node:
 	if parent == null:
 		parent = get_scene()
 	
+	instance.global_position = Vector3(0, 0, 0)
 	parent.add_child(instance)
 
 	# Optional: Set the position or other properties
-	instance.global_position = Vector3(0, 0, 0)
+	
 	return instance
 	
 func spawn_object_with_transform(template: PackedScene, transform: Transform3D, parent: Node) -> Node:
@@ -38,10 +39,42 @@ func spawn_object_with_transform(template: PackedScene, transform: Transform3D, 
 	if parent == null:
 		parent = get_scene()
 	
+	instance.global_transform = transform
 	parent.add_child(instance)
 
 	# Optional: Set the position or other properties
-	instance.global_transform = transform
+	
+	return instance
+	
+func spawn_object_at_position(template: PackedScene, position: Vector3, parent: Node) -> Node:
+	# Instance the scene
+	var instance: Node = template.instantiate()
+
+	if parent == null:
+		parent = get_scene()
+		
+		
+	instance.global_position = position
+	parent.add_child(instance)
+
+	# Optional: Set the position or other properties
+	
+	return instance
+	
+func spawn_object_with_position_and_scale(template: PackedScene, position: Vector3, scale: Vector3, parent: Node) -> Node:
+	# Instance the scene
+	var instance: Node = template.instantiate()
+
+	if parent == null:
+		parent = get_scene()
+		
+		
+	instance.global_position = position
+	instance.scale = scale
+	parent.add_child(instance)
+
+	# Optional: Set the position or other properties
+	
 	return instance
 
 func parse_properties(input_str: String) -> Dictionary:

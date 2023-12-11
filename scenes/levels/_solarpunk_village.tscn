@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_pf0ti"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_t8rg4"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="6_pm7rn"]
-[ext_resource type="Resource" uid="uid://bamlgq30fg5h1" path="res://resources/_solarpunk_village.tres" id="7_aeims"]
+[ext_resource type="Resource" uid="uid://bamlgq30fg5h1" path="res://resources/environments/_solarpunk_village.tres" id="7_aeims"]
 [ext_resource type="AudioStream" uid="uid://cdwmo4muas8rc" path="res://assets/sound/ambient/683243__saha213131__morning-in-village.ogg" id="7_ajsrg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
