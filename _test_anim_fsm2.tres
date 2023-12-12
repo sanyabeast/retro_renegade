@@ -38,6 +38,7 @@ advance_mode = 2
 advance_condition = &"idle"
 
 [resource]
+states/End/position = Vector2(824, 134)
 states/Idle/node = SubResource("AnimationNodeBlendSpace1D_btihe")
 states/Idle/position = Vector2(465, 126)
 states/Start/position = Vector2(272, 126)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=20 format=3 uid="uid://d1tk1d7wk181b"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="1_fury1"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/resources/complex_fx.gd" id="8_m71fm"]
 [ext_resource type="PackedScene" uid="uid://8aw76vlve0vy" path="res://scenes/characters/_zombie_a1.tscn" id="13_fmels"]
 [ext_resource type="PackedScene" uid="uid://dr8opd2y77of6" path="res://scenes/characters/_white_clown_a1.tscn" id="14_kudjf"]
+[ext_resource type="PackedScene" uid="uid://bfh4ynpk3fo1k" path="res://scenes/characters/_zombie_cop_a1.tscn" id="15_bc6ec"]
 
 [sub_resource type="Resource" id="Resource_jsqn1"]
 script = ExtResource("8_m71fm")
@@ -98,3 +99,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.62468, 1.90735e-06, -13.75
 
 [node name="ZombieA2" parent="." instance=ExtResource("14_kudjf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.42178, 0, -25.9686)
+
+[node name="ZombieCop" parent="." instance=ExtResource("15_bc6ec")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1191, 0, -0.0698824)
