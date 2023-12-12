@@ -1,0 +1,46 @@
+[gd_resource type="AnimationNodeStateMachine" load_steps=10 format=3 uid="uid://cjmmkpb7t8g2g"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gmtls"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_sadux"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_btihe"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_gmtls")
+blend_point_0/pos = -1.0
+blend_point_1/node = SubResource("AnimationNodeAnimation_sadux")
+blend_point_1/pos = 1.0
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ly8cy"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f0nmb"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_mak8n"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_ly8cy")
+blend_point_0/pos = -1.0
+blend_point_1/node = SubResource("AnimationNodeAnimation_f0nmb")
+blend_point_1/pos = 1.0
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dbytk"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j5te2"]
+switch_mode = 1
+advance_mode = 2
+advance_condition = &"is_walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fcyyd"]
+switch_mode = 1
+advance_mode = 2
+advance_condition = &"idle"
+
+[resource]
+states/Idle/node = SubResource("AnimationNodeBlendSpace1D_btihe")
+states/Idle/position = Vector2(465, 126)
+states/Start/position = Vector2(272, 126)
+states/Walk/node = SubResource("AnimationNodeBlendSpace1D_mak8n")
+states/Walk/position = Vector2(641, 126)
+transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_dbytk"), "Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_j5te2"), "Walk", "Idle", SubResource("AnimationNodeStateMachineTransition_fcyyd")]

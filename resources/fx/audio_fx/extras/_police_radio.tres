@@ -13,6 +13,7 @@ loop = true
 
 [resource]
 script = ExtResource("1_ts22f")
+name = "Some Audio FX"
 clips = Array[AudioStreamOggVorbis]([SubResource("AudioStreamOggVorbis_q7u7i")])
 max_distance = 8.0
 volume_min = 1.0
