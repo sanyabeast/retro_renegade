@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" path="res://scripts/player_fps.gd" id="1_sfmll"]
 [ext_resource type="Script" path="res://scripts/player/physical_interaction.gd" id="2_3ig20"]
-[ext_resource type="Script" path="res://scripts/misc/fps_camera_manager.gd" id="2_bafxf"]
 [ext_resource type="Resource" uid="uid://b6w6445143jol" path="res://resources/player/default_player.tres" id="2_imjhf"]
 [ext_resource type="Script" path="res://scripts/tools/rayset.gd" id="3_j37np"]
+[ext_resource type="Script" path="res://scripts/player/fps_camera_manager.gd" id="3_kseyo"]
 [ext_resource type="Script" path="res://scenes/actors/player_sfx_controller.gd" id="5_8yvxe"]
-[ext_resource type="Resource" uid="uid://dvejhqbrf8a20" path="res://resources/audio_fx/character/_player_jump.tres" id="6_s0cas"]
+[ext_resource type="Resource" uid="uid://dvejhqbrf8a20" path="res://resources/fx/audio_fx/character/_player_jump.tres" id="6_s0cas"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kykjl"]
 radius = 0.35
@@ -196,7 +196,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 [node name="AudioListener3D" type="AudioListener3D" parent="CameraRoot"]
 
 [node name="CameraManager" type="Node3D" parent="CameraRoot"]
-script = ExtResource("2_bafxf")
+script = ExtResource("3_kseyo")
 
 [node name="Camera3D" type="Camera3D" parent="CameraRoot/CameraManager"]
 fov = 70.0

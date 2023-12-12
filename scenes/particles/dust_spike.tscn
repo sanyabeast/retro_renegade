@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=3 uid="uid://dsoyrkmmgh0q7"]
+
+[ext_resource type="Texture2D" uid="uid://dnk125p2xvbxj" path="res://assets/textures/particles/_smokey_a2.png" id="1_2shad"]
+[ext_resource type="Texture2D" uid="uid://cy1e4u8waeqyq" path="res://assets/textures/particles/_smokey_a1.png" id="2_ai2ta"]
+
+[sub_resource type="Curve" id="Curve_srewn"]
+_data = [Vector2(0, 0.286819), 0.0, 0.0, 0, 0, Vector2(0.503968, 0.372975), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_anntf"]
+curve = SubResource("Curve_srewn")
+
+[sub_resource type="Curve" id="Curve_3hcs6"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.474206, 0.85162), 1.3785, 1.3785, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6pk8o"]
+curve = SubResource("Curve_3hcs6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_77obd"]
+emission_shape_scale = Vector3(1, 0.2, 1)
+angle_min = -90.0
+angle_max = 90.0
+velocity_pivot = Vector3(-1, -1, 1)
+direction = Vector3(1, 1, 1)
+initial_velocity_min = -2.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -3.0
+linear_accel_max = 3.0
+scale_curve = SubResource("CurveTexture_6pk8o")
+color = Color(0.494118, 0.494118, 0.494118, 1)
+alpha_curve = SubResource("CurveTexture_anntf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iepfb"]
+transparency = 1
+shading_mode = 2
+diffuse_mode = 3
+disable_ambient_light = true
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_2shad")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_ycu5d"]
+material = SubResource("StandardMaterial3D_iepfb")
+size = Vector2(1.5, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ebigf"]
+transparency = 1
+shading_mode = 2
+diffuse_mode = 1
+disable_ambient_light = true
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_ai2ta")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_hwsy4"]
+material = SubResource("StandardMaterial3D_ebigf")
+size = Vector2(1.5, 1.5)
+
+[node name="GPUParticles3D" type="GPUParticles3D"]
+emitting = false
+amount = 6
+lifetime = 0.3
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_77obd")
+draw_passes = 2
+draw_pass_1 = SubResource("QuadMesh_ycu5d")
+draw_pass_2 = SubResource("QuadMesh_hwsy4")

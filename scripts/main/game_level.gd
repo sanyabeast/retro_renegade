@@ -2,10 +2,7 @@ extends Node3D
 
 class_name GameLevel
 
-@export var player_default_class: PackedScene
-@export var player_spawn_auto: bool = true
-@export var player_retry_max: int = 3
-@export var player_retry_current: int = 0
+@export var settings: RGameLevel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

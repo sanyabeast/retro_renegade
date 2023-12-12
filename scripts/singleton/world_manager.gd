@@ -2,56 +2,46 @@ extends Node
 
 class_name WorldManager
 
+const MIN_IMPACT_STRENGTH: float = 0.01
+const MAX_IMPACTS_PER_SECOND_FOR_OBJECT: int = 2
+
 var level: GameLevel
 var env: WorldEnvironmentController
 var rigid_bodies: Array[RigidBody3D] = []
-var rigid_bodies_timer_gates: Dictionary = {}
+var _rigid_bodies_timer_gates: Dictionary = {}
 
 var day_time: float = 0
 var day_duration: float = 24 * 60 * 60
 
+var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
+var _fx_id: int = 0
+
+# LIFECYCLE
+func _ready():
+	pass # Replace with function body.
+
+func _process(delta):
+	day_time += delta / day_duration;
+	day_time = fmod(day_time, 1)
+	dev.print_screen("rigids", "rigid bodies: %s pts" % rigid_bodies.size())
+	dev.print_screen("daytime", "day time: %s" % get_daytime_formatted_to_24h())
+	pass
+
+# METHODS
 func set_environment(_env: WorldEnvironmentController):
 	env = _env
 	day_time = env.settings.day_time
 	day_duration = env.settings.day_duration
 	
 func add_rigidbody(body: RigidBody3D):
-	
 	body.contact_monitor = true
 	body.max_contacts_reported = 1
-	rigid_bodies_timer_gates[body] = tools.TimerGateManager.new()
-	body.connect("body_entered", handle_rigidbody_collided.bind(body))
-	body.connect("tree_exited", check_rigidbodies.bind(body))
+	_rigid_bodies_timer_gates[body] = tools.TimerGateManager.new()
+	body.connect("body_entered", _handle_rigidbody_collided.bind(body))
+	body.connect("tree_exited", _check_rigidbodies.bind(body))
 	
 	rigid_bodies.append(body)
-	
-func check_rigidbodies(rigidbody: RigidBody3D):
-	rigid_bodies_timer_gates.erase(rigidbody)
-	rigid_bodies.remove_at(rigid_bodies.find(rigidbody))
-	
-	for rb in rigid_bodies:
-		rb.sleeping = false
 
-func handle_rigidbody_collided(target: Node3D, rigidbody: RigidBody3D):
-	var contact_point = rigidbody.global_position
-	
-	if rigidbody.get_contact_count() > 0:
-		var state: PhysicsDirectBodyState3D = PhysicsServer3D.body_get_direct_state(rigidbody)
-		contact_point = state.get_contact_local_position(0)
-		print(state.get_contact_local_position(0))
-	
-	play_collision_sound(contact_point, rigidbody, target)
-	spawn_collision_particles(contact_point, rigidbody, target)
-	
-func  spawn_collision_particles(position: Vector3, body: RigidBody3D, target: Node3D):
-	if rigid_bodies_timer_gates[body].check("collision_particles", 0.1):
-		var impact_progress = pow(clampf((body.linear_velocity.length() / sqrt(body.mass)) / 8, 0, 1), 2)
-		if impact_progress > 0.01:
-			tools.spawn_object_with_position_and_scale(app.config.default_hit_particle_system, position, Vector3(
-				impact_progress,
-				impact_progress,
-				impact_progress
-			), null)
 
 func set_level(_level: GameLevel):
 	print("World: level set to: %s" % _level.name)
@@ -62,29 +52,48 @@ func unset_level(_level: GameLevel):
 		print("World: level unset: %s" % _level.name)
 		level = null
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+# FX
+func play_audio_fx(audio_fx: RAudioFX, position: Vector3, volume_addent: float = 1, pitch_multiplier: float = 1):
+	# Load the audio file
+	var complex_fx: RComplexFX = RComplexFX.new()
+	complex_fx.name = audio_fx.name
+	complex_fx.audio_fx_variants = [audio_fx]
+	spawn_cfx(complex_fx, position, volume_addent, pitch_multiplier, 1)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	day_time += delta / day_duration;
-	dev.print_screen("rigids", "registred rigidbodies: %s" % rigid_bodies.size())
-	dev.print_screen("day_time", "game time: %s" % day_time)
+# COMPLEX FX
+func spawn_cfx(cfx: RComplexFX, position: Vector3, volume_addent: float = 1, pitch_multiplier: float = 1, scale_multiplier: float = 1):
+	assert(env != null, "WorldEnvironmentController must be present on scene to spawn fx")
+	var cfx_node: ComplexFXController = ComplexFXController.new()
+	cfx_node.setup(cfx, volume_addent, pitch_multiplier, scale_multiplier)
+	cfx_node.global_position = position
+	cfx_node.name = "CFX %s %s" % [cfx.name, _fx_id]
+	env.add_child(cfx_node)
+	_fx_id += 1
 	pass
 
-func play_collision_sound(position: Vector3, body: RigidBody3D, target: Node3D):
+# CALLBACKS
+func _check_rigidbodies(rigidbody: RigidBody3D):
+	_rigid_bodies_timer_gates.erase(rigidbody)
+	rigid_bodies.remove_at(rigid_bodies.find(rigidbody))
 	
-	if env == null:
-		print("setup WorldEnvironmentController to play collision sounds")
-		return
-	else:
-		print("playing collision between %s and %s" % [body.name, target.name])
+	for rb in rigid_bodies:
+		rb.sleeping = false
+
+func _handle_rigidbody_collided(target: Node3D, body: RigidBody3D):
+	if _rigid_bodies_timer_gates[body].check("colfx", 1/MAX_IMPACTS_PER_SECOND_FOR_OBJECT):
+		var contact_point = body.global_position
 		
-		if rigid_bodies_timer_gates[body].check("collision_sound", 0.1):
-			var impact_progress = sqrt(clampf((body.linear_velocity.length() / sqrt(body.mass)) / 8, 0, 1))
-			if impact_progress > 0.05:
-				var volume = lerpf(-16, -8, impact_progress)
-				var pitch = lerpf(0.25, 1.5, impact_progress) + randf_range(-0.1, 0.1)
-				tools.play_sound_at_position(env.settings.default_collision_sound, position, volume, pitch)
+		if body.get_contact_count() > 0:
+			var state: PhysicsDirectBodyState3D = PhysicsServer3D.body_get_direct_state(body)
+			contact_point = state.get_contact_local_position(0)
+		
+		var impact_strength = pow(clampf((body.linear_velocity.length() / sqrt(body.mass)) / 8, 0, 1), 2)
+		if impact_strength > MIN_IMPACT_STRENGTH:
+			spawn_cfx(app.config.default_collision_cfx, contact_point, 1, 1, 1)
+
+# tools
+func get_daytime_formatted_to_24h()->String:
+	var total_minutes = int(day_time * 24 * 60)
+	var hours = total_minutes / 60
+	var minutes = total_minutes % 60
+	return "%02d:%02d" % [hours, minutes]

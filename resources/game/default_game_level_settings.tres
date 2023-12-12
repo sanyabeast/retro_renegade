@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RGameLevel" load_steps=3 format=3 uid="uid://dybxeo2go05b4"]
+
+[ext_resource type="Script" path="res://scripts/resources/game_level.gd" id="1_1lqap"]
+[ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="1_b650r"]
+
+[resource]
+script = ExtResource("1_1lqap")
+name = "Practice Range"
+player_default_class = ExtResource("1_b650r")
+player_spawn_auto = true
+player_retry_max = 3

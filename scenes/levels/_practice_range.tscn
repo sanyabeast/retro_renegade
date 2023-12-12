@@ -1,16 +1,23 @@
-[gd_scene load_steps=15 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=17 format=3 uid="uid://d1tk1d7wk181b"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="1_fury1"]
-[ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="1_ihxl1"]
 [ext_resource type="PackedScene" uid="uid://vn16akq43r0k" path="res://assets/blends/levels/_practice_range_a/practice_range_a.blend" id="1_p2o55"]
+[ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_swfcu"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="3_b1dd5"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="4_bgqvb"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_qnyal"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_wpm5a"]
-[ext_resource type="Script" path="res://scripts/tools/audio_fx_player.gd" id="6_w6av1"]
+[ext_resource type="Script" path="res://scripts/tools/complex_fx_controller.gd" id="6_lda7q"]
 [ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/environments/_vaporworld.tres" id="7_868w0"]
-[ext_resource type="Resource" uid="uid://5voi0b3q0l2g" path="res://resources/audio_fx/extras/_police_radio.tres" id="7_rq5eu"]
+[ext_resource type="Resource" uid="uid://5voi0b3q0l2g" path="res://resources/fx/audio_fx/extras/_police_radio.tres" id="7_rq5eu"]
+[ext_resource type="Script" path="res://scripts/resources/complex_fx.gd" id="8_m71fm"]
+
+[sub_resource type="Resource" id="Resource_jsqn1"]
+script = ExtResource("8_m71fm")
+name = "Some Complex FX"
+audio_fx_variants = Array[Resource("res://scripts/resources/audio_fx.gd")]([ExtResource("7_rq5eu")])
+particle_system_variants = Array[PackedScene]([])
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wshbf"]
 sky_top_color = Color(0.45098, 0.498039, 0.992157, 1)
@@ -46,7 +53,7 @@ adjustment_enabled = true
 
 [node name="_practice_range" type="Node3D"]
 script = ExtResource("1_a7hcx")
-player_default_class = ExtResource("1_ihxl1")
+settings = ExtResource("2_swfcu")
 
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("1_fury1")
@@ -61,21 +68,16 @@ scene_path = "res://scenes/levels/_solarpunk_village.tscn"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5889, -1.90735e-06, 11.8782)
 scene_path = "res://scenes/levels/_practice_range_b.tscn"
 
-[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.38897, 0.938862, -20.9578)
-attenuation_model = 1
-max_db = -24.0
-autoplay = true
-max_distance = 10.0
-script = ExtResource("6_w6av1")
-audio_fxs = Array[Resource("res://scripts/resources/audio_fx.gd")]([ExtResource("7_rq5eu")])
+[node name="PoliceCarAmbient" type="Node3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.07855, 0, -21.5311)
+script = ExtResource("6_lda7q")
+cfx = SubResource("Resource_jsqn1")
 
-[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env", "world_ambient_stream")]
+[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
 script = ExtResource("5_qnyal")
 settings = ExtResource("7_868w0")
 dir_light = NodePath("DirectionalLight3D")
 world_env = NodePath("WorldEnvironment")
-world_ambient_stream = NodePath("LevelAmbienceStream")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_8hcxo")
@@ -84,12 +86,6 @@ environment = SubResource("Environment_8hcxo")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 30, 0)
 light_color = Color(1, 0.52549, 0.431373, 1)
 shadow_enabled = true
-
-[node name="LevelAmbienceStream" type="AudioStreamPlayer3D" parent="World"]
-attenuation_model = 3
-max_db = -8.0
-autoplay = true
-panning_strength = 0.25
 
 [node name="FPSBaseHUD" parent="." instance=ExtResource("3_b1dd5")]
 

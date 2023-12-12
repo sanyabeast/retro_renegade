@@ -23,7 +23,7 @@ func respawn_player():
 	if world.level == null:
 		print("PlayerManager: FAILED to respawn player: no world.level set")
 		return
-	if world.level.player_default_class == null:
+	if world.level.settings.player_default_class == null:
 		print("PlayerManager: FAILED to respawn player: no world.level.default_player set")
 		return
 	if spawn_spots.size() == 0:
@@ -31,7 +31,7 @@ func respawn_player():
 		return	
 	
 	var _spot: Node3D = tools.get_random_element_from_array(spawn_spots)	
-	var player = tools.spawn_object_with_transform(world.level.player_default_class, _spot.global_transform, world.level)
+	var player = tools.spawn_object_with_transform(world.level.settings.player_default_class, _spot.global_transform, world.level)
 	current = player
 	print("PlayerManager: successfully respawned at %s" % _spot.name)
 	pass

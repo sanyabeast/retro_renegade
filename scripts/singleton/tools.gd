@@ -53,7 +53,6 @@ func spawn_object_at_position(template: PackedScene, position: Vector3, parent: 
 	if parent == null:
 		parent = get_scene()
 		
-		
 	instance.global_position = position
 	parent.add_child(instance)
 
@@ -183,79 +182,18 @@ func lerp_inverse(current: float, from: float, to: float)-> float:
 func random_float(min_value: float, max_value: float) -> float:
 	return randf_range(min_value, max_value)
 
-# POSITIONAL SOUNDS
-var _sound_players: Array[AudioStreamPlayer3D] = []
+func progress_to_percentage(p: float) -> String:
+	return "%s%%" % int(p * 100)
 
-func _check_sound_players():
-	print("checking snds")
-	var active_sounds: Array[AudioStreamPlayer3D] = []
-	var finished_sounds: Array[AudioStreamPlayer3D] = []
-	
-	for item in _sound_players:
-		if item == null:
-			continue
-		if item.finished:
-			finished_sounds.append(item)
-		else:
-			active_sounds.append(item)
-	
-	for _sound in finished_sounds:
-		_sound.queue_free()		
-			
-	_sound_players = active_sounds
-
-func play_sound_at_position(audio_fx: RAudioFX, position: Vector3, override_volume = null, override_pitch = null):
-	if audio_fx == null:
-		print("Tools.play_sound_at_position: failed - audio_fx is null")
-		return
-		
-	var audio_player = AudioStreamPlayer3D.new()
-	
-	_sound_players.append(audio_player)
-	get_scene().add_child(audio_player)  # Add it to the scene
-	
-	# Set the position
-	audio_player.global_transform.origin = position
-	# Optional: Automatically remove the node after playback
-	audio_player.connect("finished", _check_sound_players)
-	play_audio_fx(audio_player, audio_fx, override_volume, override_pitch)
-	
-	dev.print_screen("sounds_count", "sounds: %s" % _sound_players.size())
-
-func play_audio_fx(audio_player: AudioStreamPlayer3D, audio_fx: RAudioFX, override_volume = null, override_pitch = null):
-	# Load the audio file
-	
-	if audio_fx.clips == null or audio_fx.clips.size() == 0:
-		print("Tools.play_audio_fx: unable to play: no clips at audiofx: %s" % audio_fx.resource_name)
-		return
-	
-	audio_player.stream = get_random_element_from_array(audio_fx.clips)
-	audio_player.volume_db = lerpf(-64, 0, sqrt(randf_range(audio_fx.volume_min, audio_fx.volume_max)))
-	audio_player.max_db = lerpf(-64, 0, sqrt(randf_range(audio_fx.volume_limit_min, audio_fx.volume_limit_max)))
-	audio_player.pitch_scale = randf_range(audio_fx.pitch_min, audio_fx.pitch_max)
-	audio_player.max_distance = audio_fx.max_distance
-	audio_player.attenuation_model = audio_fx.attenuation_mode
-	audio_player.panning_strength = audio_fx.panning_strength
-	
-	if override_volume is float: 
-		audio_player.max_db = override_volume
-		
-	if override_pitch is float: 
-		audio_player.pitch_scale = override_pitch
-
-	# Play the sound
-	audio_player.play()
-
-
-var _timer_gate_date = {}
+var _timer_gate_data = {}
 
 class TimerGateManager:
-	var _timer_gate_date = {}
+	var _timer_gate_data = {}
 
 	func check(id: String, timeout: float) -> bool:
 		var current_time = Time.get_ticks_msec() / 1000.0
-		if not _timer_gate_date.has(id) or current_time - _timer_gate_date[id] >= timeout:
-			_timer_gate_date[id] = current_time
+		if not _timer_gate_data.has(id) or current_time - _timer_gate_data[id] >= timeout:
+			_timer_gate_data[id] = current_time
 			return true
 		return false
 

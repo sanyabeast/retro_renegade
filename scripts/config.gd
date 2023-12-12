@@ -2,4 +2,8 @@ extends Resource
 
 class_name RGameConfig
 
-@export var default_hit_particle_system: PackedScene
+@export var name: String = "Some Game Config"
+@export var default_collision_cfx: RComplexFX
+
+func _init():
+	pass

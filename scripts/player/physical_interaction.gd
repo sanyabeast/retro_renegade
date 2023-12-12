@@ -22,6 +22,8 @@ func _ready():
 	pass # Replace with function body.
 
 func _process(delta):
+	dev.print_screen("player_phys_touch_wall", "player touches wall: %s" % is_touching_wall)
+	dev.print_screen("player_phys_touch_wall", "player landed: %s" % player.is_on_floor())
 	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -69,10 +71,9 @@ func _check_physical_object_in_hand(delta):
 				current_hand_manipulation_target.linear_velocity = Vector3.UP * player.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
 				current_hand_manipulation_target = null
 				
-	dev.print_screen("hand manipulation", "none" if current_hand_manipulation_target == null else current_hand_manipulation_target.name)	
-	dev.print_screen("hand manipulation mass penalty", "hand manipulation mass penalty: %s" % get_hand_manipulation_mass_penalty())
-	dev.print_screen("hmcg","hand manipulation cg: %s" % hand_manipulation_close_grip)
-
+	dev.print_screen("hand manipulation", "hand manip. target: %s" % ("none" if current_hand_manipulation_target == null else current_hand_manipulation_target.name))	
+	dev.print_screen("hand manipulation mass penalty", "hand manip. penalty: %s" % tools.progress_to_percentage(get_hand_manipulation_mass_penalty()))
+	
 func get_hand_manipulation_mass_penalty() -> float:
 	if current_hand_manipulation_target != null:
 		return 1. - clampf((current_hand_manipulation_target.mass / player.props.hand_manipulation_max_weight), 0, 1)

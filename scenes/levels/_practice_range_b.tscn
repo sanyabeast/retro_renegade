@@ -1,14 +1,14 @@
 [gd_scene load_steps=15 format=3 uid="uid://dpm7k4yfj5s1m"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_rsgrl"]
-[ext_resource type="PackedScene" uid="uid://cw2741kmyhe68" path="res://scenes/main/player_fps.tscn" id="2_2sams"]
+[ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_umqm6"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="3_0edn0"]
 [ext_resource type="PackedScene" uid="uid://ciqidhedqudsf" path="res://assets/blends/levels/_practice_range_b/practice_range_b.blend" id="4_eifh5"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_uo7mq"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="6_7e31n"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="6_cltbw"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="7_piuni"]
-[ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/environments/_vaporworld.tres" id="7_up8xc"]
+[ext_resource type="Resource" uid="uid://b7dpsncuarny4" path="res://resources/environments/_surreal_world.tres" id="7_q0f5k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)
@@ -52,7 +52,7 @@ loop = true
 
 [node name="_practice_range" type="Node3D"]
 script = ExtResource("1_rsgrl")
-player_default_class = ExtResource("2_2sams")
+settings = ExtResource("2_umqm6")
 
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("3_0edn0")
@@ -63,12 +63,11 @@ script = ExtResource("3_0edn0")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.01633, 0, 7.53152)
 scene_path = "res://scenes/levels/_practice_range.tscn"
 
-[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env", "world_ambient_stream")]
+[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
 script = ExtResource("6_7e31n")
-settings = ExtResource("7_up8xc")
+settings = ExtResource("7_q0f5k")
 dir_light = NodePath("DirectionalLight3D")
 world_env = NodePath("WorldEnvironment")
-world_ambient_stream = NodePath("AudioStreamPlayer3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_xl8aq")

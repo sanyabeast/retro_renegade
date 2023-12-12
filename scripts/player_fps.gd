@@ -45,11 +45,11 @@ func _process(delta):
 	travelled += (global_position - _prev_global_position).length()
 	_prev_global_position = global_position
 
-	dev.print_screen("player_pos", "player pos: %s" % global_position)
-	dev.print_screen("player_vel", "player vel: %s" % velocity.length())
-	dev.print_screen("player_climb", "player climb power: %s" % current_climbing_power)
+	dev.print_screen("player_pos", "player xyz: %s" % global_position)
+	dev.print_screen("player_vel", "player velocity: %.2f m/s" % velocity.length())
 	dev.print_screen("player_crouch", "player crouching: %s" % is_crouching)
-	dev.print_screen("player_travelled", "player travelled: %s" % travelled)
+	dev.print_screen("player_travelled", "player travelled: %.2f m" % travelled)
+	dev.print_screen("player_travelled_climb", "player travelled climbing: %.2f m" % ((travelled - climbing_start_distance) if is_climbing else 0))
 	
 func _physics_process(delta):
 	if current_jump_power == 1:

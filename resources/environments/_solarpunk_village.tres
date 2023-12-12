@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="RWorldEnvSettings" load_steps=6 format=3 uid="uid://bamlgq30fg5h1"]
+[gd_resource type="Resource" script_class="RWorldEnvSettings" load_steps=5 format=3 uid="uid://bamlgq30fg5h1"]
 
 [ext_resource type="AudioStream" uid="uid://cdwmo4muas8rc" path="res://assets/sound/ambient/683243__saha213131__morning-in-village.ogg" id="1_td3fx"]
-[ext_resource type="Resource" uid="uid://cxkq5pqpxejdp" path="res://resources/audio_fx/_default_collision.tres" id="2_8j84r"]
 [ext_resource type="Script" path="res://scripts/resources/audio_fx.gd" id="2_vtwwg"]
-[ext_resource type="Script" path="res://scripts/resources/world_env_daycycle_settings.gd" id="3_v60t7"]
+[ext_resource type="Script" path="res://scripts/resources/world_env_settings.gd" id="3_v60t7"]
 
 [sub_resource type="Resource" id="Resource_dbaon"]
 script = ExtResource("2_vtwwg")
+name = "Some Audio FX"
 clips = Array[AudioStreamOggVorbis]([ExtResource("1_td3fx")])
 max_distance = 1024.0
 volume_min = 0.8
@@ -20,10 +20,11 @@ attenuation_mode = 3
 
 [resource]
 script = ExtResource("3_v60t7")
+name = "Solarpunk Village"
 day_duration = 300.0
 day_time = 0.25
 day_cycle_enabled = true
-day_cycle_length = 60.0
+day_cycle_length = 300.0
 fog_density_night = 0.1
 fog_density_day = 0.01
 sky_energy_night = 0.15
@@ -33,4 +34,3 @@ sun_hue_night = 0.95
 sun_saturation_day = 0.333
 sun_saturation_night = 0.666
 ambient_sound = SubResource("Resource_dbaon")
-default_collision_sound = ExtResource("2_8j84r")

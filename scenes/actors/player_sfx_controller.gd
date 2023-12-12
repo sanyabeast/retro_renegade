@@ -40,6 +40,6 @@ func _process(delta):
 	
 # JUMPING
 	if player.current_jump_power == 1 and _timer_gate.check("jump", jump_play_timeout):
-		tools.play_audio_fx(jump_audiostream, jump_audio_fx)
+		world.play_audio_fx(jump_audio_fx, global_position, 0, 1)
 	
 	pass
