@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=22 format=3 uid="uid://d1tk1d7wk181b"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
 [ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="1_fury1"]
@@ -15,6 +15,8 @@
 [ext_resource type="PackedScene" uid="uid://8aw76vlve0vy" path="res://scenes/characters/_zombie_a1.tscn" id="13_fmels"]
 [ext_resource type="PackedScene" uid="uid://dr8opd2y77of6" path="res://scenes/characters/_white_clown_a1.tscn" id="14_kudjf"]
 [ext_resource type="PackedScene" uid="uid://bfh4ynpk3fo1k" path="res://scenes/characters/_zombie_cop_a1.tscn" id="15_bc6ec"]
+[ext_resource type="PackedScene" uid="uid://cy52toqj1q0n0" path="res://scenes/characters/_drunk_capo.tscn" id="16_awxng"]
+[ext_resource type="PackedScene" uid="uid://t1j3fu2dug7t" path="res://scenes/characters/_raven.tscn" id="17_7ais4"]
 
 [sub_resource type="Resource" id="Resource_jsqn1"]
 script = ExtResource("8_m71fm")
@@ -58,23 +60,42 @@ adjustment_enabled = true
 script = ExtResource("1_a7hcx")
 settings = ExtResource("2_swfcu")
 
+[node name="_DevHUD" parent="." instance=ExtResource("4_bgqvb")]
+
 [node name="Level" type="Node3D" parent="."]
-script = ExtResource("1_fury1")
 
 [node name="practice_range_a" parent="Level" instance=ExtResource("1_p2o55")]
+script = ExtResource("1_fury1")
 
-[node name="NetherPortal" parent="Level" instance=ExtResource("5_wpm5a")]
+[node name="Extras" type="Node3D" parent="Level"]
+
+[node name="NetherPortal" parent="Level/Extras" instance=ExtResource("5_wpm5a")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 5.97415, -1.90735e-06, -62.8583)
 scene_path = "res://scenes/levels/_solarpunk_village.tscn"
 
-[node name="NetherPortal2" parent="Level" instance=ExtResource("5_wpm5a")]
+[node name="NetherPortal2" parent="Level/Extras" instance=ExtResource("5_wpm5a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5889, -1.90735e-06, 11.8782)
 scene_path = "res://scenes/levels/_practice_range_b.tscn"
 
-[node name="PoliceCarAmbient" type="Node3D" parent="Level"]
+[node name="PoliceCarAmbient" type="Node3D" parent="Level/Extras"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.07855, 0, -21.5311)
 script = ExtResource("6_lda7q")
 cfx = SubResource("Resource_jsqn1")
+
+[node name="ZombieA1" parent="Level" instance=ExtResource("13_fmels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.62468, 1.90735e-06, -13.7583)
+
+[node name="ZombieA2" parent="Level" instance=ExtResource("14_kudjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.42178, 0, -25.9686)
+
+[node name="ZombieCop" parent="Level" instance=ExtResource("15_bc6ec")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1191, 0, -0.0698824)
+
+[node name="ZombieCop2" parent="Level" instance=ExtResource("16_awxng")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4941, -1.90735e-06, -42.1532)
+
+[node name="DrunkCapoA1" parent="Level" instance=ExtResource("17_7ais4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.41218, 0, 22.872)
 
 [node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
 script = ExtResource("5_qnyal")
@@ -91,14 +112,3 @@ light_color = Color(1, 0.52549, 0.431373, 1)
 shadow_enabled = true
 
 [node name="FPSBaseHUD" parent="." instance=ExtResource("3_b1dd5")]
-
-[node name="_DevHUD" parent="." instance=ExtResource("4_bgqvb")]
-
-[node name="ZombieA1" parent="." instance=ExtResource("13_fmels")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.62468, 1.90735e-06, -13.7583)
-
-[node name="ZombieA2" parent="." instance=ExtResource("14_kudjf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.42178, 0, -25.9686)
-
-[node name="ZombieCop" parent="." instance=ExtResource("15_bc6ec")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1191, 0, -0.0698824)

@@ -8,13 +8,13 @@ var rigid_bodies: Array[RigidBody3D]
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_traverse(self)
-	print("TreeParser: found %s player spawns" % [player_spawn_spots.size()])
+	dev.logd("TreeParser", "found %s player spawns" % [player_spawn_spots.size()])
 	for _ps in player_spawn_spots:
 		players.add_spawn_spot(_ps)
 		
 
 func _exit_tree():
-	#print("TreeParser: exits tree")
+	#dev.logd(TreeParser: exits tree")
 	for _ps in player_spawn_spots:
 		players.remove_spawn_spot(_ps)
 	pass
@@ -38,7 +38,6 @@ func _process_node(node: Object):
 	
 	if "mass" in props:
 		if node.get_parent() is RigidBody3D:
-			#print("TreeParser: setting %s rigid body mass to %s" % [node.name, props["mass"]])
 			node.get_parent().mass = float(props["mass"])
 	
 

@@ -97,7 +97,7 @@ func parse_properties(input_str: String) -> Dictionary:
 func spawn_object_and_replace(packed_scene: PackedScene, existing_object: Node) -> Node:
 	# Check if the arguments are valid
 	if packed_scene == null or existing_object == null:
-		print("Invalid arguments passed to the function.")
+		dev.logd("Tools", "Invalid arguments passed to the function.")
 		return
 
 	# Instantiate the new object from the PackedScene
@@ -118,6 +118,9 @@ func spawn_object_and_replace(packed_scene: PackedScene, existing_object: Node) 
 	# Queue the existing object for deletion
 	existing_object.queue_free()
 	return new_object
+
+func get_active_camera():
+	return get_viewport().get_camera_3d()
 
 func get_scene() -> Node3D:
 	return get_tree().current_scene
@@ -164,10 +167,10 @@ func load_scene(scene_path: String):
 	tree.change_scene_to_file(scene_path)
 	
 func load_scene_packed(packed_scene: PackedScene):
-	print("prepare to load scene: %s" % packed_scene)
+	dev.logd("Tools", "prepare to load scene: %s" % packed_scene)
 	var tree: SceneTree = get_tree()
 	var result = tree.change_scene_to_packed(packed_scene)
-	print("LOADING PACKED SCENE, RESULT: %s" % result)
+	dev.logd("Tools", "LOADING PACKED SCENE, RESULT: %s" % result)
 
 func get_forward_vector(node: Node3D):
 	return -node.global_transform.basis.z
@@ -179,11 +182,24 @@ func lerp_inverse(current: float, from: float, to: float)-> float:
 	var alpha = (current - from) / (to - from)
 	return clamp(alpha, 0.0, 1.0) # Clamping to ensure the result is between 0 and 1
 
+func v3_to_v2(v3: Vector3)->Vector2:
+	return Vector2(v3.x, v3.y)
+
 func random_float(min_value: float, max_value: float) -> float:
 	return randf_range(min_value, max_value)
 
 func progress_to_percentage(p: float) -> String:
 	return "%s%%" % int(p * 100)
+
+# DATA CONTAINERS
+class DataContainer:
+	var data: Dictionary
+	func _init(_data):
+		data = _data
+	func update(key, value):
+		data[key] = value
+	func unset(key):
+		data.erase(key)
 
 var _timer_gate_data = {}
 

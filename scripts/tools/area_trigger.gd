@@ -28,16 +28,16 @@ func _on_body_entered(node: Node3D):
 				is_locked = true
 				current_body = node
 				on_entered()
-				print("AreaTrigger: body entered: %s" % node.name)
+				dev.logd("AreaTrigger", "body entered: %s" % node.name)
 				break
 	else:
-		print("Trigger is locked by %s" % current_body)
+		dev.logd("AreaTrigger", "Trigger is locked by %s" % current_body)
 
 func _on_body_exited(node: Node3D):
-	print("AreaTrigger: node exited: %s" % node.name)
+	dev.logd("AreaTrigger", "node exited: %s" % node.name)
 	is_locked = false
 	current_body = null
 
 func on_entered():
-	print("AreaTrigger: implement on_entered action")
+	dev.logd("AreaTrigger", "implement on_entered action")
 	pass

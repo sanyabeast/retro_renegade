@@ -1,7 +1,7 @@
 extends CharacterBody3D
 
 
-const SPEED = 0.4
+@export var max_walk_speed: float = 0.4
 const JUMP_VELOCITY = 4.5
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -16,14 +16,24 @@ var _look_direction: Vector3 = Vector3.ZERO
 
 var _animation_tree: AnimationTree
 var _animation_player: AnimationPlayer
+var _skeleton: Skeleton3D
 
 var _current_move_speed: float = 0
 var _target_move_speed: float = 0
 
+var _dev_data: tools.DataContainer = tools.DataContainer.new({
+	"name": "",
+	"velocity": ""
+})
+
 func _ready():
 	_traverse(self)
-	print(_animation_tree)
+	#_skeleton.physical_bones_start_simulation()
+	dev.logd("NPCController", _animation_tree)
 	_switch_target_point()
+	dev.set_label(self, _dev_data)
+	_dev_data.update("name","%s" % name)
+	
 
 func _process(delta):
 	
@@ -33,17 +43,19 @@ func _process(delta):
 	if _timer_gate.check("toggle_idle", 3):
 		is_idle = tools.random_bool2(0.25)
 	
-	_direction = Vector3.ZERO if is_idle else ((global_position - current_target_point).normalized())
-	_target_move_speed = 0 if is_idle else SPEED
-	_current_move_speed = move_toward(_current_move_speed, _target_move_speed, 1 * delta)
-	_walk_direction = _walk_direction.move_toward(_direction, 0.5 * delta)
-	_look_direction = _look_direction.move_toward(_direction, 0.5 * delta)
+	_direction = (global_position - current_target_point).normalized()
+	_target_move_speed = 0 if is_idle else max_walk_speed
+	_current_move_speed = move_toward(_current_move_speed, _target_move_speed, 0.2 * delta)
+	_walk_direction = _walk_direction.move_toward(_direction, 2 * delta)
+	_look_direction = _look_direction.move_toward(_direction, 2 * delta)
 	
 	look_at(global_position + _look_direction)
 		
-	print(_direction)
+	#dev.logd("NPCController", _direction)
 	
 	_update_animation_params()
+	
+	_dev_data.update("velocity","Velocity %.2f" % velocity.length())
 		
 
 func _traverse(node):
@@ -55,6 +67,9 @@ func _traverse(node):
 	if node is AnimationTree:
 		_animation_tree = node
 		_animation_tree.active = true
+	
+	if node is Skeleton3D:
+		_skeleton = node
 		
 	# Recursively call this function on all children
 	for child in node.get_children():
@@ -77,10 +92,10 @@ func _update_animation_params():
 			_animation_tree["parameters/conditions/idle"] = false
 			_animation_tree["parameters/conditions/is_walking"] = true	
 			
-		_animation_tree["parameters/Idle/blend_position"] = lerpf(-1, 1, clampf(velocity.length() / SPEED, 0, 1))
-		_animation_tree["parameters/Walk/blend_position"] = lerpf(-1, 1, clampf(velocity.length() / SPEED, 0, 1))
+		_animation_tree["parameters/Idle/blend_position"] = lerpf(-1, 1, pow(clampf(velocity.length() / max_walk_speed, 0, 1), 2))
+		_animation_tree["parameters/Walk/blend_position"] = lerpf(-1, 1, pow(clampf(velocity.length() / max_walk_speed, 0, 1), 2))
 	
-		_animation_player.speed_scale = 1 if is_idle else (velocity.length() / SPEED)
+		_animation_player.speed_scale = 1 if is_idle else (velocity.length() / max_walk_speed)
 
 func _physics_process(delta):
 	# Add the gravity.

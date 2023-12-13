@@ -3,7 +3,7 @@ extends Node
 class_name WorldManager
 
 const MIN_IMPACT_STRENGTH: float = 0.01
-const MAX_IMPACTS_PER_SECOND_FOR_OBJECT: int = 2
+const MAX_IMPACTS_PER_SECOND_FOR_OBJECT: float = 5
 
 var level: GameLevel
 var env: WorldEnvironmentController
@@ -44,12 +44,12 @@ func add_rigidbody(body: RigidBody3D):
 
 
 func set_level(_level: GameLevel):
-	print("World: level set to: %s" % _level.name)
+	dev.logd("WorldManager", "World: level set to: %s" % _level.name)
 	level = _level
 	
 func unset_level(_level: GameLevel):
 	if level == _level:
-		print("World: level unset: %s" % _level.name)
+		dev.logd("WorldManager", "World: level unset: %s" % _level.name)
 		level = null
 
 # FX

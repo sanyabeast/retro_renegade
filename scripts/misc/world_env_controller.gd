@@ -12,7 +12,7 @@ class_name WorldEnvironmentController
 func _ready():
 	world.set_environment(self)
 	if settings.ambient_sound != null:
-		print(settings.ambient_sound.clips)
+		dev.logd("WorldEnvironmentController", settings.ambient_sound.clips)
 		world.play_audio_fx(settings.ambient_sound, global_position, 0, 1)
 		pass
 	

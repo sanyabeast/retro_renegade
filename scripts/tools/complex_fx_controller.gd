@@ -17,7 +17,7 @@ var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("%s - init" % get_instance_id())
+	dev.logd("ComplexFXController","%s - init" % get_instance_id())
 	if cfx != null:
 		_spawn_cfx()
 	
@@ -29,11 +29,18 @@ func _ready():
 	for pl in audio_players:
 		pl.play()
 	
-	print("ComplexFXController: found %s particle-systems" % particle_systems.size())
-	print("ComplexFXController: found %s audio-players" % audio_players.size())
+	dev.logd("ComplexFXController", "found %s particle-systems" % particle_systems.size())
+	dev.logd("ComplexFXController", "found %s audio-players" % audio_players.size())
+	
+	dev.set_label(self, tools.DataContainer.new({
+		"default": "FX %s" % (cfx.name if cfx != null else "_")
+	}))
+
+func _exit_tree():
+	dev.remove_label(self)
 
 func setup(_cfx: RComplexFX, _volume_addent: float = 1, _pitch_multiplier: float = 1, _scale_multiplier: float = 1):
-	print("%s - setup" % get_instance_id())
+	dev.logd("ComplexFXController", "%s - setup" % get_instance_id())
 	cfx = _cfx
 	volume_addent = _volume_addent
 	pitch_multiplier = _pitch_multiplier
@@ -59,7 +66,7 @@ func _traverse(node):
 		_traverse(child)
 
 func _spawn_cfx():
-	print("Spawning sfx %s" % cfx)
+	dev.logd("ComplexFXController","Spawning sfx %s" % cfx)
 	if cfx.audio_fx_variants.size() > 0:
 		_add_audio_fx(tools.get_random_element_from_array(cfx.audio_fx_variants))
 		
@@ -104,5 +111,5 @@ func check_tasks():
 			
 	if self_destruct:
 		if active_particle_systems == 0 and active_audio_players == 0:
-			print("ComplexFXController: self destructing")
+			dev.logd("ComplexFXController", "self destructing...")
 			queue_free()
