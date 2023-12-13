@@ -1,8 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://3jtylca7f62c"]
+[gd_scene load_steps=13 format=3 uid="uid://3jtylca7f62c"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_outfo"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_uouj1"]
-[ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="3_bflum"]
 [ext_resource type="PackedScene" uid="uid://bmwnf758ok0mg" path="res://assets/blends/levels/_solarpunk_village/_solarpunk_village.blend" id="4_lm2dd"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="5_a3f3a"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_pf0ti"]
@@ -47,7 +46,6 @@ script = ExtResource("1_outfo")
 settings = ExtResource("2_uouj1")
 
 [node name="Level" type="Node3D" parent="."]
-script = ExtResource("3_bflum")
 
 [node name="_solarpunk_village" parent="Level" instance=ExtResource("4_lm2dd")]
 

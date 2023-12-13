@@ -1,6 +1,7 @@
-[gd_scene load_steps=21 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=22 format=3 uid="uid://d1tk1d7wk181b"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
+[ext_resource type="Script" path="res://scripts/tools/tree_parser.gd" id="1_fury1"]
 [ext_resource type="PackedScene" uid="uid://vn16akq43r0k" path="res://assets/blends/levels/_practice_range_a/practice_range_a.blend" id="1_p2o55"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_swfcu"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="3_b1dd5"]
@@ -64,6 +65,7 @@ settings = ExtResource("2_swfcu")
 [node name="Level" type="Node3D" parent="."]
 
 [node name="practice_range_a" parent="Level" instance=ExtResource("1_p2o55")]
+script = ExtResource("1_fury1")
 
 [node name="Extras" type="Node3D" parent="Level"]
 

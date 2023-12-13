@@ -45,7 +45,10 @@ func add_rigidbody(body: RigidBody3D):
 
 func set_level(_level: GameLevel):
 	dev.logd("WorldManager", "World: level set to: %s" % _level.name)
+	players.spawn_spots = []
 	level = _level
+	_init_node_tree(level)
+
 	
 func unset_level(_level: GameLevel):
 	if level == _level:
@@ -97,3 +100,23 @@ func get_daytime_formatted_to_24h()->String:
 	var hours = total_minutes / 60
 	var minutes = total_minutes % 60
 	return "%02d:%02d" % [hours, minutes]
+
+
+
+func _init_node_tree(node):
+	if node != null:
+		_process_node(node)
+		for child in node.get_children():
+			_init_node_tree(child)
+		
+func _process_node(object: Object):
+	if object is Node3D:
+		var node_props = ImportScript.parse_properties(object.name)
+		if "player_spawn" in node_props:
+			print("found spawn player object")
+			players.add_spawn_spot(object)
+		pass
+		
+		if object is RigidBody3D:
+			add_rigidbody(object)
+	

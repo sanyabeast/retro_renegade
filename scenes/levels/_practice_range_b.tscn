@@ -1,8 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://dpm7k4yfj5s1m"]
+[gd_scene load_steps=14 format=3 uid="uid://dpm7k4yfj5s1m"]
 
 [ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_rsgrl"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_umqm6"]
-[ext_resource type="Script" path="res://scripts/main/tree_parser.gd" id="3_0edn0"]
 [ext_resource type="PackedScene" uid="uid://ciqidhedqudsf" path="res://assets/blends/levels/_practice_range_b/practice_range_b.blend" id="4_eifh5"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_uo7mq"]
 [ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="6_7e31n"]
@@ -55,7 +54,6 @@ script = ExtResource("1_rsgrl")
 settings = ExtResource("2_umqm6")
 
 [node name="Level" type="Node3D" parent="."]
-script = ExtResource("3_0edn0")
 
 [node name="practice_range_b" parent="Level" instance=ExtResource("4_eifh5")]
 

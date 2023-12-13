@@ -9,6 +9,10 @@ func add_spawn_spot(node: Node3D):
 	dev.logd("PlayerManager", "adding new spawn spot: %s" % node.name)
 	spawn_spots.append(node)
 
+func remove_all_spawn_spots():
+	spawn_spots = []
+	dev.logd("PlayerManager", "removing all spawn spots")
+
 func remove_spawn_spot(node: Node3D):
 	dev.logd("PlayerManager", "removing new spawn spot: %s" % node.name)
 	var index = spawn_spots.find(node)
