@@ -35,7 +35,7 @@ window/size/viewport_height=900
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/hyperlog/plugin.cfg")
+enabled=PackedStringArray()
 
 [input]
 
