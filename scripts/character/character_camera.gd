@@ -24,8 +24,10 @@ enum EGameCharacterCameraMode {
 
 @export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.FirstPerson
 
+@export var body_controller: GameCharacterBody
+
 var game_config: RGameConfig = Tools.load_config()
-var player: GameCharacter
+var character: GameCharacter
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -33,7 +35,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	if body_controller != null and body_controller.head_pin_point != null:
+		global_position = body_controller.head_pin_point.global_position
 	
 func set_camera_mode(new_mode: EGameCharacterCameraMode):
 	camera_mode = new_mode
@@ -64,6 +67,6 @@ func process_camera_input(event):
 			camera_3p_rig.rotation_degrees.x = clamp(camera_3p_rig.rotation_degrees.x, camera_3p_attitude_min, camera_3p_attitude_max)
 			pass
 	#  PLAYER
-	if player != null:
-		player.rotate_y(deg_to_rad(event.relative.x * game_config.first_person_camera_sensitivity * -1))
+	if character != null:
+		character.rotate_y(deg_to_rad(event.relative.x * game_config.first_person_camera_sensitivity * -1))
 		

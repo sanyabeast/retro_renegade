@@ -64,6 +64,14 @@ func _ready():
 func _process(delta):
 	update_mouse_mode()
 	
+	if current != null and dev != null:
+		dev.print_screen("character_pos", "character xyz: %s" % current.global_position)
+		dev.print_screen("character_vel", "character velocity: %.2f m/s" % current.velocity.length())
+		dev.print_screen("character_crouch", "character crouching: %s" % current.is_crouching)
+		dev.print_screen("character_travelled", "character travelled: %.2f m" % current.travelled)
+		dev.print_screen("character_air_travelled", "character travelled (air): %.2f m" % current.air_travelled)
+		dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((current.travelled - current.climbing_start_distance) if current.is_climbing else 0))
+	
 
 func _physics_process(delta):
 	process_user_input()

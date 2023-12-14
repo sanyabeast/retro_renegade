@@ -20,3 +20,6 @@ class_name RAudioFX
 
 @export var attenuation_mode: AudioStreamPlayer3D.AttenuationModel
 
+@export var start_at_min: float = 0
+@export var start_at_max: float = 0
+

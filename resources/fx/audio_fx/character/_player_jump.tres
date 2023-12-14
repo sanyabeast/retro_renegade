@@ -7,14 +7,16 @@
 
 [resource]
 script = ExtResource("1_6vjrh")
-name = "Player Jump"
-clips = Array[AudioStreamOggVorbis]([ExtResource("1_1h1sg"), ExtResource("2_rcqfo"), ExtResource("3_2yjkd")])
-max_distance = 8.0
-volume_min = 0.25
-volume_max = 0.35
+name = "Some Audio FX"
+clips = Array[AudioStreamOggVorbis]([ExtResource("3_2yjkd"), ExtResource("1_1h1sg"), ExtResource("2_rcqfo")])
+max_distance = 32.0
+volume_min = 0.55
+volume_max = 0.6
 volume_limit_min = 1.0
 volume_limit_max = 1.0
-pitch_min = 0.9
+pitch_min = 0.95
 pitch_max = 1.0
 panning_strength = 0.5
 attenuation_mode = 0
+start_at_min = 0.0
+start_at_max = 0.0

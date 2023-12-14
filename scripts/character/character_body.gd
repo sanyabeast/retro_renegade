@@ -1,6 +1,9 @@
-extends Node3D
+extends CollisionShape3D
 
 class_name GameCharacterBody
+
+@export var head_pin_point: Node3D
+@export var hand_pin_point: Node3D
 
 var character: GameCharacter
 var _animation_tree: AnimationTree
@@ -56,3 +59,4 @@ func _update_animation_params(delta):
 	_animation_tree["parameters/Walk/blend_position"] = lerpf(-1, 1, pow(clampf(_smoothed_move_velocity / character.props.walk_speed_max, 0, 1), 2))
 
 	_animation_player.speed_scale = 1 if is_idle else (_smoothed_move_velocity / character.props.walk_speed_max)
+

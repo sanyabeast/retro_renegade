@@ -74,7 +74,7 @@ func play_audio_fx(audio_fx: RAudioFX, position: Vector3, volume_addent: float =
 	spawn_cfx(complex_fx, position, volume_addent, pitch_multiplier, 1)
 
 # COMPLEX FX
-func spawn_cfx(cfx: RComplexFX, position: Vector3, volume_addent: float = 1, pitch_multiplier: float = 1, scale_multiplier: float = 1):
+func spawn_cfx(cfx: RComplexFX, position: Vector3, volume_addent: float = 0, pitch_multiplier: float = 1, scale_multiplier: float = 1):
 	assert(env != null, "WorldEnvironmentController must be present on scene to spawn fx")
 	var cfx_node: ComplexFXController = ComplexFXController.new()
 	cfx_node.setup(cfx, volume_addent, pitch_multiplier, scale_multiplier)

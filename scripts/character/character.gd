@@ -8,8 +8,8 @@ const GRAVITY: float = -32
 @export var torch: SpotLight3D
 @export var camera_rig: GameCharacterCameraRig
 @export var phys_interaction: GameCharacterPhysicalInteractionManager
-
-@onready var anim_player: AnimationPlayer = $AnimationPlayer
+@export var body_controller: GameCharacterBody
+@export var sfx_controller: CharacterSFX
 
 var current_climbing_power: float = 0
 var current_sprint_power: float = 0
@@ -29,6 +29,8 @@ var current_movement_acceleration: float = 0
 var climbing_start_distance: float = 0
 
 var travelled: float = 0
+var air_travelled: float = 0
+
 var _prev_global_position: Vector3 = Vector3.ZERO
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
@@ -37,13 +39,21 @@ var game_config: RGameConfig = Tools.load_config()
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
+	
+	if body_controller != null:
+		camera_rig.body_controller = body_controller
+	
 	_prev_global_position = global_position
 	world.link_character(self)
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	if camera_rig != null:
 		dev.logd("GameCharacater %s" % name, "linking player to camera_rig")
-		camera_rig.player = self
+		camera_rig.character = self
+		
+	if sfx_controller != null:
+		dev.logd("GameCharacater %s" % name, "linking player to sfx_controller")
+		sfx_controller.character = self	
 
 func _setup_tree(node):
 	# Call the callback function on the current node
@@ -53,6 +63,12 @@ func _setup_tree(node):
 		
 	if phys_interaction == null and node is GameCharacterPhysicalInteractionManager:
 		phys_interaction = node
+		
+	if body_controller == null and node is GameCharacterBody:
+		body_controller = node
+		
+	if sfx_controller == null and node is CharacterSFX:
+		sfx_controller = node	
 		
 	if node is GameCharacterBody:
 		node.character = self	
@@ -67,17 +83,38 @@ func _exit_tree():
 func _process(delta):
 
 	travelled += (global_position - _prev_global_position).length()
+	
+	# SFX CONTROLLER CACTIONS COMMITTING
+	# LANDING TRACKING
+	
+	if not is_touching_floor():
+		air_travelled += (global_position - _prev_global_position).length()
+	else:
+		if air_travelled > 0:
+			sfx_controller.commit_action(CharacterSFX.EActionType.Landing, clamp(air_travelled / 8, 0, 1))
+			air_travelled = 0
+	
+	# WALKING / SPRINTING / STAYING
+	if is_touching_floor():
+		sfx_controller.commit_action(
+			CharacterSFX.EActionType.Walk, 
+			clampf(Vector2(velocity.x, velocity.z).length() / props.walk_speed_max, 0, 1)
+		)
+	else:
+		sfx_controller.commit_action(CharacterSFX.EActionType.Walk, 0)
+	
+	if is_sprinting:
+		sfx_controller.commit_action(
+			CharacterSFX.EActionType.Sprint, 
+			clampf((Vector2(velocity.x, velocity.z).length() - props.walk_speed_max) / (props.sprint_speed_max - props.walk_speed_max), 0, 1)
+		)
+	else:
+		sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
+
 	_prev_global_position = global_position
-
-	#dev.print_screen("character_pos", "character xyz: %s" % global_position)
-	#dev.print_screen("character_vel", "character velocity: %.2f m/s" % velocity.length())
-	#dev.print_screen("character_crouch", "character crouching: %s" % is_crouching)
-	#dev.print_screen("character_travelled", "character travelled: %.2f m" % travelled)
-	#dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((travelled - climbing_start_distance) if is_climbing else 0))
-
+	
 func _physics_process(delta):
 	
-
 	current_dash_power = move_toward(current_dash_power, 0, (1 / props.dash_duration) * delta)
 	
 	if is_touching_floor() or not is_touching_wall():
@@ -159,6 +196,9 @@ func start_climb():
 		climbing_start_distance = travelled
 		current_climbing_power = 1
 		velocity.y = max(0, velocity.y)
+		
+		if sfx_controller != null:
+			sfx_controller.commit_action(CharacterSFX.EActionType.ClimbStart)
 
 func stop_climb():
 	is_climbing = false;
@@ -167,6 +207,9 @@ func stop_climb():
 func start_jump():
 	if is_touching_floor():
 		current_jump_power = 1;
+		
+		if sfx_controller != null and is_on_floor_only():
+			sfx_controller.commit_action(CharacterSFX.EActionType.JumpStart)
 
 # SPRINTING
 func start_sprint():
@@ -181,17 +224,16 @@ func stop_sprint():
 func start_crouch():
 	if not is_crouching:
 		is_crouching = true
-		anim_player.play("CrouchEnter")
+		#anim_player.play("CrouchEnter")
 
-		if props.allow_dash and is_sprinting:
-			current_dash_power = 1
+		#if props.allow_dash and is_sprinting:
+			#current_dash_power = 1
 	
 func stop_crouch():
 	if is_crouching and is_elevation_allowed():
 		is_crouching = false
-		current_dash_power = 0
-		anim_player.play("CrouchExit")
-
+		#current_dash_power = 0
+		#anim_player.play("CrouchExit")
 
 # PHYSICAL INTERACTION
 func is_touching_wall()->bool:

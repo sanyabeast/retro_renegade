@@ -27,7 +27,8 @@ func _ready():
 		ps.emitting = true
 		
 	for pl in audio_players:
-		pl.play()
+		if not pl.playing:
+			pl.play()
 	
 	dev.logd("ComplexFXController", "found %s particle-systems" % particle_systems.size())
 	dev.logd("ComplexFXController", "found %s audio-players" % audio_players.size())
@@ -39,7 +40,7 @@ func _ready():
 func _exit_tree():
 	dev.remove_label(self)
 
-func setup(_cfx: RComplexFX, _volume_addent: float = 1, _pitch_multiplier: float = 1, _scale_multiplier: float = 1):
+func setup(_cfx: RComplexFX, _volume_addent: float = 0, _pitch_multiplier: float = 1, _scale_multiplier: float = 1):
 	dev.logd("ComplexFXController", "%s - setup" % get_instance_id())
 	cfx = _cfx
 	volume_addent = _volume_addent
@@ -57,8 +58,8 @@ func _traverse(node):
 	if node is AudioStreamPlayer3D:
 		audio_players.append(node)	
 		var pl = node as AudioStreamPlayer3D
-		var mid_volume = abs((MIN_VOLUME_LEVEL + MAX_VOLUME_LEVEL) / 2)
-		#pl.volume_db += lerpf(-mid_volume, mid_volume, volume_addent)
+		print("volume added", volume_addent)
+		pl.volume_db += lerpf(-32, 32, (volume_addent / 2) + 0.5)
 		pl.pitch_scale *= pitch_multiplier
 	
 	# Recursively call this function on all children
@@ -84,6 +85,7 @@ func _add_audio_fx(audio_fx: RAudioFX):
 	new_audio_player.max_distance = audio_fx.max_distance
 	new_audio_player.attenuation_model = audio_fx.attenuation_mode
 	new_audio_player.panning_strength = audio_fx.panning_strength
+	new_audio_player.seek(randf_range(audio_fx.start_at_min, audio_fx.start_at_max))
 	
 	add_child(new_audio_player)
 
