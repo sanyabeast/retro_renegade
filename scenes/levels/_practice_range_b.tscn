@@ -1,10 +1,10 @@
 [gd_scene load_steps=14 format=3 uid="uid://dpm7k4yfj5s1m"]
 
-[ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_rsgrl"]
+[ext_resource type="Script" path="res://scripts/main/level.gd" id="1_rsgrl"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_umqm6"]
 [ext_resource type="PackedScene" uid="uid://ciqidhedqudsf" path="res://assets/blends/levels/_practice_range_b/practice_range_b.blend" id="4_eifh5"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_uo7mq"]
-[ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="6_7e31n"]
+[ext_resource type="Script" path="res://scripts/main/world_environment.gd" id="6_7e31n"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="6_cltbw"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="7_piuni"]
 [ext_resource type="Resource" uid="uid://b7dpsncuarny4" path="res://resources/environments/_surreal_world.tres" id="7_q0f5k"]

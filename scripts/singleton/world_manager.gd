@@ -16,6 +16,8 @@ var day_duration: float = 24 * 60 * 60
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 var _fx_id: int = 0
 
+var characters: Array[GameCharacter] = []
+
 # LIFECYCLE
 func _ready():
 	pass # Replace with function body.
@@ -26,6 +28,14 @@ func _process(delta):
 	dev.print_screen("rigids", "rigid bodies: %s pts" % rigid_bodies.size())
 	dev.print_screen("daytime", "day time: %s" % get_daytime_formatted_to_24h())
 	pass
+
+func link_character(character: GameCharacter):
+	dev.logd("WorldManager", "linking character: %s" % character.name)
+	characters.append(character)
+
+func unlink_character(character: GameCharacter):
+	dev.logd("WorldManager", "unlinking character: %s" % character.name)
+	characters.remove_at(characters.find(character))
 
 # METHODS
 func set_environment(_env: WorldEnvironmentController):

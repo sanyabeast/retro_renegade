@@ -22,14 +22,11 @@ func _process(delta):
 	pass
 
 func _on_body_entered(node: Node3D):
-	if not is_locked:
-		for group_name in allowed_groups:
-			if node.is_in_group(group_name):  # Assuming the player is in a group named "Player"
-				is_locked = true
-				current_body = node
-				on_entered()
-				dev.logd("AreaTrigger", "body entered: %s" % node.name)
-				break
+	if node == players.current:
+		is_locked = true
+		current_body = node
+		on_entered()
+		dev.logd("AreaTrigger", "body entered: %s" % node.name)
 	else:
 		dev.logd("AreaTrigger", "Trigger is locked by %s" % current_body)
 

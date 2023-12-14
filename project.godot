@@ -22,11 +22,12 @@ config/icon="res://icon.svg"
 tools="*res://scripts/singleton/tools.gd"
 app="*res://scripts/singleton/app_manager.gd"
 world="*res://scripts/singleton/world_manager.gd"
+camera_manager="*res://scripts/singleton/camera_manager.gd"
 players="*res://scripts/singleton/player_manager.gd"
+npcs="*res://scripts/singleton/npc_manager.gd"
 hud="*res://scripts/singleton/hud_manager.gd"
 game="*res://scripts/singleton/game_manager.gd"
 dev="*res://scripts/_dev/_dev_manager.gd"
-HyperLog="*res://addons/hyperlog/hyperlog.tscn"
 
 [display]
 
@@ -36,6 +37,10 @@ window/size/viewport_height=900
 [editor_plugins]
 
 enabled=PackedStringArray()
+
+[global]
+
+game_config_path="res://resources/config.tres"
 
 [input]
 
@@ -103,6 +108,9 @@ common/max_physics_steps_per_frame=16
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+scaling_3d/mode=2
+scaling_3d/scale=0.67
+scaling_3d/fsr_sharpness=0.5
 textures/decals/filter=0
 textures/light_projectors/filter=0
 anti_aliasing/quality/screen_space_aa=1

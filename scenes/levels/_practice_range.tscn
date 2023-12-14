@@ -1,21 +1,17 @@
-[gd_scene load_steps=21 format=3 uid="uid://d1tk1d7wk181b"]
+[gd_scene load_steps=17 format=3 uid="uid://d1tk1d7wk181b"]
 
-[ext_resource type="Script" path="res://scripts/main/game_level.gd" id="1_a7hcx"]
+[ext_resource type="Script" path="res://scripts/main/level.gd" id="1_a7hcx"]
 [ext_resource type="PackedScene" uid="uid://vn16akq43r0k" path="res://assets/blends/levels/_practice_range_a/practice_range_a.blend" id="1_p2o55"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_swfcu"]
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="3_b1dd5"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="4_bgqvb"]
-[ext_resource type="Script" path="res://scripts/misc/world_env_controller.gd" id="5_qnyal"]
+[ext_resource type="Script" path="res://scripts/main/world_environment.gd" id="5_qnyal"]
 [ext_resource type="PackedScene" uid="uid://bmpxwvhaqhlo4" path="res://scenes/extra/_nether_portal.tscn" id="5_wpm5a"]
 [ext_resource type="Script" path="res://scripts/tools/complex_fx_controller.gd" id="6_lda7q"]
 [ext_resource type="Resource" uid="uid://be1y28xy0m114" path="res://resources/environments/_vaporworld.tres" id="7_868w0"]
 [ext_resource type="Resource" uid="uid://5voi0b3q0l2g" path="res://resources/fx/audio_fx/extras/_police_radio.tres" id="7_rq5eu"]
 [ext_resource type="Script" path="res://scripts/resources/complex_fx.gd" id="8_m71fm"]
-[ext_resource type="PackedScene" uid="uid://8aw76vlve0vy" path="res://scenes/characters/_zombie_a1.tscn" id="13_fmels"]
-[ext_resource type="PackedScene" uid="uid://dr8opd2y77of6" path="res://scenes/characters/_white_clown_a1.tscn" id="14_kudjf"]
-[ext_resource type="PackedScene" uid="uid://bfh4ynpk3fo1k" path="res://scenes/characters/_zombie_cop_a1.tscn" id="15_bc6ec"]
-[ext_resource type="PackedScene" uid="uid://cy52toqj1q0n0" path="res://scenes/characters/_drunk_capo.tscn" id="16_awxng"]
-[ext_resource type="PackedScene" uid="uid://t1j3fu2dug7t" path="res://scenes/characters/_raven.tscn" id="17_7ais4"]
+[ext_resource type="PackedScene" uid="uid://bjl3mmsy1d4y5" path="res://scenes/characters/_zombie_a1.tscn" id="13_fmels"]
 
 [sub_resource type="Resource" id="Resource_jsqn1"]
 script = ExtResource("8_m71fm")
@@ -80,21 +76,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.07855, 0, -21.5311)
 script = ExtResource("6_lda7q")
 cfx = SubResource("Resource_jsqn1")
 
-[node name="ZombieA1" parent="Level" instance=ExtResource("13_fmels")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.62468, 1.90735e-06, -13.7583)
-
-[node name="ZombieA2" parent="Level" instance=ExtResource("14_kudjf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.42178, 0, -25.9686)
-
-[node name="ZombieCop" parent="Level" instance=ExtResource("15_bc6ec")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.1191, 0, -0.0698824)
-
-[node name="ZombieCop2" parent="Level" instance=ExtResource("16_awxng")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4941, -1.90735e-06, -42.1532)
-
-[node name="DrunkCapoA1" parent="Level" instance=ExtResource("17_7ais4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.41218, 0, 22.872)
-
 [node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
 script = ExtResource("5_qnyal")
 settings = ExtResource("7_868w0")
@@ -110,3 +91,6 @@ light_color = Color(1, 0.52549, 0.431373, 1)
 shadow_enabled = true
 
 [node name="FPSBaseHUD" parent="." instance=ExtResource("3_b1dd5")]
+
+[node name="DefaultCharacter" parent="." instance=ExtResource("13_fmels")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.65484, 2.17234, 10.299)

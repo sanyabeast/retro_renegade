@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://t1j3fu2dug7t"]
 
-[ext_resource type="Script" path="res://scripts/npc/npc_controller.gd" id="1_xext8"]
-[ext_resource type="AnimationNodeStateMachine" uid="uid://cjmmkpb7t8g2g" path="res://_test_anim_fsm2.tres" id="4_kkggq"]
+[ext_resource type="Script" path="res://scripts/character/npc/npc_controller.gd" id="1_xext8"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://cjmmkpb7t8g2g" path="res://resources/_test_anim_fsm2.tres" id="4_kkggq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2xwc3"]
 resource_name = "raven"

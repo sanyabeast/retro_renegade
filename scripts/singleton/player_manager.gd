@@ -3,11 +3,27 @@ extends Node
 class_name PlayerManager
 
 var spawn_spots: Array[Node3D] = []
-var current: Node3D = null
+var current: GameCharacter = null
 
+enum EInputMode {
+	App,
+	CharacterControl,
+	DontOverride
+}
+
+var input_mode: EInputMode = EInputMode.CharacterControl
+var input_mode_override: EInputMode = EInputMode.App
+
+func set_player(character: GameCharacter):
+	current = character
+	camera_manager.set_camera(current.get_camera())
+	
 func add_spawn_spot(node: Node3D):
 	dev.logd("PlayerManager", "adding new spawn spot: %s" % node.name)
 	spawn_spots.append(node)
+
+func allow_npc(character: GameCharacter):
+	return not (character == current)
 
 func remove_all_spawn_spots():
 	spawn_spots = []
@@ -36,7 +52,7 @@ func respawn_player():
 	
 	var _spot: Node3D = tools.get_random_element_from_array(spawn_spots)	
 	var player = tools.spawn_object_with_transform(world.level.settings.player_default_class, _spot.global_transform, world.level)
-	current = player
+	set_player( player)
 	dev.logd("PlayerManager", "successfully respawned at %s" % _spot.name)
 	pass
 
@@ -44,7 +60,98 @@ func respawn_player():
 func _ready():
 	pass # Replace with function body.
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	update_mouse_mode()
+	
+
+func _physics_process(delta):
+	process_user_input()
+	
+func update_mouse_mode():
+	var _input_mode = input_mode if input_mode_override == EInputMode.DontOverride else input_mode_override
+	
+	match _input_mode:
+		EInputMode.App:
+			if Input.get_mouse_mode() != Input.MOUSE_MODE_VISIBLE:
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		EInputMode.CharacterControl:
+			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+func process_user_input():
+	var _input_mode = input_mode if input_mode_override == EInputMode.DontOverride else input_mode_override
+	
+	match _input_mode:
+		EInputMode.App:
+			pass
+		EInputMode.CharacterControl:
+			if current != null:
+				var props: RCharacterProperties = current.props
+				# CLIMBING
+				if props.allow_climbing:
+					if Input.is_action_pressed('jump'):
+						current.start_climb()
+					
+				# JUMPING
+				if props.allow_jump:
+					if Input.is_action_pressed('jump'):
+						current.start_jump()
+				# SPRINGING
+				if props.allow_sprint:
+					if props.flip_sprint_walk:
+						if Input.is_action_pressed("sprint"):
+							current.stop_sprint()
+						else:
+							current.start_sprint()
+					else:
+						if Input.is_action_pressed("sprint"):
+							current.start_sprint()
+						else:
+							current.stop_sprint()
+				# CROUCHING
+				if Input.is_action_pressed("crouch"):
+					current.start_crouch()
+				if not Input.is_action_pressed("crouch"):
+					current.stop_crouch()
+					
+				# PHYSICAL INTERACTION
+				if Input.is_action_just_pressed("grab"):
+					current.start_grab()
+				
+				if not Input.is_action_pressed("grab"):
+					current.stop_grab()
+					
+				if Input.is_action_just_pressed("throw"):
+					current.start_throw()
+					
+				# MOVEMENT DIRECTION AND TARGET SPEEDS
+				var movement_direction: Vector3 = Vector3.ZERO
+
+				if Input.is_action_pressed("forward"):
+					movement_direction -= current.global_transform.basis.z
+				if Input.is_action_pressed("backward"):
+					movement_direction +=  current.global_transform.basis.z
+				if Input.is_action_pressed("right"):
+					movement_direction +=  current.global_transform.basis.x
+				if Input.is_action_pressed("left"):
+					movement_direction -=  current.global_transform.basis.x
+					
+				current.set_movement_direction(movement_direction)	
+
+				# EXTRAS
+				if Input.is_action_just_pressed("ui_cancel"):
+					if (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):
+						input_mode_override = EInputMode.App
+
+				if Input.is_action_just_pressed("torch"):
+					current.set_torch_visible(not current.is_torch_visible())
+
+func _input(event):
+	if current != null:
+		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			current.process_camera_input(event)
+			
+		if event is InputEventMouseButton:
+			if input_mode_override != EInputMode.DontOverride and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+				input_mode_override = EInputMode.DontOverride

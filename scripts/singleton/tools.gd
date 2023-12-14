@@ -93,6 +93,13 @@ func parse_properties(input_str: String) -> Dictionary:
 
 	return properties
 
+func lerp_transform_rotation(transform: Transform3D, target_transform: Transform3D, alpha: float = 0.5)->Basis:
+	var a = Quaternion(transform.basis)
+	var b = Quaternion(target_transform.basis)
+	# Interpolate using spherical-linear interpolation (SLERP).
+	var c = a.slerp(b, alpha) # find halfway point between a and b
+	# Apply back
+	return Basis(c)
 
 func spawn_object_and_replace(packed_scene: PackedScene, existing_object: Node) -> Node:
 	# Check if the arguments are valid
@@ -191,6 +198,9 @@ func random_float(min_value: float, max_value: float) -> float:
 func progress_to_percentage(p: float) -> String:
 	return "%s%%" % int(p * 100)
 
+static func load_config() -> RGameConfig:
+	return load("res://resources/config.tres");
+
 # DATA CONTAINERS
 class DataContainer:
 	var data: Dictionary
@@ -200,8 +210,6 @@ class DataContainer:
 		data[key] = value
 	func unset(key):
 		data.erase(key)
-
-var _timer_gate_data = {}
 
 class TimerGateManager:
 	var _timer_gate_data = {}

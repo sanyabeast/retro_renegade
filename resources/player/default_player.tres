@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="RPlayerProperties" load_steps=2 format=3 uid="uid://b6w6445143jol"]
 
-[ext_resource type="Script" path="res://scripts/resources/player_properties.gd" id="1_xo8nd"]
+[ext_resource type="Script" path="res://scripts/resources/character_properties.gd" id="1_xo8nd"]
 
 [resource]
 script = ExtResource("1_xo8nd")

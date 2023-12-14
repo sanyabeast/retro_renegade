@@ -6,15 +6,17 @@ class_name RGameConfig
 @export var default_collision_cfx: RComplexFX
 
 @export_subgroup("Scene Importing")
-@export var imported_omnilight_energy_scale: float = 0.000025
-@export var imported_omnilight_max_range: float = 48
+@export var imported_omnilight_energy_scale: float = 0.00005
+@export var imported_omnilight_max_range: float = 32
 @export var imported_spotlight_energy_scale: float = 0.0005
-@export var imported_spotlight_max_range: float = 48
+@export var imported_spotlight_max_range: float = 32
+
+@export_subgroup("Controls Settings")
+@export var first_person_camera_sensitivity: float = 0.1 
+@export var third_person_camera_sensitivity: float = 0.05
 
 @export_group("Debug Settings")
-@export var dev_labels_view_distance: float = 128
-
-
+@export var dev_labels_view_distance: float = 64
 
 func _init():
 	pass
