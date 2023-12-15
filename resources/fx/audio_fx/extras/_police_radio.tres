@@ -24,3 +24,5 @@ pitch_min = 1.0
 pitch_max = 1.0
 panning_strength = 0.75
 attenuation_mode = 0
+start_at_min = 0.0
+start_at_max = 0.0
