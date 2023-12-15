@@ -38,6 +38,21 @@ window/size/viewport_height=900
 
 enabled=PackedStringArray()
 
+[file_customization]
+
+folder_colors={
+"res://addons/": "gray",
+"res://assets/": "pink",
+"res://resources/": "teal",
+"res://scenes/": "purple",
+"res://scenes/levels/": "gray",
+"res://scenes/main/": "gray",
+"res://scripts/": "red",
+"res://scripts/main/": "gray",
+"res://scripts/resources/": "gray",
+"res://scripts/singleton/": "gray"
+}
+
 [global]
 
 game_config_path="res://resources/config.tres"
