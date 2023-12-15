@@ -2,6 +2,11 @@ extends Node
 
 class_name Tools
 
+enum ENodeType {
+	MeshInstance,
+	RigidBody,
+	CollisionShape
+}
 
 # Recursive function to get all descendants with a specific substring in their names
 func get_descendants_with_substring(root: Node, substring: String, matching_nodes: Array) -> Array:
@@ -198,6 +203,44 @@ func random_float(min_value: float, max_value: float) -> float:
 func progress_to_percentage(p: float) -> String:
 	return "%s%%" % int(p * 100)
 
+# SEARCHING BY NODE TYPE:
+func _test_node_type(node, node_type: ENodeType):
+	var test: bool = false
+	match node_type:
+		ENodeType.RigidBody:
+			test = node is RigidBody3D
+		ENodeType.MeshInstance:
+			test = node is MeshInstance3D
+		ENodeType.CollisionShape:
+			test = node is CollisionShape3D
+		_:
+			test = node is Node3D
+		
+	return test
+
+func find_nodes_of_type_recursively(node: Node3D, node_type: ENodeType, result)->Array[Node3D]:
+	if result == null:
+		result = [] as Array[Node3D]
+	
+	if  _test_node_type(node, node_type):
+		result.add(node)
+		
+	# Recursively call this function on all children
+	for child in node.get_children():
+		find_nodes_of_type_recursively(child, node_type, result)
+		
+	return result as Array[Node3D]
+
+
+func find_first_node_of_type_recursively(node: Node3D, node_type: ENodeType):
+	if _test_node_type(node, node_type):
+		return node
+	# Recursively call this function on all children
+	for child in node.get_children():
+		var result = find_first_node_of_type_recursively(child, node_type)
+		if result: 
+			return result
+		
 static func load_config() -> RGameConfig:
 	return load("res://resources/config.tres");
 

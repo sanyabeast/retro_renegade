@@ -4,9 +4,7 @@ class_name GameManager
 
 var player_retry_current: int = 0
 
-
 @onready var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

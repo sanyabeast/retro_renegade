@@ -4,9 +4,9 @@
 [ext_resource type="Resource" uid="uid://b6w6445143jol" path="res://resources/characters/default_character_props.tres" id="2_flilu"]
 [ext_resource type="PackedScene" uid="uid://gpnbicx3wuo6" path="res://scenes/main/character_camera_rig.tscn" id="3_qukyb"]
 [ext_resource type="Script" path="res://scripts/tools/rayset.gd" id="4_rabap"]
-[ext_resource type="Script" path="res://scripts/character/physical_interaction.gd" id="5_j80ex"]
 [ext_resource type="Resource" uid="uid://i1k2bf4m4ssn" path="res://resources/characters/sfx_pfofiles/default_character_sfx_profile.tres" id="5_yr86q"]
 [ext_resource type="Script" path="res://scripts/character/character_sfx.gd" id="6_1kv4k"]
+[ext_resource type="Script" path="res://scripts/character/character_physical_interaction.gd" id="7_yjrbf"]
 [ext_resource type="Script" path="res://scripts/character/character_body.gd" id="8_h8ymd"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kykjl"]
@@ -22,13 +22,15 @@ sampling_rate = 96000.0
 packet_sequence = SubResource("OggPacketSequence_pm8gx")
 loop = true
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lu83h"]
+albedo_color = Color(0.8, 0.705882, 0.54902, 1)
+roughness = 0.49
+subsurf_scatter_strength = 0.47
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_pbmfk"]
+material = SubResource("StandardMaterial3D_lu83h")
 radius = 0.35
 height = 1.8
-
-[sub_resource type="SphereMesh" id="SphereMesh_f1i07"]
-radius = 0.1
-height = 0.215
 
 [node name="DefaultCharacter" type="CharacterBody3D" node_paths=PackedStringArray("torch")]
 floor_block_on_wall = false
@@ -37,46 +39,45 @@ script = ExtResource("1_m5orf")
 props = ExtResource("2_flilu")
 torch = NodePath("CharacterCameraRig/Torch")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." node_paths=PackedStringArray("head_pin_point", "hand_pin_point")]
+[node name="CharacterBody" type="CollisionShape3D" parent="." node_paths=PackedStringArray("head_pin_point", "hand_pin_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_kykjl")
 script = ExtResource("8_h8ymd")
-head_pin_point = NodePath("CharacterBody/HeadPinPoint")
-hand_pin_point = NodePath("CharacterBody/HandPinPoint")
+head_pin_point = NodePath("CapsuleCharacter/HeadPinPoint")
+hand_pin_point = NodePath("CapsuleCharacter/HandPinPoint")
 
-[node name="CharacterBody" type="Node3D" parent="CollisionShape3D"]
+[node name="CapsuleCharacter" type="Node3D" parent="CharacterBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
 
-[node name="CharacterSFX" type="Node3D" parent="CollisionShape3D/CharacterBody" node_paths=PackedStringArray("jump_audiostream", "footsteps_audiostream")]
+[node name="CharacterSFX" type="Node3D" parent="CharacterBody/CapsuleCharacter" node_paths=PackedStringArray("jump_audiostream", "footsteps_audiostream")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0219635, 0)
 script = ExtResource("6_1kv4k")
 profile = ExtResource("5_yr86q")
 jump_audiostream = NodePath("JumpAudioStream")
 footsteps_audiostream = NodePath("FootstepsAudioStream")
 
-[node name="FootstepsAudioStream" type="AudioStreamPlayer3D" parent="CollisionShape3D/CharacterBody/CharacterSFX"]
+[node name="FootstepsAudioStream" type="AudioStreamPlayer3D" parent="CharacterBody/CapsuleCharacter/CharacterSFX"]
 stream = SubResource("AudioStreamOggVorbis_ib64y")
 max_db = -10.0
 autoplay = true
 max_distance = 16.0
 
-[node name="JumpAudioStream" type="AudioStreamPlayer3D" parent="CollisionShape3D/CharacterBody/CharacterSFX"]
+[node name="JumpAudioStream" type="AudioStreamPlayer3D" parent="CharacterBody/CapsuleCharacter/CharacterSFX"]
 max_db = -8.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D/CharacterBody"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody/CapsuleCharacter"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 layers = 2
 mesh = SubResource("CapsuleMesh_pbmfk")
 
-[node name="HandPinPoint" type="Node3D" parent="CollisionShape3D/CharacterBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -1)
+[node name="HandPinPoint" type="Node3D" parent="CharacterBody/CapsuleCharacter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -0.966297)
 
-[node name="_Gizmo" type="MeshInstance3D" parent="CollisionShape3D/CharacterBody/HandPinPoint"]
-visible = false
-mesh = SubResource("SphereMesh_f1i07")
-
-[node name="HeadPinPoint" type="Node3D" parent="CollisionShape3D/CharacterBody"]
+[node name="HeadPinPoint" type="Node3D" parent="CharacterBody/CapsuleCharacter"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.49794, 0)
+
+[node name="ChestPinPoint" type="Node3D" parent="CharacterBody/CapsuleCharacter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.836124, 0)
 
 [node name="CharacterCameraRig" parent="." instance=ExtResource("3_qukyb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
@@ -89,14 +90,12 @@ shadow_enabled = true
 spot_range = 15.2369
 spot_angle = 32.3109
 
-[node name="PhysicalInteraction" type="Node3D" parent="." node_paths=PackedStringArray("player", "ceil_test_rayset", "wall_test_rayset", "hand_manipulation_ray", "hand_manipulation_pin_point")]
+[node name="PhysicalInteraction" type="Node3D" parent="." node_paths=PackedStringArray("ceil_test_rayset", "wall_test_rayset", "camera_raycast")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
-script = ExtResource("5_j80ex")
-player = NodePath("..")
+script = ExtResource("7_yjrbf")
 ceil_test_rayset = NodePath("CeilTestRaySet")
 wall_test_rayset = NodePath("WallTestRaySet")
-hand_manipulation_ray = NodePath("HandManipulationRay")
-hand_manipulation_pin_point = NodePath("../CollisionShape3D/CharacterBody/HandPinPoint")
+camera_raycast = NodePath("CameraRaycast")
 
 [node name="CeilTestRaySet" type="Node3D" parent="PhysicalInteraction"]
 script = ExtResource("4_rabap")
@@ -104,27 +103,32 @@ script = ExtResource("4_rabap")
 [node name="CeilCheckRay" type="RayCast3D" parent="PhysicalInteraction/CeilTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.572, -0.3)
 target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0.72549, 0.819608, 1)
 debug_shape_thickness = 5
 
 [node name="CeilCheckRay2" type="RayCast3D" parent="PhysicalInteraction/CeilTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1.572, 0.3)
 target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0.72549, 0.819608, 1)
 debug_shape_thickness = 5
 
 [node name="CeilCheckRay3" type="RayCast3D" parent="PhysicalInteraction/CeilTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301, 1.572, -0.3)
 target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0.72549, 0.819608, 1)
 debug_shape_thickness = 5
 
 [node name="CeilCheckRay4" type="RayCast3D" parent="PhysicalInteraction/CeilTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301, 1.572, 0.3)
 target_position = Vector3(0, 1, 0)
+debug_shape_custom_color = Color(0, 0.72549, 0.819608, 1)
 debug_shape_thickness = 5
 
-[node name="HandManipulationRay" type="RayCast3D" parent="PhysicalInteraction"]
+[node name="CameraRaycast" type="RayCast3D" parent="PhysicalInteraction"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57248, 0)
-target_position = Vector3(0, 0, -2.5)
-debug_shape_thickness = 5
+target_position = Vector3(0, 0, -128)
+debug_shape_custom_color = Color(0.843137, 0, 0.913725, 1)
+debug_shape_thickness = 4
 
 [node name="WallTestRaySet" type="Node3D" parent="PhysicalInteraction"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32155, 0.223149)
@@ -133,7 +137,9 @@ script = ExtResource("4_rabap")
 [node name="RayCast3D" type="RayCast3D" parent="PhysicalInteraction/WallTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 1, -0.4)
 target_position = Vector3(0, 0, -1.5)
+debug_shape_custom_color = Color(0.792157, 0.427451, 0, 1)
 
 [node name="RayCast3D2" type="RayCast3D" parent="PhysicalInteraction/WallTestRaySet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, -0.4)
 target_position = Vector3(0, 0, -1.5)
+debug_shape_custom_color = Color(0.792157, 0.427451, 0, 1)

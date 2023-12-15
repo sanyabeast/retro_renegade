@@ -5,17 +5,17 @@
 [node name="CharacterCameraRig" type="Node3D" node_paths=PackedStringArray("camera_1p", "camera_1p_rig", "camera_3p", "camera_3p_rig")]
 script = ExtResource("1_s0qmd")
 camera_1p = NodePath("Camera1P")
-camera_1p_rig = NodePath(".")
-camera_3p = NodePath("CameraRig3P/CameraRoot/Camera3P")
-camera_3p_rig = NodePath(".")
+camera_1p_rig = NodePath("Camera1P")
+camera_3p = NodePath("CameraRig3P/Camera3P")
+camera_3p_rig = NodePath("CameraRig3P")
 
 [node name="Camera1P" type="Camera3D" parent="."]
-fov = 70.0
+fov = 65.0
+far = 256.0
 
 [node name="CameraRig3P" type="Node3D" parent="."]
 
-[node name="CameraRoot" type="Node3D" parent="CameraRig3P"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-
-[node name="Camera3P" type="Camera3D" parent="CameraRig3P/CameraRoot"]
-fov = 70.0
+[node name="Camera3P" type="Camera3D" parent="CameraRig3P"]
+transform = Transform3D(1, 0, 0, 0, 0.999048, 0.0436194, 0, -0.0436194, 0.999048, 0, 1, 4)
+fov = 80.0
+far = 256.0

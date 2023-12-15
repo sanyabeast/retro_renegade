@@ -34,8 +34,6 @@ var air_travelled: float = 0
 var _prev_global_position: Vector3 = Vector3.ZERO
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
-var game_config: RGameConfig = Tools.load_config()
-
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
@@ -54,6 +52,10 @@ func _ready():
 	if sfx_controller != null:
 		dev.logd("GameCharacater %s" % name, "linking player to sfx_controller")
 		sfx_controller.character = self	
+	
+	if phys_interaction != null:
+		dev.logd("GameCharacater %s" % name, "linking player to phys_interaction")
+		phys_interaction.character = self	
 
 func _setup_tree(node):
 	# Call the callback function on the current node
@@ -283,3 +285,7 @@ func set_camera_mode(new_mode: GameCharacterCameraRig.EGameCharacterCameraMode):
 func next_camera_mode():
 	if camera_rig != null:
 		camera_rig.next_camera_mode()
+
+func get_hand_pin_point():
+	if body_controller != null:
+		return body_controller.hand_pin_point

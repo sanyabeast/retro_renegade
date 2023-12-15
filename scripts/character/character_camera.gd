@@ -26,7 +26,6 @@ enum EGameCharacterCameraMode {
 
 @export var body_controller: GameCharacterBody
 
-var game_config: RGameConfig = Tools.load_config()
 var character: GameCharacter
 
 # Called when the node enters the scene tree for the first time.
@@ -58,15 +57,15 @@ func process_camera_input(event):
 	# 1P CAMERA
 	match camera_mode:
 		EGameCharacterCameraMode.FirstPerson:
-			camera_1p_rig.rotate_x(deg_to_rad(event.relative.y * game_config.first_person_camera_sensitivity * camera_1p_sensitivity * -1))
+			camera_1p_rig.rotate_x(deg_to_rad(event.relative.y * app.config.first_person_camera_sensitivity * camera_1p_sensitivity * -1))
 			camera_1p_rig.rotation_degrees.x = clamp(camera_1p_rig.rotation_degrees.x, camera_1p_attitude_min, camera_1p_attitude_max)
 			pass
 		EGameCharacterCameraMode.ThirdPerson:
 			# 3P CAMERA
-			camera_3p_rig.rotate_x(deg_to_rad(event.relative.y * game_config.third_person_camera_sensitivity * camera_3p_sensitivity * -1))
+			camera_3p_rig.rotate_x(deg_to_rad(event.relative.y * app.config.third_person_camera_sensitivity * camera_3p_sensitivity * -1))
 			camera_3p_rig.rotation_degrees.x = clamp(camera_3p_rig.rotation_degrees.x, camera_3p_attitude_min, camera_3p_attitude_max)
 			pass
 	#  PLAYER
 	if character != null:
-		character.rotate_y(deg_to_rad(event.relative.x * game_config.first_person_camera_sensitivity * -1))
+		character.rotate_y(deg_to_rad(event.relative.x * app.config.first_person_camera_sensitivity * -1))
 		

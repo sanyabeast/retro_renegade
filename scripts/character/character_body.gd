@@ -4,6 +4,7 @@ class_name GameCharacterBody
 
 @export var head_pin_point: Node3D
 @export var hand_pin_point: Node3D
+@export var chest_pin_point: Node3D
 
 var character: GameCharacter
 var _animation_tree: AnimationTree

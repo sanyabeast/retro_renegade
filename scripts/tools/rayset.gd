@@ -2,12 +2,21 @@ extends Node3D
 
 class_name RaySet
 
+## RayCast3D children will be added automatically
 @export var rays: Array[RayCast3D] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_find_rays(self)
 	pass # Replace with function body.
+
+func add_exception(node: CollisionObject3D):
+	for r in rays:
+		r.add_exception(node)
+		
+func remove_exception(node: CollisionObject3D):
+	for r in rays:
+		r.remove_exception(node)		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
