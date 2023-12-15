@@ -39,11 +39,12 @@ script = ExtResource("1_m5orf")
 props = ExtResource("2_flilu")
 torch = NodePath("CharacterCameraRig/Torch")
 
-[node name="CharacterBody" type="CollisionShape3D" parent="." node_paths=PackedStringArray("head_pin_point", "hand_pin_point")]
+[node name="CharacterBody" type="CollisionShape3D" parent="." node_paths=PackedStringArray("head_pin_point", "eyes_pin_point", "hand_pin_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_kykjl")
 script = ExtResource("8_h8ymd")
 head_pin_point = NodePath("CapsuleCharacter/HeadPinPoint")
+eyes_pin_point = NodePath("CapsuleCharacter/HeadPinPoint")
 hand_pin_point = NodePath("CapsuleCharacter/HandPinPoint")
 
 [node name="CapsuleCharacter" type="Node3D" parent="CharacterBody"]

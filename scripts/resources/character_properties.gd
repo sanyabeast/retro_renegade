@@ -34,3 +34,6 @@ class_name RCharacterProperties
 @export var hand_manipulation_throw_ballistics: float = 0.25
 @export var hand_manipulation_drop_power: float = 2
 @export var hand_manipulation_max_weight: float = 50
+
+@export_subgroup("Physical Extras")
+@export var gravity_multiplier: float = 3

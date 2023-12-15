@@ -119,6 +119,12 @@ torch={
 
 common/physics_ticks_per_second=120
 common/max_physics_steps_per_frame=16
+3d/default_gravity=10.0
+3d/default_linear_damp=0.3
+3d/default_angular_damp=0.2
+3d/sleep_threshold_linear=0.29
+3d/sleep_threshold_angular=0.19
+3d/solver/solver_iterations=8
 
 [rendering]
 

@@ -34,8 +34,8 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if body_controller != null and body_controller.head_pin_point != null:
-		global_position = body_controller.head_pin_point.global_position
+	if body_controller != null and body_controller.eyes_pin_point != null:
+		global_position = body_controller.eyes_pin_point.global_position
 	
 func set_camera_mode(new_mode: EGameCharacterCameraMode):
 	camera_mode = new_mode

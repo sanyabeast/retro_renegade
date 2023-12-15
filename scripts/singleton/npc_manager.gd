@@ -24,7 +24,7 @@ func _process(delta):
 	pass
 
 func _process_npc(character: GameCharacter, delta: float):
-	dev.logd("NPCManager", "processing npc: %s" % character.name)
+	#dev.logd("NPCManager", "processing npc: %s" % character.name)
 	if not character in _npc_data:
 		_npc_data[character] = {
 			"move_target": Vector3.ZERO,
@@ -32,21 +32,23 @@ func _process_npc(character: GameCharacter, delta: float):
 			"timer_gate": tools.TimerGateManager.new()
 		}
 		
-	if _npc_data[character]["timer_gate"].check("switch_target_point", 5):
+	if _npc_data[character]["timer_gate"].check("switch_target_point", 10):
 		_npc_data[character]["move_target"] = character.global_position + Vector3(
-		randf_range(-16, 16),
-		0,
-		randf_range(-16, 16),
-	)
+			randf_range(-64, 64),
+			0,
+			randf_range(-64, 64),
+		)
+		character.nav_agent.target_position = _npc_data[character]["move_target"]
 	
-	if _npc_data[character]["timer_gate"].check("switch_is_idle", 2):
+	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
 		
-	var move_direction: Vector3 =  (character.global_position - _npc_data[character]["move_target"]).normalized()
+	var move_direction: Vector3 = (character.nav_agent.get_next_path_position() - character.global_position).normalized()
 	var look_direction: Vector3 = move_direction
 	if _npc_data[character]["is_idle"]:
 		move_direction *= 0
 		
 	character.set_movement_direction(move_direction)	
+	character.set_body_direction(move_direction)
 	character.look_at_direction(move_direction)	
 	pass

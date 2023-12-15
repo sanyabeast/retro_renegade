@@ -2,7 +2,8 @@ extends CharacterBody3D
 class_name GameCharacter
 
 const MOVEMENT_DEADZONE = 0.1
-const GRAVITY: float = -32
+
+var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export var props: RCharacterProperties
 @export var torch: SpotLight3D
@@ -10,6 +11,7 @@ const GRAVITY: float = -32
 @export var phys_interaction: GameCharacterPhysicalInteractionManager
 @export var body_controller: GameCharacterBody
 @export var sfx_controller: CharacterSFX
+@export var nav_agent: NavigationAgent3D
 
 var current_climbing_power: float = 0
 var current_sprint_power: float = 0
@@ -34,12 +36,15 @@ var air_travelled: float = 0
 var _prev_global_position: Vector3 = Vector3.ZERO
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
+var body_direction: Vector3 = Vector3.FORWARD
+
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
 	
 	if body_controller != null:
 		camera_rig.body_controller = body_controller
+	
 	
 	_prev_global_position = global_position
 	world.link_character(self)
@@ -57,6 +62,12 @@ func _ready():
 		dev.logd("GameCharacater %s" % name, "linking player to phys_interaction")
 		phys_interaction.character = self	
 
+	if nav_agent == null:
+		nav_agent = NavigationAgent3D.new()
+		dev.logd("GameCharacater %s" % name, "creating NavigationAgent3D for character")
+		add_child(nav_agent)
+	
+
 func _setup_tree(node):
 	# Call the callback function on the current node
 	
@@ -71,6 +82,9 @@ func _setup_tree(node):
 		
 	if sfx_controller == null and node is CharacterSFX:
 		sfx_controller = node	
+	
+	if nav_agent == null and node is NavigationAgent3D:
+		nav_agent = node	
 		
 	if node is GameCharacterBody:
 		node.character = self	
@@ -153,7 +167,7 @@ func process_movement(delta):
 
 	var target_vel = current_movement_direction * current_movement_speed * movement_penalty
 
-	velocity.y += lerpf(GRAVITY, 0, current_climbing_power) * delta
+	velocity.y += lerpf(gravity * props.gravity_multiplier, 0, current_climbing_power) * delta
 	velocity.y += current_climbing_power * (props.climbing_speed) * delta
 	velocity.y += current_jump_power * (jump_speed)
 	
@@ -175,12 +189,18 @@ func set_movement_direction(movement_direction: Vector3):
 	if current_movement_direction.length() > MOVEMENT_DEADZONE:
 		current_movement_direction = current_movement_direction.normalized()
 		target_movement_speed = lerpf(props.walk_speed_max, props.sprint_speed_max, current_sprint_power)
+		
 	else:
 		target_movement_speed = 0
 	pass
+	
+func set_body_direction(direction: Vector3):
+	body_direction = Vector3(direction.x, 0, direction.z)
+	look_at(global_position + body_direction)
 
 func look_at_direction(look_direction: Vector3):
-	look_at(global_position + Vector3(look_direction.x, 0, look_direction.y))
+	pass
+	#look_at(global_position + Vector3(look_direction.x, 0, look_direction.y))
 
 func set_torch_visible(visible: bool):
 	if torch != null:

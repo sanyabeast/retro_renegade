@@ -29,3 +29,4 @@ hand_manipulation_throw_power = 16.0
 hand_manipulation_throw_ballistics = 0.25
 hand_manipulation_drop_power = 2.0
 hand_manipulation_max_weight = 50.0
+gravity_multiplier = 3.0
