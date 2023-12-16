@@ -1,26 +1,27 @@
 [gd_resource type="AnimationNodeStateMachine" load_steps=22 format=3 uid="uid://cjmmkpb7t8g2g"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lvp7q"]
-animation = &"Idle"
+animation = &"UnarmedIdle"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ooheg"]
-animation = &"CrouchIdle"
+animation = &"UnarmedCrouchIdle"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vljaq"]
-animation = &"Fall"
+animation = &"UnarmedFall"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mcgeh"]
-animation = &"Fall"
+animation = &"UnarmedFall"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lg2ur"]
-animation = &"Fall"
+animation = &"UnarmedFall"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hqg3y"]
-animation = &"Walk"
+animation = &"UnarmedWalk"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_op7to"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_msicm"]
+graph_offset = Vector2(-130, 61)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_hqg3y")
 nodes/Animation/position = Vector2(100, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_op7to")
@@ -29,7 +30,7 @@ nodes/output/position = Vector2(460, 120)
 node_connections = [&"TimeScale", 0, &"Animation", &"output", 0, &"TimeScale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qk2pg"]
-animation = &"Sprint"
+animation = &"UnarmedSprint"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_xomsk"]
 
@@ -42,7 +43,7 @@ nodes/output/position = Vector2(400, 160)
 node_connections = [&"TimeScale", 0, &"Animation", &"output", 0, &"TimeScale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4gscm"]
-animation = &"CrouchWalk"
+animation = &"UnarmedCrouchWalk"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_hqlsl"]
 
@@ -73,12 +74,12 @@ blend_point_7/node = SubResource("AnimationNodeBlendTree_w10fi")
 blend_point_7/pos = Vector2(0, -1)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ofxly"]
-animation = &"Climb"
+animation = &"UnarmedClimb"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_sh1sh"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_1vt4t"]
-graph_offset = Vector2(-302.552, -1.84958)
+graph_offset = Vector2(-315.552, 60.1504)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_ofxly")
 nodes/Animation/position = Vector2(-80, 120)
 "nodes/TimeScale 2/node" = SubResource("AnimationNodeTimeScale_sh1sh")
@@ -100,7 +101,7 @@ advance_condition = &"basic"
 
 [resource]
 states/Basic/node = SubResource("AnimationNodeBlendSpace2D_srym6")
-states/Basic/position = Vector2(452, 87)
+states/Basic/position = Vector2(451, 87)
 states/Climbing/node = SubResource("AnimationNodeBlendTree_1vt4t")
 states/Climbing/position = Vector2(656, 126)
 states/End/position = Vector2(839, 126)
