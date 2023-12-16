@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3 uid="uid://bh0ffb460hoeg"]
+
+[ext_resource type="Script" path="res://scripts/main/level.gd" id="1_t8vfe"]
+[ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_4r2fu"]
+[ext_resource type="PackedScene" uid="uid://bkkoambimyxm0" path="res://assets/blends/levels/_dungeons_a/_dungeons_a.blend" id="3_valwj"]
+[ext_resource type="Script" path="res://scripts/main/world_environment.gd" id="5_c5k26"]
+[ext_resource type="Resource" uid="uid://b7dpsncuarny4" path="res://resources/environments/_surreal_world.tres" id="6_fmbdm"]
+[ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="7_t17i5"]
+[ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="8_kcbf8"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
+sky_top_color = Color(0.54902, 0.670588, 1, 1)
+sky_horizon_color = Color(1, 0.258824, 0.227451, 1)
+sky_curve = 0.121838
+ground_bottom_color = Color(0, 0, 0, 1)
+ground_horizon_color = Color(0.00784314, 0, 0.34902, 1)
+sun_angle_max = 6.0
+sun_curve = 8.652
+
+[sub_resource type="Sky" id="Sky_rvey0"]
+sky_material = SubResource("ProceduralSkyMaterial_2mljf")
+
+[sub_resource type="Environment" id="Environment_xl8aq"]
+background_mode = 2
+sky = SubResource("Sky_rvey0")
+ambient_light_source = 3
+ambient_light_sky_contribution = 0.25
+reflected_light_source = 2
+tonemap_mode = 2
+tonemap_white = 0.75
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+glow_enabled = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.02
+volumetric_fog_ambient_inject = 0.41
+adjustment_enabled = true
+
+[node name="_DungeonsALevel" type="Node3D"]
+script = ExtResource("1_t8vfe")
+settings = ExtResource("2_4r2fu")
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="_dungeons_a" parent="Level" instance=ExtResource("3_valwj")]
+
+[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
+script = ExtResource("5_c5k26")
+settings = ExtResource("6_fmbdm")
+dir_light = NodePath("DirectionalLight3D")
+world_env = NodePath("WorldEnvironment")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment_xl8aq")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(-0.707107, 0.183013, -0.683013, 0, 0.965926, 0.258819, 0.707107, 0.183013, -0.683013, 0, 30, 0)
+light_color = Color(1, 0.698039, 0.631373, 1)
+shadow_enabled = true
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="World"]
+attenuation_model = 3
+max_db = -24.0
+autoplay = true
+panning_strength = 0.1
+
+[node name="FPSBaseHUD" parent="." instance=ExtResource("7_t17i5")]
+
+[node name="_DevHUD" parent="." instance=ExtResource("8_kcbf8")]

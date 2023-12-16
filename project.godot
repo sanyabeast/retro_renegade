@@ -130,8 +130,8 @@ common/max_physics_steps_per_frame=16
 
 textures/canvas_textures/default_texture_filter=0
 scaling_3d/mode=2
-scaling_3d/scale=0.67
-scaling_3d/fsr_sharpness=0.5
+scaling_3d/scale=0.66
+scaling_3d/fsr_sharpness=1.0
 textures/decals/filter=0
 textures/light_projectors/filter=0
 anti_aliasing/quality/screen_space_aa=1
