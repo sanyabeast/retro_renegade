@@ -39,6 +39,7 @@ var current_action_type: ECharacterBodyActionType = ECharacterBodyActionType.Mov
 
 var _prev_body_direction: Vector3 = Vector3.ZERO
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_setup_tree(self)

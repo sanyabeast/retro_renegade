@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeStateMachine" load_steps=25 format=3 uid="uid://cjmmkpb7t8g2g"]
+[gd_resource type="AnimationNodeStateMachine" load_steps=26 format=3 uid="uid://cjmmkpb7t8g2g"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ofxly"]
 animation = &"UnarmedClimb"
@@ -25,12 +25,12 @@ animation = &"UnarmedWalk"
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_op7to"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_msicm"]
-graph_offset = Vector2(-104.074, -3.1405)
+graph_offset = Vector2(-32.6025, 27.265)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_hqg3y")
 nodes/Animation/position = Vector2(100, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_op7to")
-nodes/TimeScale/position = Vector2(300, 120)
-nodes/output/position = Vector2(460, 120)
+nodes/TimeScale/position = Vector2(400, 140)
+nodes/output/position = Vector2(620, 120)
 node_connections = [&"TimeScale", 0, &"Animation", &"output", 0, &"TimeScale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qk2pg"]
@@ -38,13 +38,18 @@ animation = &"UnarmedSprint"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_xomsk"]
 
+[sub_resource type="AnimationNodeTimeSeek" id="AnimationNodeTimeSeek_4hhdd"]
+
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_cxj7f"]
+graph_offset = Vector2(-373.114, 41.254)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_qk2pg")
-nodes/Animation/position = Vector2(77.5973, 109.808)
+nodes/Animation/position = Vector2(-40, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_xomsk")
-nodes/TimeScale/position = Vector2(221.079, 228.4)
-nodes/output/position = Vector2(400, 160)
-node_connections = [&"TimeScale", 0, &"Animation", &"output", 0, &"TimeScale"]
+nodes/TimeScale/position = Vector2(320, 200)
+nodes/TimeSeek/node = SubResource("AnimationNodeTimeSeek_4hhdd")
+nodes/TimeSeek/position = Vector2(170.531, 235.544)
+nodes/output/position = Vector2(580, 120)
+node_connections = [&"TimeScale", 0, &"TimeSeek", &"TimeSeek", 0, &"Animation", &"output", 0, &"TimeScale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4gscm"]
 animation = &"UnarmedCrouchWalk"
@@ -87,7 +92,7 @@ blend_point_0/pos = Vector2(-1, 0)
 blend_point_1/node = SubResource("AnimationNodeAnimation_ooheg")
 blend_point_1/pos = Vector2(-1, -1)
 blend_point_2/node = SubResource("AnimationNodeBlendTree_msicm")
-blend_point_2/pos = Vector2(0, 0)
+blend_point_2/pos = Vector2(-0.2, -0.1)
 blend_point_3/node = SubResource("AnimationNodeBlendTree_cxj7f")
 blend_point_3/pos = Vector2(1, 0)
 blend_point_4/node = SubResource("AnimationNodeBlendTree_w10fi")
@@ -102,6 +107,7 @@ blend_point_8/node = SubResource("AnimationNodeBlendTree_n5846")
 blend_point_8/pos = Vector2(1, -1)
 min_space = Vector2(-1.2, -1.2)
 max_space = Vector2(1.2, 1.5)
+sync = true
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_l0j7n"]
 advance_mode = 2

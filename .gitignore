@@ -3,3 +3,5 @@
 assets/
 assets.7z
 assets.zip
+*.7z
+*.zip

@@ -2,12 +2,6 @@ extends GameCharacterBodyController
 
 class_name GameCharacterBodyControllerSkeletonBasic
 
-@export_subgroup("Skeleton Animations")
-@export var walk_animation_speed_scale: float = 1
-@export var sprint_animation_speed_scale: float = 1
-@export var crouch_walk_animation_speed_scale: float = 1
-@export var climb_animation_speed_scale: float = 1
-
 @export_subgroup("Skeletong Pin Points to Bone Attachment")
 @export var head_bone_name: String = "mixamorig_Head"
 @export var hand_bone_name: String = "mixamorig_RightHand"
@@ -19,6 +13,22 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var horizontal_blend_transition_speed: float = 8
 
 @export_subgroup("Extras")
+@export var force_looping_for_animations: Array[String] = [
+	"UnarmedIdle",
+	"UnarmedWalk",
+	"UnarmedSprint",
+	"UnarmedFall",
+	"UnarmedCrouchIdle",
+	"UnarmedCrouchWalk",
+	"UnarmedClimb"
+]
+
+@export var walk_animation_speed_scale: float = 1
+@export var sprint_animation_speed_scale: float = 1
+@export var sprint_animation_seek_offset: float = 0
+@export var crouch_walk_animation_speed_scale: float = 1
+@export var climb_animation_speed_scale: float = 1
+
 var directional_velocity_factor: float = 20
 
 var _target_v_blend_value: float = 0
@@ -32,6 +42,17 @@ var _target_v_speed_scale: float = 1
 var _target_h_speed_scale: float = 1
 
 var _current_climb_animation_speed_scale: float = 1
+
+func _ready():
+	super._ready()
+	
+	
+	# forcing loop mode for specified animations
+	if _animation_player != null:
+		for anim_name in force_looping_for_animations:
+			var anim: Animation = _animation_player.get_animation(anim_name)
+			anim.set_loop_mode(Animation.LOOP_LINEAR)
+	
 
 func _setup_pin_points():
 	if head_pin_point == null and head_bone_name != "":
@@ -91,6 +112,8 @@ func _update_animation_tree(delta):
 			_animation_tree["parameters/move/2/TimeScale/scale"] = _current_h_speed_scale * walk_animation_speed_scale * move_direction_factor
 			_animation_tree["parameters/move/3/TimeScale/scale"] = _current_h_speed_scale * sprint_animation_speed_scale * move_direction_factor
 			_animation_tree["parameters/move/4/TimeScale/scale"] = _current_h_speed_scale * crouch_walk_animation_speed_scale * move_direction_factor
+		
+			_animation_tree["parameters/move/3/TimeSeek/seek_request"] = sprint_animation_seek_offset
 		
 		ECharacterBodyActionType.Climb:
 			_animation_tree["parameters/climb/TimeScale 2/scale"] = _current_climb_animation_speed_scale * climb_animation_speed_scale
