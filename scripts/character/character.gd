@@ -29,12 +29,23 @@ var target_movement_speed: float = 0
 var current_movement_acceleration: float = 0
 
 var climbing_start_distance: float = 0
+var jump_started: bool = false
 
 var travelled: float = 0
+var ground_travelled: float = 0
 var air_travelled: float = 0
+
+var ground_time: float = 0
+var air_time: float = 0
+
+var current_jump_charge: float = 0
 
 var _prev_global_position: Vector3 = Vector3.ZERO
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
+
+var current_vertical_velocity: float = 0
+var current_horizontal_velocity: float = 0
+var current_total_velocity: float = 0
 
 var body_direction: Vector3 = Vector3.FORWARD
 
@@ -104,14 +115,28 @@ func _process(delta):
 	# LANDING TRACKING
 	
 	if not is_touching_floor():
+		ground_travelled = 0
+		ground_time = 0
+		
 		air_travelled += (global_position - _prev_global_position).length()
+		air_time += delta
 	else:
+		ground_travelled += (global_position - _prev_global_position).length()
+		ground_time += delta
+		
 		if air_travelled > 0:
-			sfx_controller.commit_action(CharacterSFX.EActionType.Landing, clamp(air_travelled / 8, 0, 1))
+			var landing_impact: float = clamp(abs(current_vertical_velocity) / 16, 0, 1)
+			
+			sfx_controller.commit_action(CharacterSFX.EActionType.Landing, landing_impact)
+			if body_controller != null:
+				body_controller.commit_landing(pow(landing_impact, 2))
+			
 			air_travelled = 0
+			air_time = 0
 	
 	# WALKING / SPRINTING / STAYING
 	if is_touching_floor():
+		 
 		sfx_controller.commit_action(
 			CharacterSFX.EActionType.Walk, 
 			clampf(Vector2(velocity.x, velocity.z).length() / props.walk_speed_max, 0, 1)
@@ -127,7 +152,19 @@ func _process(delta):
 	else:
 		sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
 
+	if jump_started and is_touching_floor():
+		current_jump_charge += delta
+		print(current_jump_charge)
+		if current_jump_charge > props.jump_max_charge_duration:
+			finish_jump()
+	else:
+		current_jump_charge = 0
+
 	_prev_global_position = global_position
+	
+	current_vertical_velocity = velocity.y
+	current_horizontal_velocity = Vector2(velocity.x, velocity.z).length()
+	current_total_velocity = velocity.length()
 	
 func _physics_process(delta):
 	
@@ -139,7 +176,7 @@ func _physics_process(delta):
 	#process_user_input()
 	process_movement(delta)
 	
-	if current_jump_power == 1:
+	if current_jump_power > 0:
 		current_jump_power = 0
 
 	pass
@@ -227,12 +264,24 @@ func stop_climb():
 	current_climbing_power = 0
 
 func start_jump():
-	if is_touching_floor():
-		current_jump_power = 1;
+	if not jump_started and is_touching_floor():
+		current_jump_charge = 0
+		jump_started = true
+		
+	
+func cancel_jump():
+	if jump_started:
+		jump_started = false
+		current_jump_charge = 0
+
+func finish_jump():
+	if jump_started and is_touching_floor():
+		current_jump_power = sqrt(clampf(current_jump_charge / props.jump_max_charge_duration, 0, 1));
+		jump_started = false
+		current_jump_charge = 0
 		
 		if sfx_controller != null and is_on_floor_only():
 			sfx_controller.commit_action(CharacterSFX.EActionType.JumpStart)
-
 # SPRINTING
 func start_sprint():
 	current_sprint_power = 1

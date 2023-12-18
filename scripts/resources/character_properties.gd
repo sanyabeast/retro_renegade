@@ -14,6 +14,7 @@ class_name RCharacterProperties
 @export var flip_sprint_walk: bool = false
 @export var dash_speed: float = 12
 @export var dash_duration: float = 1
+@export var jump_max_charge_duration: float = 0.25
 
 @export var walk_speed_min: float = 4
 @export var walk_speed_max: float = 6

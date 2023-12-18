@@ -3,6 +3,7 @@ extends Node3D
 class_name GameCharacterCameraRig
 
 enum EGameCharacterCameraMode {
+	Auto,
 	FirstPerson,
 	ThirdPerson
 }
@@ -22,7 +23,7 @@ enum EGameCharacterCameraMode {
 @export var camera_3p_attitude_max: float = 0
 @export var camera_3p_sensitivity: float = 1
 
-@export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.FirstPerson
+@export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.Auto
 
 @export var body_controller: GameCharacterBody
 
@@ -36,6 +37,9 @@ func _ready():
 func _process(delta):
 	if body_controller != null and body_controller.eyes_pin_point != null:
 		global_position = body_controller.eyes_pin_point.global_position
+		
+	if camera_mode == EGameCharacterCameraMode.Auto and world.level != null:
+		camera_mode = world.level.settings.default_character_camera_mode
 	
 func set_camera_mode(new_mode: EGameCharacterCameraMode):
 	camera_mode = new_mode

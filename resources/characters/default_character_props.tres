@@ -13,6 +13,7 @@ jump_speed = 12.0
 flip_sprint_walk = false
 dash_speed = 12.0
 dash_duration = 1.0
+jump_max_charge_duration = 0.25
 walk_speed_min = 4.0
 walk_speed_max = 6.0
 walk_acceleration = 4.0

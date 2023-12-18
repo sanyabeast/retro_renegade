@@ -70,6 +70,9 @@ func _process(delta):
 		dev.print_screen("character_crouch", "character crouching: %s" % current.is_crouching)
 		dev.print_screen("character_travelled", "character travelled: %.2f m" % current.travelled)
 		dev.print_screen("character_air_travelled", "character travelled (air): %.2f m" % current.air_travelled)
+		dev.print_screen("character_ground_travelled", "character travelled (ground): %.2f m" % current.ground_travelled)
+		dev.print_screen("character_air_time", "character time (air): %.2f s" % current.air_time)
+		dev.print_screen("character_ground_time", "character time (ground): %.2f s" % current.ground_time)
 		dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((current.travelled - current.climbing_start_distance) if current.is_climbing else 0))
 	
 
@@ -103,8 +106,14 @@ func process_user_input():
 					
 				# JUMPING
 				if props.allow_jump:
-					if Input.is_action_pressed('jump'):
-						current.start_jump()
+					if Input.is_action_just_released("jump"):
+						current.finish_jump()	
+					else:
+						if Input.is_action_pressed('jump'):
+							current.start_jump()
+						else:
+							current.cancel_jump()
+					
 				# SPRINGING
 				if props.allow_sprint:
 					if props.flip_sprint_walk:
