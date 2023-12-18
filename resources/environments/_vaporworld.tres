@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("2_6ci6k")
 name = "Vaporworld"
-day_duration = 120.0
-day_time = 0.75
+day_duration = 300.0
+day_time = 0.35
 day_cycle_enabled = true
 day_cycle_length = 300.0
 fog_density_night = 0.1

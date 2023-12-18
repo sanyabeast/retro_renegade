@@ -29,6 +29,8 @@ func _process_npc(character: GameCharacter, delta: float):
 		_npc_data[character] = {
 			"move_target": Vector3.ZERO,
 			"is_idle": true,
+			"is_sprint": false,
+			"is_climbing": false,
 			"timer_gate": tools.TimerGateManager.new()
 		}
 		
@@ -42,15 +44,29 @@ func _process_npc(character: GameCharacter, delta: float):
 	
 	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
+	
+	_npc_data[character]["is_sprint"] = character.global_position.distance_to(character.nav_agent.target_position) > 16
+	_npc_data[character]["is_climbing"]	= character.is_touching_wall()
 		
 	var move_direction: Vector3 = (character.nav_agent.get_next_path_position() - character.global_position).normalized()
 	var look_direction: Vector3 = move_direction
 	if _npc_data[character]["is_idle"]:
 		move_direction *= 0
 		
-	move_direction = character.current_movement_direction.lerp(move_direction, 0.05)
+	move_direction = character.current_movement_direction.lerp(move_direction, 0.15)
 		
 	character.set_movement_direction(move_direction)	
 	character.set_body_direction(move_direction)
 	character.look_at_direction(move_direction)	
+	
+	if _npc_data[character]["is_sprint"]:
+		character.start_sprint()
+	else:
+		character.stop_sprint()
+	pass
+	
+	if _npc_data[character]["is_climbing"]:
+		character.start_climb()
+	else:
+		character.stop_climb()
 	pass

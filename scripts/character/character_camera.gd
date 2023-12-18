@@ -8,7 +8,6 @@ enum EGameCharacterCameraMode {
 	ThirdPerson
 }
 
-
 @export_subgroup("First Person Camera")
 @export var camera_1p: Camera3D
 @export var camera_1p_rig: Node3D
@@ -61,7 +60,8 @@ func process_camera_input(event):
 	# 1P CAMERA
 	match camera_mode:
 		EGameCharacterCameraMode.FirstPerson:
-			camera_1p_rig.rotate_x(deg_to_rad(event.relative.y * app.config.first_person_camera_sensitivity * camera_1p_sensitivity * -1))
+			#camera_1p_rig.rotate_x(deg_to_rad(event.relative.y * app.config.first_person_camera_sensitivity * camera_1p_sensitivity * -1))
+			camera_1p_rig.rotation_degrees.x += event.relative.y * app.config.first_person_camera_sensitivity * camera_1p_sensitivity * -1
 			camera_1p_rig.rotation_degrees.x = clamp(camera_1p_rig.rotation_degrees.x, camera_1p_attitude_min, camera_1p_attitude_max)
 			pass
 		EGameCharacterCameraMode.ThirdPerson:
