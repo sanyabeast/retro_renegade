@@ -123,3 +123,24 @@ func _get_action_type_id(action_type: ECharacterBodyActionType):
 func _get_animation_state_id(stance: ECharacterBodyStance, action_type: ECharacterBodyActionType)-> String:
 	return _get_stance_id(stance) + "_" + _get_action_type_id(action_type)
 
+
+# BODY PHYSICS
+func add_collision_exception_for_body_physics(node)->void:
+	if node != character:
+		character.add_collision_exception_with(node)
+	pass
+
+func remove_collision_exception_for_body_physics(node)->void:
+	if node != character:
+		character.remove_collision_exception_with(node)
+	pass
+
+func get_physics_body_anchor_transform()->Transform3D:
+	return character.global_transform
+
+func start_body_physics():
+	pass
+	
+func stop_body_physics():
+	pass
+

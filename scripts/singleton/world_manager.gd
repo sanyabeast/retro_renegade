@@ -25,6 +25,7 @@ func _ready():
 func _process(delta):
 	day_time += delta / day_duration;
 	day_time = fmod(day_time, 1)
+	_check_y_kill()
 	dev.print_screen("rigids", "rigid bodies: %s pts" % rigid_bodies.size())
 	dev.print_screen("daytime", "day time: %s" % get_daytime_formatted_to_24h())
 	pass
@@ -111,7 +112,21 @@ func get_daytime_formatted_to_24h()->String:
 	var minutes = total_minutes % 60
 	return "%02d:%02d" % [hours, minutes]
 
-
+func _check_y_kill():
+	if _timer_gate.check("character-y-kill", 3):
+		for c in characters:
+			if c.global_position.y <= level.settings.y_kill:
+				dev.logd("WorldManager", "character %s respawned due to Y-Kill" % c.name)
+				c.global_position = tools.get_random_element_from_array(players.spawn_spots).global_position
+				pass
+	if _timer_gate.check("rigidbody-y-kill", 10):
+		for rb in rigid_bodies:
+			if rb.global_position.y <= level.settings.y_kill:
+				dev.logd("WorldManager", "rigidbody %s queued free due to Y-Kill" % rb.name)
+				rb.queue_free()
+				pass
+	
+	pass
 
 func _init_node_tree(node):
 	if node != null:

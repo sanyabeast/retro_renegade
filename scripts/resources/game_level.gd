@@ -8,3 +8,5 @@ class_name RGameLevel
 @export var player_retry_max: int = 3
 @export var default_character_camera_mode: GameCharacterCameraRig.EGameCharacterCameraMode = GameCharacterCameraRig.EGameCharacterCameraMode.FirstPerson
 
+@export var y_kill: float = -64
+@export var y_max: float = 128

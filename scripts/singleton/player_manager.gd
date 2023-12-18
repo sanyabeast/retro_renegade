@@ -164,6 +164,14 @@ func process_user_input():
 				if Input.is_action_just_pressed("torch"):
 					current.set_torch_visible(not current.is_torch_visible())
 
+				# DEV
+				if Input.is_action_just_pressed("dev0"):
+					if current.body_physics_enabled:
+						current.stop_body_physics()
+					else:
+						current.start_body_physics()
+			
+
 func _input(event):
 	if current != null:
 		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:

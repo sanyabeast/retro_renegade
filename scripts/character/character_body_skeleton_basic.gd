@@ -7,6 +7,7 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var hand_bone_name: String = "mixamorig_RightHand"
 @export var chest_bone_name: String = "mixamorig_Spine"
 @export var eyes_pin_point_offset: float = 0.25
+@export var physics_body_anchor: Node3D
 
 @export_subgroup("Transitions and Blending")
 @export var vertical_blend_transition_speed: float = 4
@@ -29,6 +30,8 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var crouch_walk_animation_speed_scale: float = 1
 @export var climb_animation_speed_scale: float = 1
 
+
+
 var directional_velocity_factor: float = 20
 
 var _target_v_blend_value: float = 0
@@ -43,16 +46,29 @@ var _target_h_speed_scale: float = 1
 
 var _current_climb_animation_speed_scale: float = 1
 
+var _physical_bones: Array[PhysicalBone3D] = []
+
 func _ready():
 	super._ready()
-	
 	
 	# forcing loop mode for specified animations
 	if _animation_player != null:
 		for anim_name in force_looping_for_animations:
 			var anim: Animation = _animation_player.get_animation(anim_name)
 			anim.set_loop_mode(Animation.LOOP_LINEAR)
+
+func add_collision_exception_for_body_physics(node)->void:
+	for pbone in _physical_bones:
+		character.add_collision_exception_with(pbone)
+
+func _setup_tree(node):
+	super._setup_tree(node)
 	
+	if node is PhysicalBone3D:
+		_physical_bones.append(node)
+		
+		if physics_body_anchor == null:
+			physics_body_anchor = node
 
 func _setup_pin_points():
 	if head_pin_point == null and head_bone_name != "":
@@ -117,3 +133,19 @@ func _update_animation_tree(delta):
 		
 		ECharacterBodyActionType.Climb:
 			_animation_tree["parameters/climb/TimeScale 2/scale"] = _current_climb_animation_speed_scale * climb_animation_speed_scale
+
+func start_body_physics():
+	super.start_body_physics()
+	dev.logd("GameCharacterBodyControllerSkeletonBasic", "body physics STARTED")
+	_skeleton.physical_bones_start_simulation()
+	
+func stop_body_physics():
+	super.stop_body_physics()
+	dev.logd("GameCharacterBodyControllerSkeletonBasic", "body physics STOPPED")
+	_skeleton.physical_bones_stop_simulation()
+
+func get_physics_body_anchor_transform()-> Transform3D:
+	if physics_body_anchor != null:
+		return physics_body_anchor.global_transform
+	else:
+		return character.global_transform

@@ -16,7 +16,6 @@ var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravit
 var current_climbing_power: float = 0
 var current_sprint_power: float = 0
 var current_jump_power: float = 0
-var current_dash_power: float = 0
 
 var is_climbing: bool = false
 var is_sprinting: bool = false
@@ -47,6 +46,8 @@ var current_vertical_velocity: float = 0
 var current_horizontal_velocity: float = 0
 var current_total_velocity: float = 0
 
+var body_physics_enabled: bool = false
+
 var body_direction: Vector3 = Vector3.FORWARD
 
 func _ready():
@@ -55,7 +56,6 @@ func _ready():
 	
 	if body_controller != null:
 		camera_rig.body_controller = body_controller
-	
 	
 	_prev_global_position = global_position
 	world.link_character(self)
@@ -99,6 +99,7 @@ func _setup_tree(node):
 		
 	if node is GameCharacterBodyController:
 		node.character = self	
+		node.add_collision_exception_for_body_physics(self)
 	
 	# Recursively call this function on all children
 	for child in node.get_children():
@@ -167,15 +168,17 @@ func _process(delta):
 	current_total_velocity = velocity.length()
 	
 func _physics_process(delta):
-	
-	current_dash_power = move_toward(current_dash_power, 0, (1 / props.dash_duration) * delta)
-	
 	if is_touching_floor() or not is_touching_wall():
 		stop_climb()
 
 	#process_user_input()
-	process_movement(delta)
-	
+	if not body_physics_enabled:
+		process_movement(delta)
+	else:
+		pass
+		var anchor_transform: Transform3D = body_controller.get_physics_body_anchor_transform()
+		global_position = anchor_transform.origin
+		
 	if current_jump_power > 0:
 		current_jump_power = 0
 
@@ -213,7 +216,6 @@ func process_movement(delta):
 	velocity.x = target_vel.x
 	velocity.z = target_vel.z
 
-	velocity += tools.get_forward_vector(self) * props.dash_speed * current_dash_power
 
 	move_and_slide()
 
@@ -233,7 +235,8 @@ func set_movement_direction(movement_direction: Vector3):
 	
 func set_body_direction(direction: Vector3):
 	body_direction = Vector3(direction.x, 0, direction.z)
-	look_at(global_position + body_direction)
+	if body_direction.length() > 0.01:
+		look_at(global_position + body_direction)
 
 func look_at_direction(look_direction: Vector3):
 	pass
@@ -295,16 +298,10 @@ func stop_sprint():
 func start_crouch():
 	if not is_crouching:
 		is_crouching = true
-		#anim_player.play("CrouchEnter")
-
-		#if props.allow_dash and is_sprinting:
-			#current_dash_power = 1
 	
 func stop_crouch():
 	if is_crouching and is_elevation_allowed():
 		is_crouching = false
-		#current_dash_power = 0
-		#anim_player.play("CrouchExit")
 
 # PHYSICAL INTERACTION
 func is_touching_wall()->bool:
@@ -346,6 +343,22 @@ func get_camera():
 		return camera_rig.get_camera()
 	else: 
 		return null
+
+func start_body_physics():
+	if body_controller != null and not body_physics_enabled:
+		body_physics_enabled = true  
+		body_controller.start_body_physics()
+	pass
+
+func stop_body_physics():
+	if body_controller != null and body_physics_enabled:
+		body_physics_enabled = false  
+		var anchor_transform: Transform3D = body_controller.get_physics_body_anchor_transform()
+		global_position = anchor_transform.origin
+		body_controller.stop_body_physics()
+		
+		
+	pass
 
 func set_camera_mode(new_mode: GameCharacterCameraRig.EGameCharacterCameraMode):
 	if camera_rig != null:

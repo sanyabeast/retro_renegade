@@ -16,7 +16,7 @@ var actions = [
 	{"name": "remove some rigidbodies", "function": self.remove_some_rb},
 	{"name": "next player camera", "function": self.next_player_camera},
 	{"name": "force everybody is npc", "function": self.force_npc},
-	{"name": "possess random character", "function": self.posses_random_character},
+	{"name": "possess random character", "function": self.posses_random_character}
 	# Add more actions here
 ]
 

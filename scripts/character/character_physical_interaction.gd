@@ -94,13 +94,13 @@ func start_grab():
 				if collider_mesh != null:
 					_hand_manipulation_target_dimensions = collider_mesh.mesh.get_aabb()
 				
-				collider.add_collision_exception_with(character)
+				character.body_controller.add_collision_exception_for_body_physics(collider)
 				current_hand_manipulation_target = collider
 				hand_manipulation_close_grip = false
 	
 func stop_grab():
 	if current_hand_manipulation_target != null:
-		current_hand_manipulation_target.remove_collision_exception_with(character)
+		character.body_controller.remove_collision_exception_for_body_physics(current_hand_manipulation_target)
 		current_hand_manipulation_target.linear_velocity = Vector3.UP * character.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
 		current_hand_manipulation_target = null
 		
