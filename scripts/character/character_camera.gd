@@ -25,7 +25,7 @@ enum EGameCharacterCameraMode {
 
 @export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.Auto
 
-@export var body_controller: GameCharacterBody
+@export var body_controller: GameCharacterBodyController
 
 var character: GameCharacter
 

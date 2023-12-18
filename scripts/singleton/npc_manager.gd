@@ -48,6 +48,8 @@ func _process_npc(character: GameCharacter, delta: float):
 	if _npc_data[character]["is_idle"]:
 		move_direction *= 0
 		
+	move_direction = character.current_movement_direction.lerp(move_direction, 0.05)
+		
 	character.set_movement_direction(move_direction)	
 	character.set_body_direction(move_direction)
 	character.look_at_direction(move_direction)	

@@ -25,11 +25,11 @@ animation = &"UnarmedWalk"
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_op7to"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_msicm"]
-graph_offset = Vector2(17, 42)
+graph_offset = Vector2(-104.074, -3.1405)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_hqg3y")
 nodes/Animation/position = Vector2(100, 120)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_op7to")
-nodes/TimeScale/position = Vector2(280, 140)
+nodes/TimeScale/position = Vector2(300, 120)
 nodes/output/position = Vector2(460, 120)
 node_connections = [&"TimeScale", 0, &"Animation", &"output", 0, &"TimeScale"]
 
@@ -93,11 +93,11 @@ blend_point_3/pos = Vector2(1, 0)
 blend_point_4/node = SubResource("AnimationNodeBlendTree_w10fi")
 blend_point_4/pos = Vector2(0, -1)
 blend_point_5/node = SubResource("AnimationNodeAnimation_pxcqe")
-blend_point_5/pos = Vector2(0, 1.5)
+blend_point_5/pos = Vector2(0, 1)
 blend_point_6/node = SubResource("AnimationNodeAnimation_nqlju")
-blend_point_6/pos = Vector2(-1, 1.5)
+blend_point_6/pos = Vector2(-1, 1)
 blend_point_7/node = SubResource("AnimationNodeAnimation_2feg6")
-blend_point_7/pos = Vector2(1, 1.5)
+blend_point_7/pos = Vector2(1, 1)
 blend_point_8/node = SubResource("AnimationNodeBlendTree_n5846")
 blend_point_8/pos = Vector2(1, -1)
 min_space = Vector2(-1.2, -1.2)
@@ -107,21 +107,21 @@ max_space = Vector2(1.2, 1.5)
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3o7dq"]
-xfade_time = 0.25
-advance_mode = 2
-advance_condition = &"unarmed_climb"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_occvm"]
 xfade_time = 0.15
 advance_mode = 2
-advance_condition = &"unarmed_move"
+advance_condition = &"climb"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_occvm"]
+xfade_time = 0.3
+advance_mode = 2
+advance_condition = &"move"
 
 [resource]
 states/End/position = Vector2(966, 120)
 states/Start/position = Vector2(272, 126)
-states/unarmed_climb/node = SubResource("AnimationNodeBlendTree_1vt4t")
-states/unarmed_climb/position = Vector2(778, 126)
-states/unarmed_move/node = SubResource("AnimationNodeBlendSpace2D_srym6")
-states/unarmed_move/position = Vector2(447, 126)
-transitions = ["Start", "unarmed_move", SubResource("AnimationNodeStateMachineTransition_l0j7n"), "unarmed_move", "unarmed_climb", SubResource("AnimationNodeStateMachineTransition_3o7dq"), "unarmed_climb", "unarmed_move", SubResource("AnimationNodeStateMachineTransition_occvm")]
+states/climb/node = SubResource("AnimationNodeBlendTree_1vt4t")
+states/climb/position = Vector2(643, 126)
+states/move/node = SubResource("AnimationNodeBlendSpace2D_srym6")
+states/move/position = Vector2(447, 126)
+transitions = ["Start", "move", SubResource("AnimationNodeStateMachineTransition_l0j7n"), "move", "climb", SubResource("AnimationNodeStateMachineTransition_3o7dq"), "climb", "move", SubResource("AnimationNodeStateMachineTransition_occvm")]
 graph_offset = Vector2(25, -2)

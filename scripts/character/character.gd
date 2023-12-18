@@ -9,7 +9,7 @@ var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravit
 @export var torch: SpotLight3D
 @export var camera_rig: GameCharacterCameraRig
 @export var phys_interaction: GameCharacterPhysicalInteractionManager
-@export var body_controller: GameCharacterBody
+@export var body_controller: GameCharacterBodyController
 @export var sfx_controller: CharacterSFX
 @export var nav_agent: NavigationAgent3D
 
@@ -88,7 +88,7 @@ func _setup_tree(node):
 	if phys_interaction == null and node is GameCharacterPhysicalInteractionManager:
 		phys_interaction = node
 		
-	if body_controller == null and node is GameCharacterBody:
+	if body_controller == null and node is GameCharacterBodyController:
 		body_controller = node
 		
 	if sfx_controller == null and node is CharacterSFX:
@@ -97,7 +97,7 @@ func _setup_tree(node):
 	if nav_agent == null and node is NavigationAgent3D:
 		nav_agent = node	
 		
-	if node is GameCharacterBody:
+	if node is GameCharacterBodyController:
 		node.character = self	
 	
 	# Recursively call this function on all children
