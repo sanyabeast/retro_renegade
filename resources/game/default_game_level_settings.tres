@@ -1,12 +1,14 @@
 [gd_resource type="Resource" script_class="RGameLevel" load_steps=3 format=3 uid="uid://dybxeo2go05b4"]
 
 [ext_resource type="Script" path="res://scripts/resources/game_level.gd" id="1_1lqap"]
-[ext_resource type="PackedScene" uid="uid://qqvfnh6co2wd" path="res://scenes/characters/palladin_nordstrom_sb.tscn" id="1_b0nbt"]
+[ext_resource type="PackedScene" uid="uid://bq3mnjve0qpub" path="res://scenes/characters/ybot_sb_01.tscn" id="1_g5sph"]
 
 [resource]
 script = ExtResource("1_1lqap")
 name = "Practice Range"
-player_default_class = ExtResource("1_b0nbt")
+player_default_class = ExtResource("1_g5sph")
 player_spawn_auto = null
 player_retry_max = null
 default_character_camera_mode = null
+y_kill = -64.0
+y_max = 128.0
