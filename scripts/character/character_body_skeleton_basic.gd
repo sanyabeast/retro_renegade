@@ -46,6 +46,7 @@ var _target_v_speed_scale: float = 1
 var _target_h_speed_scale: float = 1
 
 var _current_climb_animation_speed_scale: float = 1
+var _move_to_direction_factor_interpolated: Vector2 = Vector2.UP
 
 var _physical_bones: Array[PhysicalBone3D] = []
 
@@ -105,6 +106,11 @@ func _update_body_state(delta):
 	pass
 
 func _update_animation_params(delta):
+	_move_to_direction_factor_interpolated = _move_to_direction_factor_interpolated.move_toward(Vector2(
+		_move_to_body_direction_factor.x,
+		_move_to_body_direction_factor.z
+	), 4 * delta)
+	
 	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, horizontal_blend_transition_speed * delta)
 	_current_v_blend_value = move_toward(_current_v_blend_value, _target_v_blend_value, vertical_blend_transition_speed * delta)
 			
@@ -113,6 +119,7 @@ func _update_animation_params(delta):
 
 
 func _update_animation_tree(delta):
+	
 	_animation_tree["parameters/conditions/move"] = current_action_type == ECharacterBodyActionType.Move
 	_animation_tree["parameters/conditions/climb"] = current_action_type == ECharacterBodyActionType.Climb
 	
@@ -133,7 +140,11 @@ func _update_animation_tree(delta):
 				_current_v_blend_value
 			)
 		
-			_animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if _move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
+			#_animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if _move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
+			
+			# directional movement animations
+			_animation_tree["parameters/move_scaler/move/5/walk_direct/blend_position"] = _move_to_direction_factor_interpolated
+			_animation_tree["parameters/move_scaler/move/6/run_direct/blend_position"] = _move_to_direction_factor_interpolated
 		
 		ECharacterBodyActionType.Climb:
 			_animation_tree["parameters/climb_scaler/climb/blend_position"] = Vector2(

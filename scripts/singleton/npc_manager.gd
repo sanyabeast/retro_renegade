@@ -28,6 +28,7 @@ func _process_npc(character: GameCharacter, delta: float):
 	if not character in _npc_data:
 		_npc_data[character] = {
 			"move_target": Vector3.ZERO,
+			"look_target": Vector3.ZERO,
 			"is_idle": true,
 			"is_sprint": false,
 			"is_climbing": false,
@@ -40,7 +41,10 @@ func _process_npc(character: GameCharacter, delta: float):
 			0,
 			randf_range(-64, 64),
 		)
+		
 		character.nav_agent.target_position = _npc_data[character]["move_target"]
+	
+	_npc_data[character]["look_target"] = _npc_data[character]["look_target"].lerp(_npc_data[character]["move_target"], 0.05)
 	
 	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
@@ -56,8 +60,8 @@ func _process_npc(character: GameCharacter, delta: float):
 	move_direction = character.current_movement_direction.lerp(move_direction, 0.15)
 		
 	character.set_movement_direction(move_direction)	
-	character.set_body_direction(move_direction)
-	character.look_at_direction(move_direction)	
+	character.set_body_direction(_npc_data[character]["look_target"])
+	character.look_at_direction(_npc_data[character]["look_target"])	
 	
 	if _npc_data[character]["is_sprint"]:
 		character.start_sprint()
