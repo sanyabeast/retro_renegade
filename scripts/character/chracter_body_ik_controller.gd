@@ -3,9 +3,6 @@ extends Node3D
 
 class_name GameCharacterBodyIKController
 
-@export var skeleton: Skeleton3D
-@export var character: GameCharacter
-
 @export_subgroup("IK Systems")
 @export var head_ik: SkeletonIK3D
 @export var hand_l_ik: SkeletonIK3D
@@ -34,6 +31,20 @@ class_name GameCharacterBodyIKController
 @export var foot_r_bone_name: String = 'mixamorig_RightFoot'
 @export var foot_r_bone_tracker: BoneAttachment3D
 
+@export_subgroup("Hands IK")
+@export var hands_ik_enabled: bool = true
+@export var hands_ik_interpolation_max: float = 0.75
+@export var hands_ik_interpolation_transition_speed: float = 4
+
+@export_subgroup("Referencies")
+## Automatically assigned by GameCharacterBodyController
+@export var skeleton: Skeleton3D
+## Automatically assigned by GameCharacterBodyController
+@export var character: GameCharacter
+
+var _hand_l_ik_target_interpolation: float = 0.5
+var _hand_r_ik_target_interpolation: float = 0.5
+
 var _foot_ik_target_interpolation: float = 0.5
 var _foot_r_target_offset: float = 0
 var _foot_l_target_offset: float = 0
@@ -51,66 +62,92 @@ func initialize():
 		_setup_tree(self)
 		_setup_tree(skeleton)
 		
-		_foot_l_target_offset = global_position.y
-		_foot_r_target_offset = global_position.y
+		# FOOT IK SETTING UP
+		_foot_l_target_offset = 0
+		_foot_r_target_offset = 0
 		
-		if foot_ik_enabled:
-			foot_l_ik.start()
-			foot_r_ik.start()
+		if foot_l_ik != null and foot_r_ik != null:
+			foot_l_ray.add_exception(character)
+			foot_r_ray.add_exception(character)
+			
+			if foot_ik_enabled:
+				foot_l_ik.start()
+				foot_r_ik.start()
 		
-		foot_l_ray.add_exception(character)
-		foot_r_ray.add_exception(character)
+		# HANDS_ID
+		if hand_l_ik != null and hand_r_ik != null:
+			if hands_ik_enabled:
+				hand_l_ik.start()
+				hand_r_ik.start()
 	pass
-
+	
 func _setup_tree(node):
 	if node is Node3D and not node is SkeletonIK3D:
 		match node.name:
 			"THead": 
-				head_target = node
+				head_target = node if head_target == null else head_target
 			"TBody": 
-				body_target = node
+				body_target = node if body_target == null else body_target
 			"THandL": 
-				hand_l_target = node	
+				hand_l_target = node if hand_l_target == null else hand_l_target
 			"THandR": 
-				hand_r_target = node
+				hand_r_target = node if hand_r_target == null else hand_r_target
 			"TFootL": 
-				foot_l_target = node	
+				foot_l_target = node if foot_l_target == null else foot_l_target
 			"TFootR": 
-				foot_r_target = node
+				foot_r_target = node  if foot_r_target == null else foot_r_target
 	
 	if node is SkeletonIK3D:
 		if node.get_parent() != skeleton:
 			node.reparent(skeleton)
 		match node.name:
 			"IK_Head": 
-				head_ik = node
+				head_ik = node if head_ik == null else head_ik
 			"IK_HandL": 
-				hand_l_ik = node	
+				hand_l_ik = node if hand_l_ik == null else hand_l_ik
 			"IK_HandR": 
-				hand_r_ik = node
+				hand_r_ik = node if hand_r_ik == null else hand_r_ik
 			"IK_FootL": 
-				foot_l_ik = node	
+				foot_l_ik = node if foot_l_ik == null else foot_l_ik	
 			"IK_FootR": 
-				foot_r_ik = node
+				foot_r_ik = node if foot_r_ik == null else foot_r_ik
 	
 	if node is RayCast3D:
 		match node.name:
 			"IK_Ray_FootL": 
-				if foot_l_ray == null:
-					foot_l_ray = node
+				foot_l_ray = node if foot_l_ray == null else foot_l_ray
 			"IK_Ray_FootR": 
-				if foot_r_ray == null:
-					foot_r_ray = node
-			
+				foot_r_ray = node if foot_r_ray == null else foot_r_ray
+	
+	if node is BoneAttachment3D:
+		node.reparent(skeleton)	
+		
 	for child in node.get_children():
 		_setup_tree(child)
-
-
+	
+	pass
+	
+func _process(delta):
+	# TEST CODE !
+	if character.phys_interaction.current_hand_manipulation_target != null:
+		_hand_l_ik_target_interpolation = 1
+		_hand_r_ik_target_interpolation = 1
+	else:
+		_hand_l_ik_target_interpolation = 0
+		_hand_r_ik_target_interpolation = 0
+		
+	pass
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if _inited:
-		_process_foot_ik(delta)
+		if foot_ik_enabled:
+			_process_foot_ik(delta)
+			_process_hands_ik(delta)
 		_update_state(delta)
+	pass
+
+func _process_hands_ik(delta):
 	pass
 
 func _process_foot_ik(delta):
@@ -157,4 +194,8 @@ func _update_state(delta):
 		
 		foot_l_ik.interpolation = lerpf(foot_l_ik.interpolation, _foot_ik_target_interpolation, 0.1)
 		foot_r_ik.interpolation = lerpf(foot_r_ik.interpolation, _foot_ik_target_interpolation, 0.1)
+		
+	if hands_ik_enabled:
+		hand_l_ik.interpolation = lerpf(hand_l_ik.interpolation, _hand_l_ik_target_interpolation, 0.1)
+		hand_r_ik.interpolation = lerpf(hand_r_ik.interpolation, _hand_r_ik_target_interpolation, 0.1)
 	

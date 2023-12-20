@@ -18,21 +18,20 @@ class_name GameCharacterBodyControllerSkeletonBasic
 
 @export_subgroup("Extras")
 @export var force_looping_for_animations: Array[String] = [
-	"UnarmedIdle",
-	"UnarmedWalk",
-	"UnarmedSprint",
-	"UnarmedFall",
-	"UnarmedCrouchIdle",
-	"UnarmedCrouchWalk",
-	"UnarmedClimb"
+	"Idle",
+	"Walk",
+	"Run",
+	"Freefall",
+	"Crouch_Idle",
+	"Crouch_Walk",
+	"Climb_Up",
+	"Climb_Down",
+	"Climb_Right",
+	"Ladder_Up",
+	"StandUpFace"
 ]
 
-@export var walk_animation_speed_scale: float = 1
-@export var sprint_animation_speed_scale: float = 1
-@export var sprint_animation_seek_offset: float = 0
-@export var crouch_walk_animation_speed_scale: float = 1
-@export var climb_animation_speed_scale: float = 1
-
+@export var move_animation_speed_scale: float = 1.5
 
 var directional_velocity_factor: float = 20
 
@@ -119,7 +118,7 @@ func _update_animation_tree(delta):
 	
 	match current_action_type:
 		ECharacterBodyActionType.Move:
-			_target_h_blend_value = lerpf(-1, 1, clampf((_current_character_h_velocity + _current_character_directional_velocity * directional_velocity_factor) / character.props.sprint_speed_max, 0, 1))
+			_target_h_blend_value = lerpf(-1, 1, clampf((_current_character_h_velocity) / character.props.sprint_speed_max, 0, 1))
 			_target_v_blend_value = -1 if character.is_crouching else 0
 			
 			if not character.is_touching_floor():
@@ -129,22 +128,21 @@ func _update_animation_tree(delta):
 			_target_h_speed_scale = 1
 			_target_v_speed_scale = 1
 			
-			_animation_tree["parameters/move/blend_position"] = Vector2(
+			_animation_tree["parameters/move_scaler/move/blend_position"] = Vector2(
 				_current_h_blend_value,
 				_current_v_blend_value
 			)
-			
-			var z_direction_factor = -1 if _move_to_body_direction_factor.z < 0 else 1
-			
-			_animation_tree["parameters/move/2/TimeScale/scale"] = _current_h_speed_scale * walk_animation_speed_scale * z_direction_factor
-			_animation_tree["parameters/move/3/TimeScale/scale"] = _current_h_speed_scale * sprint_animation_speed_scale * z_direction_factor
-			_animation_tree["parameters/move/4/TimeScale/scale"] = _current_h_speed_scale * crouch_walk_animation_speed_scale * z_direction_factor
 		
-			_animation_tree["parameters/move/3/TimeSeek/seek_request"] = sprint_animation_seek_offset
+			_animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if _move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
 		
 		ECharacterBodyActionType.Climb:
-			_animation_tree["parameters/climb/TimeScale 2/scale"] = _current_climb_animation_speed_scale * climb_animation_speed_scale
-
+			_animation_tree["parameters/climb_scaler/climb/blend_position"] = Vector2(
+				_move_to_body_direction_factor.x,
+				_move_to_body_direction_factor.y
+			)
+			_animation_tree["parameters/climb_scaler/climb_scale/scale"] = 1
+	pass
+	
 func start_body_physics():
 	super.start_body_physics()
 	dev.logd("GameCharacterBodyControllerSkeletonBasic", "body physics STARTED")
