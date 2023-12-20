@@ -55,8 +55,10 @@ func _ready():
 	_setup_tree(self)
 	
 	if body_controller != null:
+		body_controller.character = self
+		body_controller.initialize()
 		camera_rig.body_controller = body_controller
-	
+		
 	_prev_global_position = global_position
 	world.link_character(self)
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

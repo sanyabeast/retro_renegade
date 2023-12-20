@@ -31,7 +31,7 @@ var _current_character_v_velocity: float = 0
 var _current_character_total_velocity: float = 0
 var _current_character_directional_velocity: float = 0
 
-var _current_character_move_direction_factor: float = 1
+var _move_to_body_direction_factor: Vector3 = Vector3.ZERO
 
 # Stances and Actions
 var current_stance: ECharacterBodyStance = ECharacterBodyStance.Unarmed
@@ -44,7 +44,14 @@ var _prev_body_direction: Vector3 = Vector3.ZERO
 func _ready():
 	_setup_tree(self)
 	_setup_pin_points()
+	
+	if character != null:
+		initialize()
+	
 	pass # Replace with function body.
+
+func initialize():
+	pass
 
 func _setup_pin_points():
 	if head_pin_point == null:
@@ -82,8 +89,13 @@ func _process(delta):
 		current_action_type = ECharacterBodyActionType.Move
 	
 	# Direction Factor:
-	_current_character_move_direction_factor = -character.velocity.normalized().dot(character.global_transform.basis.z.normalized())
+	_move_to_body_direction_factor = Vector3(
+		character.velocity.normalized().dot(character.global_transform.basis.x.normalized()),
+		clampf(character.velocity.y, -1, 1),
+		-character.velocity.normalized().dot(character.global_transform.basis.z.normalized())
+	)
 	
+	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % _move_to_body_direction_factor)
 	_update_body_state(delta)
 	
 	_prev_body_direction = character.global_transform.basis.z

@@ -13,6 +13,9 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var vertical_blend_transition_speed: float = 4
 @export var horizontal_blend_transition_speed: float = 8
 
+@export_subgroup("IK")
+@export var ik_controller: GameCharacterBodyIKController
+
 @export_subgroup("Extras")
 @export var force_looping_for_animations: Array[String] = [
 	"UnarmedIdle",
@@ -31,7 +34,6 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var climb_animation_speed_scale: float = 1
 
 
-
 var directional_velocity_factor: float = 20
 
 var _target_v_blend_value: float = 0
@@ -48,14 +50,20 @@ var _current_climb_animation_speed_scale: float = 1
 
 var _physical_bones: Array[PhysicalBone3D] = []
 
-func _ready():
-	super._ready()
-	
+func initialize():
+	super.initialize()
 	# forcing loop mode for specified animations
 	if _animation_player != null:
 		for anim_name in force_looping_for_animations:
 			var anim: Animation = _animation_player.get_animation(anim_name)
-			anim.set_loop_mode(Animation.LOOP_LINEAR)
+			if anim != null:
+				anim.set_loop_mode(Animation.LOOP_LINEAR)
+				
+	if ik_controller != null:
+		if ik_controller.skeleton == null and _skeleton != null:
+			ik_controller.skeleton = _skeleton
+			ik_controller.character = character
+			ik_controller.initialize()
 
 func add_collision_exception_for_body_physics(node)->void:
 	for pbone in _physical_bones:
@@ -69,6 +77,9 @@ func _setup_tree(node):
 		
 		if physics_body_anchor == null:
 			physics_body_anchor = node
+			
+	if node is GameCharacterBodyIKController:
+		ik_controller = node
 
 func _setup_pin_points():
 	if head_pin_point == null and head_bone_name != "":
@@ -123,11 +134,11 @@ func _update_animation_tree(delta):
 				_current_v_blend_value
 			)
 			
-			var move_direction_factor = -1 if _current_character_move_direction_factor < 0 else 1
+			var z_direction_factor = -1 if _move_to_body_direction_factor.z < 0 else 1
 			
-			_animation_tree["parameters/move/2/TimeScale/scale"] = _current_h_speed_scale * walk_animation_speed_scale * move_direction_factor
-			_animation_tree["parameters/move/3/TimeScale/scale"] = _current_h_speed_scale * sprint_animation_speed_scale * move_direction_factor
-			_animation_tree["parameters/move/4/TimeScale/scale"] = _current_h_speed_scale * crouch_walk_animation_speed_scale * move_direction_factor
+			_animation_tree["parameters/move/2/TimeScale/scale"] = _current_h_speed_scale * walk_animation_speed_scale * z_direction_factor
+			_animation_tree["parameters/move/3/TimeScale/scale"] = _current_h_speed_scale * sprint_animation_speed_scale * z_direction_factor
+			_animation_tree["parameters/move/4/TimeScale/scale"] = _current_h_speed_scale * crouch_walk_animation_speed_scale * z_direction_factor
 		
 			_animation_tree["parameters/move/3/TimeSeek/seek_request"] = sprint_animation_seek_offset
 		
