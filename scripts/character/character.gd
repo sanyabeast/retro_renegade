@@ -50,6 +50,8 @@ var body_physics_enabled: bool = false
 
 var body_direction: Vector3 = Vector3.FORWARD
 
+var move_to_body_direction_factor: Vector3 = Vector3.ZERO
+
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
@@ -117,6 +119,10 @@ func _process(delta):
 	# SFX CONTROLLER CACTIONS COMMITTING
 	# LANDING TRACKING
 	
+	# Direction Factor:
+	
+	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % move_to_body_direction_factor)
+	
 	if not is_touching_floor():
 		ground_travelled = 0
 		ground_time = 0
@@ -142,7 +148,7 @@ func _process(delta):
 		 
 		sfx_controller.commit_action(
 			CharacterSFX.EActionType.Walk, 
-			clampf(Vector2(velocity.x, velocity.z).length() / props.walk_speed_max, 0, 1)
+			clampf(Vector2(velocity.x, velocity.z).length() / get_walk_speed_max(), 0, 1)
 		)
 	else:
 		sfx_controller.commit_action(CharacterSFX.EActionType.Walk, 0)
@@ -150,7 +156,7 @@ func _process(delta):
 	if is_sprinting:
 		sfx_controller.commit_action(
 			CharacterSFX.EActionType.Sprint, 
-			clampf((Vector2(velocity.x, velocity.z).length() - props.walk_speed_max) / (props.sprint_speed_max - props.walk_speed_max), 0, 1)
+			_get_walk_to_sprint_progress()
 		)
 	else:
 		sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
@@ -170,6 +176,14 @@ func _process(delta):
 	current_total_velocity = velocity.length()
 	
 func _physics_process(delta):
+	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z).normalized()
+	move_to_body_direction_factor = Vector3(
+		horizontal_velocity.dot(global_transform.basis.x.normalized()),
+		clampf(velocity.y, -1, 1),
+		-horizontal_velocity.dot(global_transform.basis.z.normalized())
+	)
+	
+	
 	if is_touching_floor() or not is_touching_wall():
 		stop_climb()
 
@@ -192,13 +206,13 @@ func process_movement(delta):
 		current_movement_acceleration = lerpf(props.walk_acceleration, props.sprint_acceleration, current_sprint_power)
 
 	current_movement_speed = move_toward(current_movement_speed, target_movement_speed, current_movement_acceleration * delta)
-	var min_movement_speed = props.walk_speed_min
+	var min_movement_speed = get_walk_speed_min()
 
 	if target_movement_speed == 0:
 		current_movement_speed = 0
 		min_movement_speed = 0
 
-	current_movement_speed = clampf(current_movement_speed, min_movement_speed , props.sprint_speed_max)
+	current_movement_speed = clampf(current_movement_speed, min_movement_speed , get_sprint_speed_max())
 
 	var jump_speed = props.jump_speed
 	var movement_penalty: float = 1
@@ -229,7 +243,7 @@ func set_movement_direction(movement_direction: Vector3):
 	
 	if current_movement_direction.length() > MOVEMENT_DEADZONE:
 		current_movement_direction = current_movement_direction.normalized()
-		target_movement_speed = lerpf(props.walk_speed_max, props.sprint_speed_max, current_sprint_power)
+		target_movement_speed = lerpf(get_walk_speed_max(), get_sprint_speed_max(), current_sprint_power)
 		
 	else:
 		target_movement_speed = 0
@@ -238,7 +252,10 @@ func set_movement_direction(movement_direction: Vector3):
 func set_body_direction(direction: Vector3):
 	body_direction = Vector3(direction.x, 0, direction.z)
 	if body_direction.length() > 0.01:
-		look_at(global_position + body_direction)
+		look_at(global_position + body_direction.normalized())
+
+func set_body_direction_target(target: Vector3):
+	set_body_direction(target - global_position)
 
 func look_at_direction(look_direction: Vector3):
 	pass
@@ -273,7 +290,6 @@ func start_jump():
 		current_jump_charge = 0
 		jump_started = true
 		
-	
 func cancel_jump():
 	if jump_started:
 		jump_started = false
@@ -358,8 +374,6 @@ func stop_body_physics():
 		var anchor_transform: Transform3D = body_controller.get_physics_body_anchor_transform()
 		global_position = anchor_transform.origin
 		body_controller.stop_body_physics()
-		
-		
 	pass
 
 func set_camera_mode(new_mode: GameCharacterCameraRig.EGameCharacterCameraMode):
@@ -373,3 +387,16 @@ func next_camera_mode():
 func get_hand_pin_point():
 	if body_controller != null:
 		return body_controller.hand_pin_point
+
+func get_sprint_speed_max()->float:
+	print(props.sprint_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_sprint_speed_max)
+	return props.sprint_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_sprint_speed_max
+
+func get_walk_speed_max()->float:
+	return props.walk_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_walk_speed_max
+
+func get_walk_speed_min()->float:
+	return props.walk_speed_min if move_to_body_direction_factor.z >= -0.1 else props.back_walk_speed_min
+
+func _get_walk_to_sprint_progress()->float:
+	return clampf((Vector2(velocity.x, velocity.z).length() - get_walk_speed_max()) / (get_sprint_speed_max() - get_walk_speed_max()), 0, 1)

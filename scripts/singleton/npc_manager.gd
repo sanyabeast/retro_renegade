@@ -60,7 +60,9 @@ func _process_npc(character: GameCharacter, delta: float):
 	move_direction = character.current_movement_direction.lerp(move_direction, 0.15)
 		
 	character.set_movement_direction(move_direction)	
-	character.set_body_direction(_npc_data[character]["look_target"])
+	character.set_body_direction_target(_npc_data[character]["look_target"])
+	if players.current != null:
+		character.set_body_direction_target(players.current.global_position)
 	character.look_at_direction(_npc_data[character]["look_target"])	
 	
 	if _npc_data[character]["is_sprint"]:

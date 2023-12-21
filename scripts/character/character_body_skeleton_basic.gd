@@ -20,7 +20,13 @@ class_name GameCharacterBodyControllerSkeletonBasic
 @export var force_looping_for_animations: Array[String] = [
 	"Idle",
 	"Walk",
+	"Walk_StrafeLeft",
+	"Walk_StrafeRight",
+	"Walk_Backwards",
 	"Run",
+	"Run_StrafeLeft",
+	"Run_StrafeRight",
+	"Run_Backwards",
 	"Freefall",
 	"Crouch_Idle",
 	"Crouch_Walk",
@@ -49,6 +55,7 @@ var _current_climb_animation_speed_scale: float = 1
 var _move_to_direction_factor_interpolated: Vector2 = Vector2.UP
 
 var _physical_bones: Array[PhysicalBone3D] = []
+var _direction_switch_interpolation_speed: float = 3
 
 func initialize():
 	super.initialize()
@@ -106,10 +113,19 @@ func _update_body_state(delta):
 	pass
 
 func _update_animation_params(delta):
-	_move_to_direction_factor_interpolated = _move_to_direction_factor_interpolated.move_toward(Vector2(
-		_move_to_body_direction_factor.x,
-		_move_to_body_direction_factor.z
-	), 4 * delta)
+	#_move_to_direction_factor_interpolated = _move_to_direction_factor_interpolated.move_toward(Vector2(
+		#character.move_to_body_direction_factor.x,
+		#character.move_to_body_direction_factor.z
+	#), _direction_switch_interpolation_speed * delta)
+	
+	_move_to_direction_factor_interpolated.x = move_toward(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, 3.0 * delta)
+	_move_to_direction_factor_interpolated.y = move_toward(_move_to_direction_factor_interpolated.y, character.move_to_body_direction_factor.z, 1.5 * delta)
+	
+	
+	#_move_to_direction_factor_interpolated = _move_to_direction_factor_interpolated.lerp(Vector2(
+		#character.move_to_body_direction_factor.x,
+		#character.move_to_body_direction_factor.z
+	#), 0.05)
 	
 	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, horizontal_blend_transition_speed * delta)
 	_current_v_blend_value = move_toward(_current_v_blend_value, _target_v_blend_value, vertical_blend_transition_speed * delta)
@@ -125,7 +141,7 @@ func _update_animation_tree(delta):
 	
 	match current_action_type:
 		ECharacterBodyActionType.Move:
-			_target_h_blend_value = lerpf(-1, 1, clampf((_current_character_h_velocity) / character.props.sprint_speed_max, 0, 1))
+			_target_h_blend_value = lerpf(-1, 1, clampf((_current_character_h_velocity) / character.get_sprint_speed_max(), 0, 1))
 			_target_v_blend_value = -1 if character.is_crouching else 0
 			
 			if not character.is_touching_floor():
@@ -140,7 +156,7 @@ func _update_animation_tree(delta):
 				_current_v_blend_value
 			)
 		
-			#_animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if _move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
+			#_animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
 			
 			# directional movement animations
 			_animation_tree["parameters/move_scaler/move/5/walk_direct/blend_position"] = _move_to_direction_factor_interpolated
@@ -148,8 +164,8 @@ func _update_animation_tree(delta):
 		
 		ECharacterBodyActionType.Climb:
 			_animation_tree["parameters/climb_scaler/climb/blend_position"] = Vector2(
-				_move_to_body_direction_factor.x,
-				_move_to_body_direction_factor.y
+				character.move_to_body_direction_factor.x,
+				character.move_to_body_direction_factor.y
 			)
 			_animation_tree["parameters/climb_scaler/climb_scale/scale"] = 1
 	pass

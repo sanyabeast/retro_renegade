@@ -31,7 +31,6 @@ var _current_character_v_velocity: float = 0
 var _current_character_total_velocity: float = 0
 var _current_character_directional_velocity: float = 0
 
-var _move_to_body_direction_factor: Vector3 = Vector3.ZERO
 
 # Stances and Actions
 var current_stance: ECharacterBodyStance = ECharacterBodyStance.Unarmed
@@ -88,14 +87,6 @@ func _process(delta):
 	else:
 		current_action_type = ECharacterBodyActionType.Move
 	
-	# Direction Factor:
-	_move_to_body_direction_factor = Vector3(
-		character.velocity.normalized().dot(character.global_transform.basis.x.normalized()),
-		clampf(character.velocity.y, -1, 1),
-		-character.velocity.normalized().dot(character.global_transform.basis.z.normalized())
-	)
-	
-	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % _move_to_body_direction_factor)
 	_update_body_state(delta)
 	
 	_prev_body_direction = character.global_transform.basis.z

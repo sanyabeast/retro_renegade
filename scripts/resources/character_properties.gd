@@ -16,11 +16,15 @@ class_name RCharacterProperties
 @export var dash_duration: float = 1
 @export var jump_max_charge_duration: float = 0.25
 
-@export var walk_speed_min: float = 4
+@export var walk_speed_min: float = 3
 @export var walk_speed_max: float = 6
 @export var walk_acceleration: float = 4
 @export var sprint_acceleration: float = 4
 @export var sprint_speed_max: float = 12
+
+@export var back_walk_speed_min: float = 1
+@export var back_walk_speed_max: float = 3
+@export var back_sprint_speed_max: float = 6
 
 @export var climbing_max_distance: float = 4
 @export var crouching_walk_penalty: float = 0.75
