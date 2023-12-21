@@ -15,6 +15,8 @@ enum ECharacterBodyActionType {
 	Fire
 }
 
+@export var animation_script: GameCharacterBodyAnimationScript
+
 @export_subgroup("Pin Points")
 @export var head_pin_point: Node3D
 @export var eyes_pin_point: Node3D
@@ -31,13 +33,10 @@ var _current_character_v_velocity: float = 0
 var _current_character_total_velocity: float = 0
 var _current_character_directional_velocity: float = 0
 
-
 # Stances and Actions
 var current_stance: ECharacterBodyStance = ECharacterBodyStance.Unarmed
 var current_action_type: ECharacterBodyActionType = ECharacterBodyActionType.Move
-
 var _prev_body_direction: Vector3 = Vector3.ZERO
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -50,7 +49,8 @@ func _ready():
 	pass # Replace with function body.
 
 func initialize():
-	pass
+	if animation_script != null:
+		animation_script.initialize(self)
 
 func _setup_pin_points():
 	if head_pin_point == null:
@@ -71,6 +71,9 @@ func _setup_tree(node):
 	
 	if node is Skeleton3D:
 		_skeleton = node	
+
+	if node is GameCharacterBodyAnimationScript:
+		animation_script = node
 
 	for child in node.get_children():
 		_setup_tree(child)
@@ -97,7 +100,6 @@ func commit_landing(impact_power: float = 0):
 
 func _update_body_state(delta):
 	pass
-
 
 func _get_stance_id(stance: ECharacterBodyStance):
 	match stance:
