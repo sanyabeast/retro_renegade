@@ -14,6 +14,8 @@ class_name GameCharacterBodyAnimationScriptMK1
 	"Walk",
 	"Walk_StrafeLeft",
 	"Walk_StrafeRight",
+	"Walk_StrafeLeftBack",
+	"Walk_StrafeRightBack",
 	"Walk_Backwards",
 	"Run",
 	"Run_StrafeLeft",
@@ -103,7 +105,11 @@ func _physics_process(delta):
 	var bc = body_controller
 	var character = bc.character
 	
-	_move_to_direction_factor_interpolated.x = lerp(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, 0.025)
-	_move_to_direction_factor_interpolated.y = lerp(_move_to_direction_factor_interpolated.y, character.move_to_body_direction_factor.z, 0.025)
+	_move_to_direction_factor_interpolated.x = lerpf(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, 0.025)
+	_move_to_direction_factor_interpolated.y = lerpf(
+		_move_to_direction_factor_interpolated.y, 
+		character.move_to_body_direction_factor.z, 
+		0.025)
+
 	
 	pass

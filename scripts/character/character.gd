@@ -163,7 +163,6 @@ func _process(delta):
 
 	if jump_started and is_touching_floor():
 		current_jump_charge += delta
-		print(current_jump_charge)
 		if current_jump_charge > props.jump_max_charge_duration:
 			finish_jump()
 	else:
@@ -177,11 +176,15 @@ func _process(delta):
 	
 func _physics_process(delta):
 	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z).normalized()
-	move_to_body_direction_factor = Vector3(
-		horizontal_velocity.dot(global_transform.basis.x.normalized()),
-		clampf(velocity.y, -1, 1),
-		-horizontal_velocity.dot(global_transform.basis.z.normalized())
-	)
+	
+	if horizontal_velocity.length() > 0.05:
+		move_to_body_direction_factor = Vector3(
+			horizontal_velocity.dot(global_transform.basis.x.normalized()),
+			clampf(velocity.y, -1, 1),
+			-horizontal_velocity.dot(global_transform.basis.z.normalized())
+		)
+	else:
+		move_to_body_direction_factor = Vector3(0, clampf(velocity.y, -1, 1), 0)
 	
 	
 	if is_touching_floor() or not is_touching_wall():

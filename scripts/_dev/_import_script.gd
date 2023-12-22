@@ -35,11 +35,9 @@ func _process_node(node: Object):
 			node.mass = props["mass"]
 	
 	if node is AnimationPlayer:
-		print(node.get_animation_list())
 		for anim_name in node.get_animation_list():
 			var anim: Animation = node.get_animation(anim_name)
 			anim.loop_mode = Animation.LOOP_LINEAR
-		print(node.get_parent())
 	
 	if node is Node3D:
 		if "player_spawn" in props:

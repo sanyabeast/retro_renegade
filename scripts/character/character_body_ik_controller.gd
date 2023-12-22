@@ -5,6 +5,7 @@ class_name GameCharacterBodyIKController
 
 @export_subgroup("IK Systems")
 @export var head_ik: SkeletonIK3D
+@export var body_ik: SkeletonIK3D
 @export var hand_l_ik: SkeletonIK3D
 @export var hand_r_ik: SkeletonIK3D
 @export var foot_l_ik: SkeletonIK3D
@@ -35,6 +36,16 @@ class_name GameCharacterBodyIKController
 @export var hands_ik_enabled: bool = true
 @export var hands_ik_interpolation_max: float = 0.75
 @export var hands_ik_interpolation_transition_speed: float = 4
+
+@export_subgroup("Body IK")
+@export var body_ik_enabled: bool = true
+@export var body_ik_interpolation_max: float = 0.75
+@export var body_ik_interpolation_transition_speed: float = 4
+
+@export var body_target_interpolation: float = 0.75
+@export var body_target_rotation_y: float = 0
+@export var body_target_rotation_x: float = 0
+@export var body_target_rotation_z: float = 0
 
 @export_subgroup("Referencies")
 ## Automatically assigned by GameCharacterBodyController
@@ -79,6 +90,21 @@ func initialize():
 			if hands_ik_enabled:
 				hand_l_ik.start()
 				hand_r_ik.start()
+				
+				
+		if body_ik_enabled:
+			if body_ik != null and body_target != null:
+				body_target.rotation_degrees.x = body_target_rotation_x
+				body_target.rotation_degrees.y = body_target_rotation_y
+				body_target.rotation_degrees.z = body_target_rotation_z
+				
+				body_ik.start()
+				dev.logd("GameCharacterBodyIKController", "body ik started")
+			else:
+				assert(body_ik != null, "GameCharacterBodyIKController: Body IK: body_ik must be set up to function")
+				assert(body_target != null, "GameCharacterBodyIKController: Body IK: body_target must be set up to function")
+		
+	
 	pass
 	
 func _setup_tree(node):
@@ -103,6 +129,8 @@ func _setup_tree(node):
 		match node.name:
 			"IK_Head": 
 				head_ik = node if head_ik == null else head_ik
+			"IK_Body": 
+				body_ik = node if body_ik == null else body_ik	
 			"IK_HandL": 
 				hand_l_ik = node if hand_l_ik == null else hand_l_ik
 			"IK_HandR": 
@@ -135,57 +163,66 @@ func _process(delta):
 	else:
 		_hand_l_ik_target_interpolation = 0
 		_hand_r_ik_target_interpolation = 0
-		
 	pass
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if _inited:
-		if foot_ik_enabled:
-			_process_foot_ik(delta)
-			_process_hands_ik(delta)
+		_process_foot_ik(delta)
+		_process_hands_ik(delta)
+		_process_body_ik(delta)
 		_update_state(delta)
 	pass
 
 func _process_hands_ik(delta):
 	pass
 
+func _process_body_ik(delta):
+	if body_ik_enabled:
+		print('kek')
+		body_ik.interpolation = lerpf(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), 0.1)
+		body_target.rotation_degrees.y = move_toward(body_target.rotation_degrees.y, body_target_rotation_y, 90 * delta)
+		body_target.rotation_degrees.x = move_toward(body_target.rotation_degrees.x, body_target_rotation_x, 90 * delta)
+		body_target.rotation_degrees.z = move_toward(body_target.rotation_degrees.z, body_target_rotation_z, 90 * delta)
+		#body_target.rotation_degrees.y = body_target_rotation_y
+
 func _process_foot_ik(delta):
-	foot_l_ray.global_position = Vector3(
-		foot_l_bone_tracker.global_position.x,
-		foot_l_bone_tracker.global_position.y + 1,
-		foot_l_bone_tracker.global_position.z,
-	)
-	
-	foot_r_ray.global_position = Vector3(
-		foot_r_bone_tracker.global_position.x,
-		foot_r_bone_tracker.global_position.y + 1,
-		foot_r_bone_tracker.global_position.z,
-	)
-	
-	if character.is_touching_floor():
-		if foot_l_ray.is_colliding():
-			var point = foot_l_ray.get_collision_point()
-			_foot_l_target_offset = clampf(point.y - global_position.y, 0, 1)
-			_foot_ik_target_interpolation = foot_ik_interpolation_max
-		else:
-			_foot_l_target_offset = 0
-			_foot_ik_target_interpolation = 0
+	if foot_ik_enabled:
+		foot_l_ray.global_position = Vector3(
+			foot_l_bone_tracker.global_position.x,
+			foot_l_bone_tracker.global_position.y + 1,
+			foot_l_bone_tracker.global_position.z,
+		)
+		
+		foot_r_ray.global_position = Vector3(
+			foot_r_bone_tracker.global_position.x,
+			foot_r_bone_tracker.global_position.y + 1,
+			foot_r_bone_tracker.global_position.z,
+		)
+		
+		if character.is_touching_floor():
+			if foot_l_ray.is_colliding():
+				var point = foot_l_ray.get_collision_point()
+				_foot_l_target_offset = clampf(point.y - global_position.y, 0, 1)
+				_foot_ik_target_interpolation = foot_ik_interpolation_max
+			else:
+				_foot_l_target_offset = 0
+				_foot_ik_target_interpolation = 0
+				
+			if foot_r_ray.is_colliding():
+				var point = foot_r_ray.get_collision_point()
+				_foot_r_target_offset =  clampf(point.y - global_position.y, 0, 1)
+				_foot_ik_target_interpolation = foot_ik_interpolation_max
+			else:
+				_foot_r_target_offset = 0
+				_foot_ik_target_interpolation= 0
+			pass
 			
-		if foot_r_ray.is_colliding():
-			var point = foot_r_ray.get_collision_point()
-			_foot_r_target_offset =  clampf(point.y - global_position.y, 0, 1)
-			_foot_ik_target_interpolation = foot_ik_interpolation_max
+			if max(_foot_l_target_offset, _foot_r_target_offset, 0) < 0.1:
+				_foot_ik_target_interpolation = 0
+			
 		else:
-			_foot_r_target_offset = 0
-			_foot_ik_target_interpolation= 0
-		pass
-		
-		if max(_foot_l_target_offset, _foot_r_target_offset, 0) < 0.1:
 			_foot_ik_target_interpolation = 0
-		
-	else:
-		_foot_ik_target_interpolation = 0
 		
 func _update_state(delta):
 	if foot_ik_enabled:
