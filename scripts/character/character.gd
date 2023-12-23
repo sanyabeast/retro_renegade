@@ -9,6 +9,7 @@ var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravit
 @export var torch: SpotLight3D
 @export var camera_rig: GameCharacterCameraRig
 @export var phys_interaction: GameCharacterPhysicalInteractionManager
+@export var character_collider: CollisionShape3D
 @export var body_controller: GameCharacterBodyController
 @export var sfx_controller: CharacterSFX
 @export var nav_agent: NavigationAgent3D
@@ -52,13 +53,19 @@ var body_direction: Vector3 = Vector3.FORWARD
 
 var move_to_body_direction_factor: Vector3 = Vector3.ZERO
 
+signal on_crouch_entered
+signal on_crouch_exited
+signal on_jump_started
+signal on_jump_canceled
+signal on_jump_finished(power: float)
+signal on_landed
+
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
 	
 	if body_controller != null:
-		body_controller.character = self
-		body_controller.initialize()
+		body_controller.initialize(self)
 		camera_rig.body_controller = body_controller
 		
 	_prev_global_position = global_position
@@ -75,7 +82,7 @@ func _ready():
 	
 	if phys_interaction != null:
 		dev.logd("GameCharacater %s" % name, "linking player to phys_interaction")
-		phys_interaction.character = self	
+		phys_interaction.initialize(self)
 
 	if nav_agent == null:
 		nav_agent = NavigationAgent3D.new()
@@ -100,7 +107,7 @@ func _setup_tree(node):
 	
 	if nav_agent == null and node is NavigationAgent3D:
 		nav_agent = node	
-		
+	
 	if node is GameCharacterBodyController:
 		node.character = self	
 		node.add_collision_exception_for_body_physics(self)
@@ -113,15 +120,14 @@ func _exit_tree():
 	world.unlink_character(self)
 
 func _process(delta):
-
+	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % move_to_body_direction_factor)
+	
 	travelled += (global_position - _prev_global_position).length()
 	
 	# SFX CONTROLLER CACTIONS COMMITTING
 	# LANDING TRACKING
 	
 	# Direction Factor:
-	
-	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % move_to_body_direction_factor)
 	
 	if not is_touching_floor():
 		ground_travelled = 0
@@ -142,10 +148,11 @@ func _process(delta):
 			
 			air_travelled = 0
 			air_time = 0
+			
+			on_landed.emit()
 	
 	# WALKING / SPRINTING / STAYING
 	if is_touching_floor():
-		 
 		sfx_controller.commit_action(
 			CharacterSFX.EActionType.Walk, 
 			clampf(Vector2(velocity.x, velocity.z).length() / get_walk_speed_max(), 0, 1)
@@ -175,6 +182,8 @@ func _process(delta):
 	current_total_velocity = velocity.length()
 	
 func _physics_process(delta):
+	dev.draw_gizmo_ray(self, "char_velocity", global_position + Vector3.UP, global_position + Vector3.UP + velocity.normalized(), Color.CYAN)
+	
 	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z).normalized()
 	
 	if horizontal_velocity.length() > 0.05:
@@ -289,14 +298,20 @@ func stop_climb():
 	current_climbing_power = 0
 
 func start_jump():
+	if is_crouching:
+		stop_crouch()
+		return
+		
 	if not jump_started and is_touching_floor():
 		current_jump_charge = 0
 		jump_started = true
+		on_jump_started.emit()
 		
 func cancel_jump():
 	if jump_started:
 		jump_started = false
 		current_jump_charge = 0
+		on_jump_finished.emit()
 
 func finish_jump():
 	if jump_started and is_touching_floor():
@@ -306,6 +321,8 @@ func finish_jump():
 		
 		if sfx_controller != null and is_on_floor_only():
 			sfx_controller.commit_action(CharacterSFX.EActionType.JumpStart)
+			
+		on_jump_finished.emit(current_jump_power)
 # SPRINTING
 func start_sprint():
 	current_sprint_power = 1
@@ -317,13 +334,15 @@ func stop_sprint():
 
 # CROUCHING
 func start_crouch():
-	if not is_crouching:
+	if not is_crouching and is_touching_floor() and not is_climbing:
 		is_crouching = true
+		on_crouch_entered.emit()
 	
 func stop_crouch():
 	if is_crouching and is_elevation_allowed():
 		is_crouching = false
-
+		on_crouch_exited.emit()
+	
 # PHYSICAL INTERACTION
 func is_touching_wall()->bool:
 	if phys_interaction != null:
@@ -387,12 +406,11 @@ func next_camera_mode():
 	if camera_rig != null:
 		camera_rig.next_camera_mode()
 
-func get_hand_pin_point():
+func get_hold_anchor():
 	if body_controller != null:
-		return body_controller.hand_pin_point
+		return body_controller.hold_anchor
 
 func get_sprint_speed_max()->float:
-	print(props.sprint_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_sprint_speed_max)
 	return props.sprint_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_sprint_speed_max
 
 func get_walk_speed_max()->float:

@@ -138,7 +138,6 @@ func _process_node(object: Object):
 	if object is Node3D:
 		var node_props = ImportScript.parse_properties(object.name)
 		if "player_spawn" in node_props:
-			print("found spawn player object")
 			players.add_spawn_spot(object)
 		pass
 		

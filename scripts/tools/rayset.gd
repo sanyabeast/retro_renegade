@@ -20,6 +20,9 @@ func remove_exception(node: CollisionObject3D):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	for r in rays:
+		var color = Color.LIGHT_CORAL if r.is_colliding() else Color.GREEN_YELLOW
+		dev.draw_gizmo_ray(self, 'ray%s' % r.name, r.global_position, r.to_global(r.target_position), color)
 	pass
 	
 func is_any_colliding()->bool:
@@ -34,7 +37,7 @@ func is_all_colliding()->bool:
 			return false
 	return true
 	
-func get_first_colliding() -> RayCast3D:
+func get_first_colliding_ray() -> RayCast3D:
 	for ray in rays:
 		if ray.is_colliding():
 			return ray

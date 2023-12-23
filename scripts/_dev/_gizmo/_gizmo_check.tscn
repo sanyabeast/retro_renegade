@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdy846n8xdfgi"]
+
+[ext_resource type="SphereMesh" uid="uid://da5vj2wwguoj4" path="res://scripts/_dev/_gizmo/_sphere_gizmo.tres" id="1_r62t6"]
+[ext_resource type="BoxMesh" uid="uid://drcedogw2j1a6" path="res://scripts/_dev/_gizmo/_cube_gizmo.tres" id="2_6r15t"]
+[ext_resource type="PrismMesh" uid="uid://cu63w0mo07deb" path="res://scripts/_dev/_gizmo/_ray_gizmo.tres" id="2_upjqj"]
+
+[node name="GizmoCheck" type="Node3D"]
+
+[node name="Sphere" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_r62t6")
+
+[node name="Cube" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_6r15t")
+
+[node name="Ray" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_upjqj")

@@ -179,7 +179,6 @@ func _process_hands_ik(delta):
 
 func _process_body_ik(delta):
 	if body_ik_enabled:
-		print('kek')
 		body_ik.interpolation = lerpf(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), 0.1)
 		body_target.rotation_degrees.y = move_toward(body_target.rotation_degrees.y, body_target_rotation_y, 90 * delta)
 		body_target.rotation_degrees.x = move_toward(body_target.rotation_degrees.x, body_target_rotation_x, 90 * delta)

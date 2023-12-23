@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeStateMachine" load_steps=9 format=3 uid="uid://gmg6i88uymyd"]
+[gd_resource type="AnimationNodeStateMachine" load_steps=11 format=3 uid="uid://gmg6i88uymyd"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f5pu7"]
 animation = &"Idle"
@@ -12,6 +12,12 @@ animation = &"Fall"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4purh"]
 animation = &"Run"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_u14i2"]
+animation = &"CrouchIdle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ikooy"]
+animation = &"CrouchWalk"
+
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_upjyr"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_f5pu7")
 blend_point_0/pos = Vector2(-1, 0)
@@ -21,11 +27,16 @@ blend_point_2/node = SubResource("AnimationNodeAnimation_nadj3")
 blend_point_2/pos = Vector2(0, 1)
 blend_point_3/node = SubResource("AnimationNodeAnimation_4purh")
 blend_point_3/pos = Vector2(1, 0)
+blend_point_4/node = SubResource("AnimationNodeAnimation_u14i2")
+blend_point_4/pos = Vector2(-1, -0.9)
+blend_point_5/node = SubResource("AnimationNodeAnimation_ikooy")
+blend_point_5/pos = Vector2(0, -1)
 sync = true
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_84bei"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_f5c2u"]
+graph_offset = Vector2(-481.894, -42.2773)
 nodes/move_blend_space/node = SubResource("AnimationNodeBlendSpace2D_upjyr")
 nodes/move_blend_space/position = Vector2(100, 60)
 nodes/move_blend_space_scale/node = SubResource("AnimationNodeTimeScale_84bei")

@@ -1,0 +1,12 @@
+[gd_resource type="PrismMesh" load_steps=3 format=3 uid="uid://cu63w0mo07deb"]
+
+[ext_resource type="Shader" path="res://resources/shaders/color_fill.gdshader" id="1_f43uq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rgxpe"]
+render_priority = 0
+shader = ExtResource("1_f43uq")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+
+[resource]
+material = SubResource("ShaderMaterial_rgxpe")
+size = Vector3(0.025, 1, 0.025)

@@ -4,13 +4,15 @@ class_name GameCharacterBodyControllerSkeletonBasic
 
 @export_subgroup("Skeletong Pin Points to Bone Attachment")
 @export var head_bone_name: String = "mixamorig_Head"
-@export var hand_bone_name: String = "mixamorig_RightHand"
-@export var chest_bone_name: String = "mixamorig_Spine"
-@export var eyes_pin_point_offset: float = 0.25
-@export var physics_body_anchor: Node3D
+@export var hips_bone_name: String = "mixamorig_Hips"
+
+@export var eyes_anchor_offset: float = 0.25
 
 @export_subgroup("IK")
 @export var ik_controller: GameCharacterBodyIKController
+
+var head_bone_tracker: BoneAttachment3D
+var hips_bone_tracker: BoneAttachment3D
 
 var _physical_bones: Array[PhysicalBone3D] = []
 var _direction_switch_interpolation_speed: float = 3
@@ -36,29 +38,20 @@ func _setup_tree(node):
 	
 	if node is PhysicalBone3D:
 		_physical_bones.append(node)
-		
-		if physics_body_anchor == null:
-			physics_body_anchor = node
 			
 	if node is GameCharacterBodyIKController:
 		ik_controller = node
 
 func _setup_pin_points():
-	if head_pin_point == null and head_bone_name != "":
-		head_pin_point = BoneAttachment3D.new()
-		head_pin_point.bone_name = head_bone_name
-		_skeleton.add_child(head_pin_point)
-		eyes_pin_point = Node3D.new()
-		eyes_pin_point.position.z = eyes_pin_point_offset
-		head_pin_point.add_child(eyes_pin_point)
-	if hand_pin_point == null and hand_bone_name != "":
-		hand_pin_point = BoneAttachment3D.new()
-		hand_pin_point.bone_name = hand_bone_name
-		_skeleton.add_child(hand_pin_point)
-	if chest_pin_point == null and chest_bone_name != "":
-		chest_pin_point = BoneAttachment3D.new()
-		chest_pin_point.bone_name = chest_bone_name	
-		_skeleton.add_child(chest_pin_point)
+	if head_bone_name != "":
+		head_bone_tracker = BoneAttachment3D.new()
+		head_bone_tracker.bone_name = head_bone_name
+		_skeleton.add_child(head_bone_tracker)
+		
+	if hips_bone_name != "":
+		hips_bone_tracker = BoneAttachment3D.new()
+		hips_bone_tracker.bone_name = hips_bone_name
+		_skeleton.add_child(hips_bone_tracker)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _update_body_state(delta):
@@ -75,7 +68,7 @@ func stop_body_physics():
 	_skeleton.physical_bones_stop_simulation()
 
 func get_physics_body_anchor_transform()-> Transform3D:
-	if physics_body_anchor != null:
-		return physics_body_anchor.global_transform
+	if hips_bone_tracker != null:
+		return hips_bone_tracker.global_transform
 	else:
 		return character.global_transform

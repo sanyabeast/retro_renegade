@@ -1,4 +1,4 @@
-extends CollisionShape3D
+extends Node3D
 
 class_name GameCharacterBodyController
 
@@ -17,11 +17,18 @@ enum ECharacterBodyActionType {
 
 @export var animation_script: GameCharacterBodyAnimationScript
 
+@export_subgroup("Default Stance Collision")
+@export var stand_collider_shape: Shape3D
+@export var stand_collider_position: Vector3 = Vector3(0, 0.9, 0)
+
+@export_subgroup("Crouch Stance Collision")
+@export var crouch_collider_shape: Shape3D
+@export var crouch_collider_position: Vector3 = Vector3(0, 0.45, 0)
+
 @export_subgroup("Pin Points")
-@export var head_pin_point: Node3D
-@export var eyes_pin_point: Node3D
-@export var hand_pin_point: Node3D
-@export var chest_pin_point: Node3D
+@export var head_anchor: Node3D
+@export var eyes_anchor: Node3D
+@export var hold_anchor: Node3D
 
 var character: GameCharacter
 var _animation_player: AnimationPlayer
@@ -44,21 +51,24 @@ func _ready():
 	_setup_pin_points()
 	
 	if character != null:
-		initialize()
+		initialize(character)
 	
 	pass # Replace with function body.
 
-func initialize():
+func initialize(_character: GameCharacter):
+	character = _character
+	
 	if animation_script != null:
 		animation_script.initialize(self)
+		
+	character.on_crouch_entered.connect(_enable_character_crouch_collision)
+	character.on_crouch_exited.connect(_enable_character_stand_collision)
 
 func _setup_pin_points():
-	if head_pin_point == null:
-		head_pin_point = self
-	if hand_pin_point == null:
-		hand_pin_point = self
-	if chest_pin_point == null:
-		chest_pin_point = self
+	if head_anchor == null:
+		head_anchor = self
+	if hold_anchor == null:
+		hold_anchor = self
 	pass
 
 func _setup_tree(node):
@@ -94,6 +104,10 @@ func _process(delta):
 	
 	_prev_body_direction = character.global_transform.basis.z
 	pass
+	
+	dev.draw_gizmo_sphere(self, "head_anchor", head_anchor.global_position, 0.2, Color.CYAN)
+	dev.draw_gizmo_sphere(self, "hips_anchor", head_anchor.global_position, 0.2, Color.LIGHT_SEA_GREEN)
+	dev.draw_gizmo_sphere(self, "hold_anchor", hold_anchor.global_position, 0.2, Color.AQUAMARINE)
 
 func commit_landing(impact_power: float = 0):
 	pass
@@ -128,7 +142,6 @@ func _get_action_type_id(action_type: ECharacterBodyActionType):
 func _get_animation_state_id(stance: ECharacterBodyStance, action_type: ECharacterBodyActionType)-> String:
 	return _get_stance_id(stance) + "_" + _get_action_type_id(action_type)
 
-
 # BODY PHYSICS
 func add_collision_exception_for_body_physics(node)->void:
 	if node != character:
@@ -149,3 +162,12 @@ func start_body_physics():
 func stop_body_physics():
 	pass
 
+func _enable_character_stand_collision():
+	character.character_collider.shape = stand_collider_shape
+	character.character_collider.position = stand_collider_position
+	pass
+	
+func _enable_character_crouch_collision():
+	character.character_collider.shape = crouch_collider_shape
+	character.character_collider.position = crouch_collider_position
+	pass

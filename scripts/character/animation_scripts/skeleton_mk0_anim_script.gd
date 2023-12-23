@@ -43,7 +43,7 @@ func on_setup():
 	pass
 	
 func _process(delta):
-	var bc: GameCharacterBodyControllerSkeletonBasic = body_controller as GameCharacterBodyControllerSkeletonBasic
+	var bc = body_controller
 	var character = bc.character
 	
 	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, horizontal_blend_transition_speed * delta)

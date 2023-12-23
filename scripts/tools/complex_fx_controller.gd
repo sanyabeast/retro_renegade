@@ -58,7 +58,7 @@ func _traverse(node):
 	if node is AudioStreamPlayer3D:
 		audio_players.append(node)	
 		var pl = node as AudioStreamPlayer3D
-		print("volume added", volume_addent)
+		
 		pl.volume_db += lerpf(-32, 32, (volume_addent / 2) + 0.5)
 		pl.pitch_scale *= pitch_multiplier
 	
@@ -97,6 +97,10 @@ func _add_particle_system(data: PackedScene):
 func _process(delta):
 	if _timer_gate.check("health", 1):
 		check_tasks()
+		
+	for ap in audio_players:
+		if ap.max_distance > 0:
+			dev.draw_gizmo_sphere(self, 'audio-player%s' % ap.get_instance_id(), ap.global_position, ap.max_distance, Color.CORAL)
 
 func check_tasks():
 	var active_particle_systems = 0

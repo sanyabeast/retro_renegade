@@ -1,0 +1,16 @@
+[gd_resource type="SphereMesh" load_steps=3 format=3 uid="uid://da5vj2wwguoj4"]
+
+[ext_resource type="Shader" path="res://resources/shaders/wireframe_a.gdshader" id="1_ji4k8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1tnjl"]
+render_priority = 1
+shader = ExtResource("1_ji4k8")
+shader_parameter/albedo = Color(1, 1, 1, 0)
+shader_parameter/wire_color = Color(1, 0, 0, 1)
+shader_parameter/wire_width = 0.4
+shader_parameter/wire_smoothness = 0.0
+
+[resource]
+material = SubResource("ShaderMaterial_1tnjl")
+radial_segments = 16
+rings = 8
