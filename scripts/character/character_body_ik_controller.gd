@@ -42,7 +42,7 @@ class_name GameCharacterBodyIKController
 @export_subgroup("Body IK")
 @export var body_ik_enabled: bool = true
 @export var body_ik_interpolation_max: float = 0.75
-@export var body_ik_interpolation_transition_speed: float = 3
+@export var body_ik_interpolation_transition_speed: float = 1.5
 
 @export var body_target_interpolation: float = 0.7
 @export var body_target_rotation_y: float = 0
@@ -237,11 +237,27 @@ func _update_state(delta):
 		foot_r_ik.interpolation = lerpf(foot_r_ik.interpolation, _foot_ik_target_interpolation, 0.1)
 		
 	if hands_ik_enabled:
-		hand_l_ik.interpolation = lerpf(hand_l_ik.interpolation, _hand_l_ik_target_interpolation, 0.1)
-		hand_r_ik.interpolation = lerpf(hand_r_ik.interpolation, _hand_r_ik_target_interpolation, 0.1)
+		hand_l_ik.interpolation = move_toward(hand_l_ik.interpolation, _hand_l_ik_target_interpolation, hands_ik_interpolation_transition_speed * delta)
+		hand_r_ik.interpolation = move_toward(hand_r_ik.interpolation, _hand_r_ik_target_interpolation, hands_ik_interpolation_transition_speed * delta)
+	
+		if hand_l_ik.interpolation < 0.01 and hand_l_ik.is_running():
+			hand_l_ik.stop()
+		elif  hand_l_ik.interpolation >= 0.01 and not hand_l_ik.is_running():
+			hand_l_ik.start()
+	
+		if hand_r_ik.interpolation < 0.01 and hand_r_ik.is_running():
+			hand_r_ik.stop()
+		elif  hand_r_ik.interpolation >= 0.01 and not hand_r_ik.is_running():
+			hand_r_ik.start()
 	
 	if body_ik_enabled:
-		body_ik.interpolation = lerpf(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), 0.1)
+		body_ik.interpolation = move_toward(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), body_ik_interpolation_transition_speed * delta)
+		
+		if body_ik.interpolation < 0.01 and body_ik.is_running():
+			body_ik.stop()
+		elif  body_ik.interpolation >= 0.01 and not body_ik.is_running():
+			body_ik.start()
+
 
 # CALLBACKS
 func _handle_crouch_entered():

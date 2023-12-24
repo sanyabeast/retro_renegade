@@ -12,6 +12,13 @@ class_name GameCharacterBodyAnimationScriptMK0
 @export var body_crouched_bend_angle: float = 15
 @export var body_crouched_tilt_max_angle: float = 5
 
+@export_subgroup("Animation Style")
+@export var walk_style: float = 0
+@export var run_style: float = 0
+@export var idle_style: float = 0
+@export var crouch_idle_style: float = 0
+@export var fall_style: float = 0
+
 @export_subgroup("Transitions and Blending")
 @export var vertical_blend_transition_speed: float = 4
 @export var horizontal_blend_transition_speed: float = 8
@@ -63,8 +70,8 @@ func _process(delta):
 	
 	_directional_velocity_factor_interpolated = move_toward(_directional_velocity_factor_interpolated, clampf(bc._current_character_directional_velocity, -1, 1), 16 * delta)
 
-	#animation_tree["parameters/conditions/move"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
-	#animation_tree["parameters/conditions/climb"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Climb
+	animation_tree["parameters/conditions/move"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
+	animation_tree["parameters/conditions/climb"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Climb
 	
 	# OBJECT HOLDING
 	match bc.current_action_type:
@@ -91,9 +98,6 @@ func _process(delta):
 				_current_v_blend_value
 			)
 			
-		
-			#bc.ik_controller.body_target_rotation_y = lerpf(150, 210, (character.move_to_body_direction_factor.x + 1) / 2)
-			
 			var fx: float = character.move_to_body_direction_factor.x
 			var fz: float = character.move_to_body_direction_factor.z
 			
@@ -114,28 +118,33 @@ func _process(delta):
 			
 			if fz >= -0.1:
 				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(max_twist_angle, -max_twist_angle, (fx + 1) / 2), 180 * delta)
-				bc.ik_controller.body_target_rotation_y = lerpf(170, 190, (fx + 1) / 2)
+				bc.ik_controller.body_target_rotation_y = lerpf(-10, 10, (fx + 1) / 2)
 			else:
 				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(-max_twist_angle, max_twist_angle, (fx + 1) / 2) , 180 * delta)
-				bc.ik_controller.body_target_rotation_y = lerpf(190, 170, (fx + 1) / 2)
+				bc.ik_controller.body_target_rotation_y = lerpf(10, -10, (fx + 1) / 2)
 			
 			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, (fz + 1) / 2)
 			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, (fx + 1) / 2)
 			
 			animation_tree["parameters/move/move_blend_space_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * move_animation_speed_scale
 			
-			#animation_tree["parameters/move_scaler/move_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < 0 else 1) * move_animation_speed_scale
+			# STYLES
+			animation_tree["parameters/move/move_blend_space/2/blend_position"] = walk_style
+			animation_tree["parameters/move/move_blend_space/3/blend_position"] = run_style
+			animation_tree["parameters/move/move_blend_space/4/blend_position"] = idle_style
+			animation_tree["parameters/move/move_blend_space/5/blend_position"] = fall_style
+			animation_tree["parameters/move/move_blend_space/6/blend_position"] = crouch_idle_style
 			
-			# directional movement animations
-			#animation_tree["parameters/move_scaler/move/5/move_direct/blend_position"] = _move_to_direction_factor_interpolated
-			#animation_tree["parameters/move_scaler/move/6/run_direct/blend_position"] = _move_to_direction_factor_interpolated
-		
+			bc.ik_controller.body_target_interpolation = 0.5
+			
 		GameCharacterBodyController.ECharacterBodyActionType.Climb:
-			#animation_tree["parameters/climb_scaler/climb/blend_position"] = Vector2(
-				#character.move_to_body_direction_factor.x,
-				#character.move_to_body_direction_factor.y
-			#)
-			#animation_tree["parameters/climb_scaler/climb_scale/scale"] = 1
+			body_scene_root_node.rotation_degrees.y = 0
+			bc.ik_controller.body_target_rotation_x = 0
+			bc.ik_controller.body_target_rotation_y = 0
+			bc.ik_controller.body_target_rotation_z = 0
+			
+			bc.ik_controller.body_target_interpolation = 0
+			
 			pass
 	pass
 	pass
