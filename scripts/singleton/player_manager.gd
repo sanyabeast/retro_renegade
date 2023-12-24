@@ -74,7 +74,7 @@ func _process(delta):
 		dev.print_screen("character_air_time", "character time (air): %.2f s" % current.air_time)
 		dev.print_screen("character_ground_time", "character time (ground): %.2f s" % current.ground_time)
 		dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((current.travelled - current.climbing_start_distance) if current.is_climbing else 0))
-	
+		dev.print_screen("character_dirvel", "character direcional velocity: %.2f m" % current.body_controller._current_character_directional_velocity)
 
 func _physics_process(delta):
 	process_user_input()

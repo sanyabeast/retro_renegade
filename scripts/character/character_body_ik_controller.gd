@@ -42,7 +42,7 @@ class_name GameCharacterBodyIKController
 @export_subgroup("Body IK")
 @export var body_ik_enabled: bool = true
 @export var body_ik_interpolation_max: float = 0.75
-@export var body_ik_interpolation_transition_speed: float = 4
+@export var body_ik_interpolation_transition_speed: float = 3
 
 @export var body_target_interpolation: float = 0.7
 @export var body_target_rotation_y: float = 0
