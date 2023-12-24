@@ -25,10 +25,20 @@ enum ECharacterBodyActionType {
 @export var crouch_collider_shape: Shape3D
 @export var crouch_collider_position: Vector3 = Vector3(0, 0.45, 0)
 
-@export_subgroup("Pin Points")
+@export_subgroup("Anchors")
 @export var head_anchor: Node3D
+@export var hips_anchor: Node3D
+
+@export_subgroup("Eyes Anchor")
 @export var eyes_anchor: Node3D
+@export var eyes_anchor_offset: Vector3 = Vector3.FORWARD * 0.25
+
+@export_subgroup("Hold Anchor")
 @export var hold_anchor: Node3D
+@export var hold_anchor_left: Node3D
+@export var hold_anchor_right: Node3D
+@export var hold_offset_crouch: float = 0.05
+@export var hold_offset_stand: float = 0.6
 
 var character: GameCharacter
 var _animation_player: AnimationPlayer
@@ -48,7 +58,7 @@ var _prev_body_direction: Vector3 = Vector3.ZERO
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_setup_tree(self)
-	_setup_pin_points()
+	_setup_anchors()
 	
 	if character != null:
 		initialize(character)
@@ -58,13 +68,20 @@ func _ready():
 func initialize(_character: GameCharacter):
 	character = _character
 	
+	add_collision_exception_for_body_physics(character)
+	
 	if animation_script != null:
 		animation_script.initialize(self)
 		
 	character.on_crouch_entered.connect(_enable_character_crouch_collision)
 	character.on_crouch_exited.connect(_enable_character_stand_collision)
 
-func _setup_pin_points():
+	if eyes_anchor == null:
+		eyes_anchor = Node3D.new()
+		eyes_anchor.position = eyes_anchor_offset
+		head_anchor.add_child(eyes_anchor)
+
+func _setup_anchors():
 	if head_anchor == null:
 		head_anchor = self
 	if hold_anchor == null:
@@ -82,6 +99,20 @@ func _setup_tree(node):
 	if node is Skeleton3D:
 		_skeleton = node	
 
+	if node is Node3D:
+		match node.name:
+			"HeadAnchor":
+				head_anchor = node
+			"HoldAnchor":
+				hold_anchor = node
+			"HoldAnchorLeft":
+				hold_anchor_left = node
+			"HoldAnchorRight":
+				hold_anchor_right = node		
+			"HipsAnchor":
+				hips_anchor = node	
+			"EyesAnchor":
+				eyes_anchor = node	
 	if node is GameCharacterBodyAnimationScript:
 		animation_script = node
 
@@ -105,9 +136,13 @@ func _process(delta):
 	_prev_body_direction = character.global_transform.basis.z
 	pass
 	
+	eyes_anchor.global_position = head_anchor.to_global(eyes_anchor_offset)
+	hold_anchor.global_position.y = lerpf(hips_anchor.global_position.y, head_anchor.global_position.y, hold_offset_crouch if character.is_crouching else hold_offset_stand)
+	
 	dev.draw_gizmo_sphere(self, "head_anchor", head_anchor.global_position, 0.2, Color.CYAN)
 	dev.draw_gizmo_sphere(self, "hips_anchor", head_anchor.global_position, 0.2, Color.LIGHT_SEA_GREEN)
 	dev.draw_gizmo_sphere(self, "hold_anchor", hold_anchor.global_position, 0.2, Color.AQUAMARINE)
+	dev.draw_gizmo_sphere(self, "eyes_anchor", eyes_anchor.global_position, 0.1, Color.PALE_TURQUOISE)
 
 func commit_landing(impact_power: float = 0):
 	pass

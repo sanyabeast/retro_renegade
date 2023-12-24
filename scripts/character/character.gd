@@ -72,6 +72,9 @@ func _ready():
 	world.link_character(self)
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
+	if body_controller != null:
+		body_controller.initialize(self)
+	
 	if camera_rig != null:
 		dev.logd("GameCharacater %s" % name, "linking player to camera_rig")
 		camera_rig.character = self
@@ -106,16 +109,22 @@ func _setup_tree(node):
 		sfx_controller = node	
 	
 	if nav_agent == null and node is NavigationAgent3D:
-		nav_agent = node	
-	
-	if node is GameCharacterBodyController:
-		node.character = self	
-		node.add_collision_exception_for_body_physics(self)
+		nav_agent = node
 	
 	# Recursively call this function on all children
 	for child in node.get_children():
 		_setup_tree(child)
 
+func add_collision_exception(collider):
+	add_collision_exception_with(collider)
+	body_controller.add_collision_exception_for_body_physics(collider)
+	phys_interaction.add_exception(collider)
+
+func remove_collision_exception(collider):
+	remove_collision_exception_with(collider)
+	body_controller.remove_collision_exception_for_body_physics(collider)
+	phys_interaction.remove_exception(collider)
+	
 func _exit_tree():
 	world.unlink_character(self)
 

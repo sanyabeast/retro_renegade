@@ -10,17 +10,23 @@ class_name GameCharacterPhysicalInteractionManager
 
 @export_subgroup("Ceil Cast")
 @export var ceil_rayset: RaySet
+@export var ceil_rayset_offset: Vector3 = Vector3.DOWN * 0.5
 
-var current_hand_manipulation_target: RigidBody3D
+var held_object: RigidBody3D
 var hand_manipulation_close_grip: bool = false
 
 var elevation_allowed: bool = true
 var is_touching_wall: bool = false
+var is_holding_object: bool = false
 
 var _hand_manipulation_target_dimensions: AABB = AABB(Vector3.ZERO, Vector3.ZERO)
 
 ## Automatically sets by GameCharacter class
 @export var character: GameCharacter
+
+signal on_object_grab(obj: Node3D)
+signal on_object_drop(obj: Node3D)
+signal on_object_throw(obj: Node3D)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -59,6 +65,18 @@ func add_exception(node):
 	if ceil_rayset != null:
 		ceil_rayset.add_exception(node)
 
+func remove_exception(node):
+	camera_raycast.remove_exception(node)
+	
+	if top_front_cast != null:
+		top_front_cast.remove_exception(node)
+	
+	if bottom_front_cast != null:
+		bottom_front_cast.remove_exception(node)
+		
+	if ceil_rayset != null:
+		ceil_rayset.remove_exception(node)
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	_check_physical_object_in_hand(delta)
@@ -96,7 +114,7 @@ func _check_ceil(delta):
 	var new_elevation_allowed: bool = true
 	
 	if ceil_rayset != null:
-		ceil_rayset.global_position = character.body_controller.head_anchor.global_position
+		ceil_rayset.global_position = character.body_controller.head_anchor.global_position + ceil_rayset_offset
 		
 		var obj = ceil_rayset.get_first_colliding_ray()
 		if obj != null:
@@ -106,22 +124,22 @@ func _check_ceil(delta):
 	elevation_allowed = new_elevation_allowed
 			
 func _check_physical_object_in_hand(delta):
-	if character != null and character.get_hold_anchor() != null:
-		if current_hand_manipulation_target != null:
-			var distance: float = current_hand_manipulation_target.global_position.distance_to(character.global_position)
-			
-			current_hand_manipulation_target.linear_velocity = (character.get_hold_anchor().global_position - current_hand_manipulation_target.global_position) * character.props.hand_manipulation_pull_force * get_hand_manipulation_mass_penalty() * delta		
-			hand_manipulation_close_grip = current_hand_manipulation_target.global_position.distance_to(character.get_hold_anchor().global_position) < character.props.hand_manipulation_close_grip_distance
-			
-			if distance > app.config.character_physical_interaction_grab_fail_distance + app.config.character_physical_interaction_grab_max_distance:
-				dev.logd("GameCharacterPhysicalInteractionManager", "hand manipulated item is missed due to distance")
-				stop_grab()
+	if held_object != null:
+		var hold_anchor = character.body_controller.hold_anchor
+		var distance: float = held_object.global_position.distance_to(character.global_position)
+		
+		held_object.linear_velocity = (hold_anchor.global_position - held_object.global_position) * character.props.hand_manipulation_pull_force * get_hand_manipulation_mass_penalty() * delta		
+		hand_manipulation_close_grip = held_object.global_position.distance_to(hold_anchor.global_position) < character.props.hand_manipulation_close_grip_distance
+		
+		if distance > app.config.character_physical_interaction_grab_fail_distance + app.config.character_physical_interaction_grab_max_distance:
+			dev.logd("GameCharacterPhysicalInteractionManager", "hand manipulated item is missed due to distance")
+			stop_grab()
 				
-	dev.print_screen("hand manipulation", "hand manip. target: %s" % ("none" if current_hand_manipulation_target == null else current_hand_manipulation_target.name))	
+	dev.print_screen("hand manipulation", "hand manip. target: %s" % ("none" if held_object == null else held_object.name))	
 	dev.print_screen("hand manipulation mass penalty", "hand manip. penalty: %s" % tools.progress_to_percentage(get_hand_manipulation_mass_penalty()))
 	
 func start_grab():
-	if current_hand_manipulation_target == null and  camera_raycast.is_colliding():
+	if held_object == null and  camera_raycast.is_colliding():
 		var collider = camera_raycast.get_collider()
 		if collider is RigidBody3D:
 			var distance = character.global_position.distance_to(collider.global_position)
@@ -131,26 +149,34 @@ func start_grab():
 				if collider_mesh != null:
 					_hand_manipulation_target_dimensions = collider_mesh.mesh.get_aabb()
 				
-				character.body_controller.add_collision_exception_for_body_physics(collider)
-				current_hand_manipulation_target = collider
+				character.add_collision_exception(collider)
+				held_object = collider
+				
+				is_holding_object = true
+				
+				on_object_grab.emit(held_object)
 				hand_manipulation_close_grip = false
 	
 func stop_grab():
-	if current_hand_manipulation_target != null:
-		character.body_controller.remove_collision_exception_for_body_physics(current_hand_manipulation_target)
-		current_hand_manipulation_target.linear_velocity = Vector3.UP * character.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
-		current_hand_manipulation_target = null
+	if held_object != null:
+		held_object.linear_velocity = Vector3.UP * character.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
+		on_object_drop.emit(held_object)
+		character.remove_collision_exception(held_object)
+		held_object = null
+		is_holding_object = false
 		
 func start_throw():
-	if current_hand_manipulation_target != null:
+	if held_object != null:
 		var ray_direction = tools.get_global_forward_vector(camera_raycast)
-		current_hand_manipulation_target.linear_velocity = (ray_direction + (Vector3.UP * character.props.hand_manipulation_throw_ballistics)).normalized() * character.props.hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
-		current_hand_manipulation_target.remove_collision_exception_with(character)
-		current_hand_manipulation_target = null
+		held_object.linear_velocity = (ray_direction + (Vector3.UP * character.props.hand_manipulation_throw_ballistics)).normalized() * character.props.hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
+		character.remove_collision_exception(held_object)
+		on_object_throw.emit(held_object)
+		held_object = null
+		is_holding_object = false
 		
 func get_hand_manipulation_mass_penalty() -> float:
-	if current_hand_manipulation_target != null:
-		return 1. - clampf((current_hand_manipulation_target.mass / character.props.hand_manipulation_max_weight), 0, 1)
+	if held_object != null:
+		return 1. - clampf((held_object.mass / character.props.hand_manipulation_max_weight), 0, 1)
 	else:
 		return 0
 

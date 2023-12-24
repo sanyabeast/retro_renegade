@@ -8,6 +8,9 @@ enum EGameCharacterCameraMode {
 	ThirdPerson
 }
 
+
+@export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.Auto
+
 @export_subgroup("First Person Camera")
 @export var camera_1p: Camera3D
 @export var camera_1p_rig: Node3D
@@ -22,8 +25,7 @@ enum EGameCharacterCameraMode {
 @export var camera_3p_attitude_max: float = 0
 @export var camera_3p_sensitivity: float = 1
 
-@export var camera_mode: EGameCharacterCameraMode = EGameCharacterCameraMode.Auto
-
+@export_subgroup("REFERECNCIES")
 @export var body_controller: GameCharacterBodyController
 
 var character: GameCharacter

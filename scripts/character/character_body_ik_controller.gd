@@ -36,13 +36,15 @@ class_name GameCharacterBodyIKController
 @export var hands_ik_enabled: bool = true
 @export var hands_ik_interpolation_max: float = 0.75
 @export var hands_ik_interpolation_transition_speed: float = 4
+@export var _hand_l_target_object: Node3D
+@export var _hand_r_target_object: Node3D
 
 @export_subgroup("Body IK")
 @export var body_ik_enabled: bool = true
 @export var body_ik_interpolation_max: float = 0.75
 @export var body_ik_interpolation_transition_speed: float = 4
 
-@export var body_target_interpolation: float = 0.75
+@export var body_target_interpolation: float = 0.7
 @export var body_target_rotation_y: float = 0
 @export var body_target_rotation_x: float = 0
 @export var body_target_rotation_z: float = 0
@@ -53,8 +55,8 @@ class_name GameCharacterBodyIKController
 ## Automatically assigned by GameCharacterBodyController
 @export var character: GameCharacter
 
-var _hand_l_ik_target_interpolation: float = 0.5
-var _hand_r_ik_target_interpolation: float = 0.5
+var _hand_l_ik_target_interpolation: float = 0.0
+var _hand_r_ik_target_interpolation: float = 0.0
 
 var _foot_ik_target_interpolation: float = 0.5
 var _foot_r_target_offset: float = 0
@@ -91,7 +93,6 @@ func initialize():
 				hand_l_ik.start()
 				hand_r_ik.start()
 				
-				
 		if body_ik_enabled:
 			if body_ik != null and body_target != null:
 				body_target.rotation_degrees.x = body_target_rotation_x
@@ -104,6 +105,8 @@ func initialize():
 				assert(body_ik != null, "GameCharacterBodyIKController: Body IK: body_ik must be set up to function")
 				assert(body_target != null, "GameCharacterBodyIKController: Body IK: body_target must be set up to function")
 		
+		character.on_crouch_entered.connect(_handle_crouch_entered)
+		character.on_crouch_exited.connect(_handle_crouch_exited)
 	
 	pass
 	
@@ -157,12 +160,6 @@ func _setup_tree(node):
 	
 func _process(delta):
 	# TEST CODE !
-	if character.phys_interaction.current_hand_manipulation_target != null:
-		_hand_l_ik_target_interpolation = 1
-		_hand_r_ik_target_interpolation = 1
-	else:
-		_hand_l_ik_target_interpolation = 0
-		_hand_r_ik_target_interpolation = 0
 	pass
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -175,11 +172,19 @@ func _physics_process(delta):
 	pass
 
 func _process_hands_ik(delta):
+	if _hand_l_target_object != null:
+		hand_l_target.global_position = hand_l_target.global_position.move_toward(
+			_hand_l_target_object.global_position, 
+			0.75 * delta
+		)
+		hand_r_target.global_position = hand_r_target.global_position.move_toward(
+			_hand_r_target_object.global_position,
+			0.75 * delta
+		)
 	pass
 
 func _process_body_ik(delta):
 	if body_ik_enabled:
-		body_ik.interpolation = lerpf(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), 0.1)
 		body_target.rotation_degrees.y = move_toward(body_target.rotation_degrees.y, body_target_rotation_y, 90 * delta)
 		body_target.rotation_degrees.x = move_toward(body_target.rotation_degrees.x, body_target_rotation_x, 90 * delta)
 		body_target.rotation_degrees.z = move_toward(body_target.rotation_degrees.z, body_target_rotation_z, 90 * delta)
@@ -235,3 +240,29 @@ func _update_state(delta):
 		hand_l_ik.interpolation = lerpf(hand_l_ik.interpolation, _hand_l_ik_target_interpolation, 0.1)
 		hand_r_ik.interpolation = lerpf(hand_r_ik.interpolation, _hand_r_ik_target_interpolation, 0.1)
 	
+	if body_ik_enabled:
+		body_ik.interpolation = lerpf(body_ik.interpolation, min(body_target_interpolation, body_ik_interpolation_max), 0.1)
+
+# CALLBACKS
+func _handle_crouch_entered():
+	body_ik.override_tip_basis = false
+	pass
+	
+func _handle_crouch_exited():
+	body_ik.override_tip_basis = false
+	pass
+
+func set_hands_target_objects(left_hand_target, right_hand_target):
+	if left_hand_target != null:
+		_hand_l_target_object = left_hand_target
+		_hand_l_ik_target_interpolation = 1
+	else:
+		_hand_l_target_object = null
+		_hand_l_ik_target_interpolation = 0
+	
+	if right_hand_target != null:
+		_hand_r_target_object = right_hand_target
+		_hand_r_ik_target_interpolation = 1
+	else:
+		_hand_r_target_object = null
+		_hand_r_ik_target_interpolation = 0	
