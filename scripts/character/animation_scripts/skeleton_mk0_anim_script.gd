@@ -138,12 +138,33 @@ func _process(delta):
 			bc.ik_controller.body_target_interpolation = 0.5
 			
 		GameCharacterBodyController.ECharacterBodyActionType.Climb:
-			body_scene_root_node.rotation_degrees.y = 0
-			bc.ik_controller.body_target_rotation_x = 0
-			bc.ik_controller.body_target_rotation_y = 0
-			bc.ik_controller.body_target_rotation_z = 0
+			var fx: float = character.move_to_body_direction_factor.x
+			var fz: float = character.move_to_body_direction_factor.z
 			
-			bc.ik_controller.body_target_interpolation = 0
+			fx = _move_to_direction_factor_interpolated.x
+			fz = _move_to_direction_factor_interpolated.y
+			
+			var max_twist_angle: float = body_twist_max_angle
+			var max_bend_angle = body_bend_max_angle
+			var min_bend_angle = -body_bend_max_angle
+			var max_tilt_angle: float = body_tilt_max_angle
+			
+			if fz >= -0.1:
+				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(max_twist_angle, -max_twist_angle, (fx + 1) / 2), 180 * delta)
+				bc.ik_controller.body_target_rotation_y = lerpf(-10, 10, (fx + 1) / 2)
+			else:
+				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(-max_twist_angle, max_twist_angle, (fx + 1) / 2) , 180 * delta)
+				bc.ik_controller.body_target_rotation_y = lerpf(10, -10, (fx + 1) / 2)
+			
+			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, (fz + 1) / 2)
+			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, (fx + 1) / 2)
+			
+			#body_scene_root_node.rotation_degrees.y = 0
+			#bc.ik_controller.body_target_rotation_x = 0
+			#bc.ik_controller.body_target_rotation_y = 0
+			#bc.ik_controller.body_target_rotation_z = 0
+			#
+			#bc.ik_controller.body_target_interpolation = 0
 			
 			pass
 	pass

@@ -38,8 +38,6 @@ var air_travelled: float = 0
 var ground_time: float = 0
 var air_time: float = 0
 
-var current_jump_charge: float = 0
-
 var _prev_global_position: Vector3 = Vector3.ZERO
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
@@ -52,6 +50,8 @@ var body_physics_enabled: bool = false
 var body_direction: Vector3 = Vector3.FORWARD
 
 var move_to_body_direction_factor: Vector3 = Vector3.ZERO
+
+var cooldowns: tools.CooldownManager = tools.CooldownManager.new()
 
 signal on_crouch_entered
 signal on_crouch_exited
@@ -177,12 +177,13 @@ func _process(delta):
 	else:
 		sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
 
-	if jump_started and is_touching_floor():
-		current_jump_charge += delta
-		if current_jump_charge > props.jump_max_charge_duration:
-			finish_jump()
-	else:
-		current_jump_charge = 0
+	if jump_started and not is_touching_floor():
+		jump_started = false
+		cooldowns.stop("jump_charge")
+
+	if jump_started and cooldowns.ready("jump_charge"):
+		finish_jump()
+	
 
 	_prev_global_position = global_position
 	
@@ -240,7 +241,6 @@ func process_movement(delta):
 
 	if is_crouching:
 		movement_penalty = props.crouching_walk_penalty
-		jump_speed = jump_speed * props.crouching_jump_penalty
 
 	var target_vel = current_movement_direction * current_movement_speed * movement_penalty
 
@@ -252,7 +252,6 @@ func process_movement(delta):
 
 	velocity.x = target_vel.x
 	velocity.z = target_vel.z
-
 
 	move_and_slide()
 
@@ -312,21 +311,22 @@ func start_jump():
 		return
 		
 	if not jump_started and is_touching_floor():
-		current_jump_charge = 0
+		print("start cjarge")
+		cooldowns.start("jump_charge", props.jump_max_charge_duration)
 		jump_started = true
 		on_jump_started.emit()
 		
 func cancel_jump():
 	if jump_started:
+		cooldowns.stop("jump_charge")
 		jump_started = false
-		current_jump_charge = 0
 		on_jump_finished.emit()
 
 func finish_jump():
 	if jump_started and is_touching_floor():
-		current_jump_power = sqrt(clampf(current_jump_charge / props.jump_max_charge_duration, 0, 1));
+		current_jump_power = sqrt(cooldowns.progress("jump_charge"));
+		cooldowns.stop("jump_charge")
 		jump_started = false
-		current_jump_charge = 0
 		
 		if sfx_controller != null and is_on_floor_only():
 			sfx_controller.commit_action(CharacterSFX.EActionType.JumpStart)

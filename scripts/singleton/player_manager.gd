@@ -69,6 +69,7 @@ func _process(delta):
 		dev.print_screen("character_vel", "character velocity: %.2f m/s" % current.velocity.length())
 		dev.print_screen("character_crouch", "character crouching: %s" % current.is_crouching)
 		dev.print_screen("character_travelled", "character travelled: %.2f m" % current.travelled)
+		dev.print_screen("character_jump_charge", "character jump charge: %.2f m" % current.cooldowns.progress("jump_charge"))
 		dev.print_screen("character_air_travelled", "character travelled (air): %.2f m" % current.air_travelled)
 		dev.print_screen("character_ground_travelled", "character travelled (ground): %.2f m" % current.ground_travelled)
 		dev.print_screen("character_air_time", "character time (air): %.2f s" % current.air_time)

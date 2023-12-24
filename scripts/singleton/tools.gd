@@ -8,6 +8,9 @@ enum ENodeType {
 	CollisionShape
 }
 
+func get_time()->float:
+	return Time.get_ticks_msec() / 1000.0
+
 # Recursive function to get all descendants with a specific substring in their names
 func get_descendants_with_substring(root: Node, substring: String, matching_nodes: Array) -> Array:
 	for child in root.get_children():
@@ -258,10 +261,60 @@ class TimerGateManager:
 	var _timer_gate_data = {}
 
 	func check(id: String, timeout: float) -> bool:
-		var current_time = Time.get_ticks_msec() / 1000.0
+		var current_time = tools.get_time()
 		if not _timer_gate_data.has(id) or current_time - _timer_gate_data[id] >= timeout:
 			_timer_gate_data[id] = current_time
 			return true
 		return false
 
+class CooldownManager:
+	var _cooldowns_data = {}
+	
+	class CooldownItem:
+		var id: String
+		var started_at: float = 0
+		var duration: float = 0
+		func _init(_id: String, _duration: float):
+			id = _id
+			start(_duration)
+		func start(_duration: float):
+			duration = _duration
+			started_at = tools.get_time()
+		func ready()->bool:
+			return progress() >= 1
+		func progress()->float:
+			print(tools.get_time() - started_at, " ", (tools.get_time() - started_at) / duration)
+			return clampf((tools.get_time() - started_at) / duration, 0.0, 1.0)
+		func estimated()->float:
+			return clampf(duration - (tools.get_time() - started_at), 0, duration)
+			
+	
+	func start(id: String, duration: float):
+		if not _cooldowns_data.has(id):
+			_cooldowns_data[id] = CooldownItem.new(id, duration)
+		else:
+			_cooldowns_data[id].start(duration)
+	func exists(id: String):
+		return _cooldowns_data.has(id)
+	func stop(id: String):
+		if _cooldowns_data.has(id):
+			_cooldowns_data.erase(id)
+	func progress(id: String)->float:
+		if _cooldowns_data.has(id):
+			return _cooldowns_data[id].progress()
+		else:
+			return 0
+	func estimated(id: String)->float:
+		if _cooldowns_data.has(id):
+			return _cooldowns_data[id].estimated()
+		else:
+			return 0
+	func ready(id: String)->bool:
+		if _cooldowns_data.has(id):
+			return _cooldowns_data[id].ready()
+		else:
+			return false
+	func reset():
+		_cooldowns_data = {}
+			
 var timer_gate: TimerGateManager = TimerGateManager.new()
