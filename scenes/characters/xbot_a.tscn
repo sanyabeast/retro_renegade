@@ -6476,7 +6476,6 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 
 [node name="Skeleton3D" parent="Body/Scene/xbot/Armature" index="0"]
 bones/0/position = Vector3(0.0244097, 1.0981, -0.047956)
 bones/0/rotation = Quaternion(-0.0102043, -0.278027, -0.0414308, 0.959625)
-bones/0/scale = Vector3(1, 1, 1)
 bones/1/rotation = Quaternion(0.116889, 0.0328134, 0.0335705, 0.992035)
 bones/2/rotation = Quaternion(0.165592, 0.00592345, -0.019131, 0.985991)
 bones/3/rotation = Quaternion(0.182002, 0.0193739, -0.0228658, 0.982841)
@@ -6493,7 +6492,6 @@ bones/10/rotation = Quaternion(0.0263589, 0.00986742, 0.0756294, 0.996739)
 bones/11/rotation = Quaternion(0.233983, 0.0835944, -0.299651, 0.921126)
 bones/12/position = Vector3(-5.2407e-06, 0.0419041, 3.68005e-06)
 bones/12/rotation = Quaternion(-0.0546296, 0.00310202, 0.170566, 0.983826)
-bones/12/scale = Vector3(1, 1, 1)
 bones/13/position = Vector3(2.28541e-06, 0.0341468, -1.9784e-05)
 bones/13/rotation = Quaternion(-0.0440641, 0.00176264, 0.0483911, 0.997854)
 bones/13/scale = Vector3(1, 1, 1)
@@ -6503,7 +6501,6 @@ bones/15/rotation = Quaternion(-0.0645742, -0.000787921, -0.0737656, 0.995183)
 bones/16/rotation = Quaternion(0.121699, 0.000264958, 0.00936398, 0.992523)
 bones/17/rotation = Quaternion(0.114592, -0.0254487, 0.0646556, 0.99098)
 bones/18/rotation = Quaternion(-4.38749e-06, 0.00100277, 8.70747e-05, 0.999999)
-bones/18/scale = Vector3(1, 1, 1)
 bones/19/rotation = Quaternion(-0.0478144, -0.00173643, 0.00947079, 0.99881)
 bones/20/rotation = Quaternion(0.198996, 0.00237668, 0.028233, 0.979591)
 bones/21/rotation = Quaternion(0.0950526, -0.000325515, 0.00388352, 0.995465)
@@ -6513,7 +6510,6 @@ bones/24/rotation = Quaternion(0.193842, 0.000175811, 0.0196389, 0.980836)
 bones/24/scale = Vector3(1, 1, 1)
 bones/25/rotation = Quaternion(0.14388, 0.00129662, 0.0161386, 0.989463)
 bones/26/rotation = Quaternion(1.16706e-07, 0.000145964, -0.000799607, 1)
-bones/26/scale = Vector3(1, 1, 1)
 bones/27/rotation = Quaternion(0.00682896, 0.00349177, 0.191299, 0.981502)
 bones/28/rotation = Quaternion(0.23885, 0.000426735, 0.0254061, 0.970724)
 bones/29/rotation = Quaternion(0.143271, 0.00161615, 0.0189911, 0.9895)
@@ -6594,7 +6590,7 @@ interpolation = 0.75
 target_node = NodePath("../../../../../IK/TBodyRoot/TBody")
 
 [node name="SpineAnchor_BoneAttachment" type="BoneAttachment3D" parent="Body/Scene/xbot/Armature/Skeleton3D" index="6"]
-transform = Transform3D(0.91171, -0.294826, -0.286115, -0.0428936, 0.624309, -0.779999, 0.408588, 0.723405, 0.556543, 0.00462437, 1.37821, 0.012221)
+transform = Transform3D(0.911711, -0.294825, -0.286114, -0.0428937, 0.62431, -0.779998, 0.408587, 0.723405, 0.556544, 0.00462444, 1.37821, 0.0122209)
 bone_name = "mixamorig_Spine2"
 bone_idx = 3
 
@@ -6680,6 +6676,7 @@ camera_raycast = NodePath("CameraRaycast")
 bottom_front_cast = NodePath("BottomFrontCast")
 top_front_cast = NodePath("TopFrontCast")
 ceil_rayset = NodePath("CeilRayset")
+ceil_rayset_offset = null
 
 [node name="CameraRaycast" type="RayCast3D" parent="PhysicalInteraction"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57248, 0)

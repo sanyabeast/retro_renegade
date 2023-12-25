@@ -6589,7 +6589,7 @@ interpolation = 0.75
 target_node = NodePath("../../../../../IK/TBodyRoot/TBody")
 
 [node name="SpineAnchor_BoneAttachment" type="BoneAttachment3D" parent="Body/Scene/ybot_mk0/Armature/Skeleton3D" index="6"]
-transform = Transform3D(0.912272, -0.335862, -0.23443, -0.0324815, 0.511232, -0.858829, 0.408296, 0.791099, 0.455473, -0.0016249, 1.37785, 0.0117023)
+transform = Transform3D(0.912271, -0.335862, -0.23443, -0.0324816, 0.511231, -0.858829, 0.408296, 0.7911, 0.455472, -0.0016249, 1.37786, 0.0117022)
 bone_name = "mixamorig_Spine2"
 bone_idx = 3
 
@@ -6670,6 +6670,7 @@ camera_raycast = NodePath("CameraRaycast")
 bottom_front_cast = NodePath("BottomFrontCast")
 top_front_cast = NodePath("TopFrontCast")
 ceil_rayset = NodePath("CeilRayset")
+ceil_rayset_offset = null
 
 [node name="CameraRaycast" type="RayCast3D" parent="PhysicalInteraction"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57248, 0)

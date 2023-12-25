@@ -188,7 +188,7 @@ func stop_grab():
 		held_object.linear_velocity = Vector3.UP * character.props.hand_manipulation_drop_power * get_hand_manipulation_mass_penalty()
 		# Emit signal for dropping an object
 		on_object_drop.emit(held_object)
-		character.remove_collision_exception(held_object)
+		app.tasks.stack_replace(self, "throw", 0.25, null, character.remove_collision_exception.bind(held_object))
 		held_object = null
 		is_holding_object = false
 		
@@ -199,7 +199,9 @@ func start_throw():
 		var ray_direction = tools.get_global_forward_vector(camera_raycast)
 		# Apply velocity to simulate throwing the object
 		held_object.linear_velocity = (ray_direction + (Vector3.UP * character.props.hand_manipulation_throw_ballistics)).normalized() * character.props.hand_manipulation_throw_power * get_hand_manipulation_mass_penalty()
-		character.remove_collision_exception(held_object)
+		
+		app.tasks.stack_replace(self, "throw", 0.25, null, character.remove_collision_exception.bind(held_object))
+		#character.remove_collision_exception(held_object)
 		# Emit signal for throwing an object
 		on_object_throw.emit(held_object)
 		held_object = null

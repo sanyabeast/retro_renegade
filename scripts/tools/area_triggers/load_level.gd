@@ -11,6 +11,7 @@ func _ready():
 	}))
 	pass # Replace with function body.
 
-func on_entered():
+func enter_action():
 	dev.logd("AreaTriggerLoadLevel", "entered")
 	tools.load_scene(scene_path)
+		

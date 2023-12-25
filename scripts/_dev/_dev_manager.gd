@@ -28,6 +28,13 @@ var _active_gizmos = {}
 var _queued_print_screen = {}
 var gizmo_shapes_enabled: bool = false
 
+func _ready():
+	logd(TAG, "ready")
+	
+	app.tasks.schedule(tools.get_scene(), "test", 5, print_screen.bind("TestMsg", "TestMsg"))
+	
+	pass # Replace with function body.
+
 func logd(tag: String, data):
 	print("%s: %s" % [tag, data])
 	
@@ -56,10 +63,6 @@ func set_debug_print(node: DebugPrint):
 func set_debug_labels(node: DebugLabels):
 	_debug_labels = node
 
-func _ready():
-	logd(TAG, "ready")
-	
-	pass # Replace with function body.
 
 func draw_gizmo_sphere(owner: Node3D, id: String, center: Vector3, radius: float, color: Color = Color.REBECCA_PURPLE):
 	id = id + str(owner.get_instance_id())
