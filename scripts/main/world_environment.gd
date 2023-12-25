@@ -4,12 +4,13 @@ class_name WorldEnvironmentController
 
 @export var settings: RWorldEnvSettings
 
-@export_subgroup("REFERENCIES")
-@export var dir_light: DirectionalLight3D
-@export var world_env: WorldEnvironment
+@export_subgroup("Referencies")
+@export var world_environment: WorldEnvironment
+@export var sun: DirectionalLight3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	_setup_tree(self)
 	world.set_environment(self)
 	if settings.ambient_sound != null:
 		dev.logd("WorldEnvironmentController", settings.ambient_sound.clips)
@@ -23,17 +24,30 @@ func _exit_tree():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if settings.day_cycle_enabled:
-		dir_light.global_rotation = get_sun_rotation()
-		#dir_light.light_energy = get_sun_energy(world.day_time)
-		dir_light.light_color = Color.from_hsv(
+		sun.global_rotation = get_sun_rotation()
+		#sun.light_energy = get_sun_energy(world.day_time)
+		sun.light_color = Color.from_hsv(
 			lerpf(settings.sun_hue_night, settings.sun_hue_day, get_sun_progress2()),
 			lerpf(settings.sun_saturation_night, settings.sun_saturation_day, get_sun_progress2()),
 			1
 		)
 		
-		world_env.environment.background_energy_multiplier = lerpf(settings.sky_energy_night, settings.sky_energy_day, get_sun_progress())
+		world_environment.environment.background_energy_multiplier = lerpf(settings.sky_energy_night, settings.sky_energy_day, get_sun_progress())
 		#dir_light.global_rotation.z = sin(world.day_time)
 	pass
+	
+func _setup_tree(node):
+	# Call the callback function on the current node
+	
+	if world_environment == null and node is WorldEnvironment:
+		world_environment = node	
+	
+	if sun == null and node is DirectionalLight3D:
+		sun = node		
+		
+	# Recursively call this function on all children
+	for child in node.get_children():
+		_setup_tree(child)
 	
 func get_sun_progress():
 	return sqrt((-sin((world.day_time + 0.25) * 2.0 * PI) + 1) / 2)

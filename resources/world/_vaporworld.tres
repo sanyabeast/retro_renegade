@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RWorldEnvSettings" load_steps=3 format=3 uid="uid://be1y28xy0m114"]
+
+[ext_resource type="Resource" uid="uid://b7wsaujp22qm7" path="res://resources/fx/audio_fx/ambient/_city_park.tres" id="1_ruwxj"]
+[ext_resource type="Script" path="res://scripts/resources/world_env_settings.gd" id="2_6ci6k"]
+
+[resource]
+script = ExtResource("2_6ci6k")
+name = "Vaporworld"
+day_duration = 60.0
+day_time = 0.75
+day_cycle_enabled = true
+day_cycle_length = 300.0
+fog_density_night = 0.1
+fog_density_day = 0.01
+sky_energy_night = 1.0
+sky_energy_day = 1.0
+sun_hue_day = 1.05
+sun_hue_night = 0.95
+sun_saturation_day = 0.333
+sun_saturation_night = 0.666
+ambient_sound = ExtResource("1_ruwxj")

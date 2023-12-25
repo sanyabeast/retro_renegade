@@ -311,7 +311,6 @@ func start_jump():
 		return
 		
 	if not jump_started and is_touching_floor():
-		print("start cjarge")
 		cooldowns.start("jump_charge", props.jump_max_charge_duration)
 		jump_started = true
 		on_jump_started.emit()
