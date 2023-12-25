@@ -132,8 +132,8 @@ func _process(delta):
 			animation_tree["parameters/move/move_blend_space/2/blend_position"] = walk_style
 			animation_tree["parameters/move/move_blend_space/3/blend_position"] = run_style
 			animation_tree["parameters/move/move_blend_space/4/blend_position"] = idle_style
-			animation_tree["parameters/move/move_blend_space/5/blend_position"] = fall_style
-			animation_tree["parameters/move/move_blend_space/6/blend_position"] = crouch_idle_style
+			animation_tree["parameters/move/move_blend_space/5/blend_position"] = crouch_idle_style
+			animation_tree["parameters/move/move_blend_space/7/fall_ab_blend/blend_amount"] = (fall_style + 1) / 2
 			
 			bc.ik_controller.body_target_interpolation = 0.5
 			
