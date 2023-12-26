@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dm21p183edgf2"]
 
-[ext_resource type="Script" path="res://scripts/singleton/world_manager.gd" id="1_bwygn"]
+[ext_resource type="Script" path="res://scripts/core/world_manager.gd" id="1_bwygn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3ewly"]
 sky_top_color = Color(0, 0.152941, 0.611765, 1)

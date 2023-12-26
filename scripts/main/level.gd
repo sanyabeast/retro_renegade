@@ -25,7 +25,7 @@ func _setup_tree(node):
 	# Call the callback function on the current node
 	
 	if bounds == null and node is Area3D and node.name == "Bounds":
-		bounds = node	
+		bounds = node
 		
 	if bounds != null:
 		return

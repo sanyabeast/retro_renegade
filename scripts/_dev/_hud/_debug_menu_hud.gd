@@ -11,6 +11,7 @@ var dev_scenes = [
 
 var actions = [
 	{"name": "respawn player", "function": self.respawn_player},
+	{"name": "respawn player (random place)", "function": self.respawn_player_random},
 	{"name": "reload current_scene", "function": self.reload_current_scene},
 	{"name": "load random scene", "function": self.load_random_scene},
 	{"name": "remove some rigidbodies", "function": self.remove_some_rb},
@@ -24,6 +25,10 @@ var actions = [
 func respawn_player():
 	players.respawn_player()
 	hide()
+	pass
+	
+func respawn_player_random():
+	players.respawn_player(world.get_random_reachable_point())
 	pass
 	
 func force_npc():

@@ -60,6 +60,8 @@ signal on_jump_canceled
 signal on_jump_finished(power: float)
 signal on_landed
 
+var freeze_movement: bool = false
+
 func _ready():
 	dev.logd("PlayerFPS", "ready")
 	_setup_tree(self)
@@ -223,40 +225,41 @@ func _physics_process(delta):
 	pass
 
 func process_movement(delta):
-	current_movement_acceleration = 0
-	if is_on_floor():
-		current_movement_acceleration = lerpf(props.walk_acceleration, props.sprint_acceleration, current_sprint_power)
+	if not freeze_movement:
+		current_movement_acceleration = 0
+		if is_on_floor():
+			current_movement_acceleration = lerpf(props.walk_acceleration, props.sprint_acceleration, current_sprint_power)
 
-	current_movement_speed = move_toward(current_movement_speed, target_movement_speed, current_movement_acceleration * delta)
-	var min_movement_speed = get_walk_speed_min()
+		current_movement_speed = move_toward(current_movement_speed, target_movement_speed, current_movement_acceleration * delta)
+		var min_movement_speed = get_walk_speed_min()
 
-	if target_movement_speed == 0:
-		current_movement_speed = 0
-		min_movement_speed = 0
+		if target_movement_speed == 0:
+			current_movement_speed = 0
+			min_movement_speed = 0
 
-	current_movement_speed = clampf(current_movement_speed, min_movement_speed , get_sprint_speed_max())
+		current_movement_speed = clampf(current_movement_speed, min_movement_speed , get_sprint_speed_max())
 
-	var jump_speed = props.jump_speed
-	var movement_penalty: float = 1
+		var jump_speed = props.jump_speed
+		var movement_penalty: float = 1
 
-	if is_crouching:
-		movement_penalty = props.crouching_walk_penalty
+		if is_crouching:
+			movement_penalty = props.crouching_walk_penalty
 
-	var target_vel = current_movement_direction * current_movement_speed * movement_penalty
+		var target_vel = current_movement_direction * current_movement_speed * movement_penalty
 
-	velocity.y += lerpf(gravity * props.gravity_multiplier, 0, current_climbing_power) * delta
-	velocity.y += current_climbing_power * (props.climbing_speed) * delta
-	velocity.y += current_jump_power * (jump_speed)
-	
-	velocity.y = clampf(velocity.y, props.vertical_velocity_min, props.vertical_velocity_max)
+		velocity.y += lerpf(gravity * props.gravity_multiplier, 0, current_climbing_power) * delta
+		velocity.y += current_climbing_power * (props.climbing_speed) * delta
+		velocity.y += current_jump_power * (jump_speed)
+		
+		velocity.y = clampf(velocity.y, props.vertical_velocity_min, props.vertical_velocity_max)
 
-	velocity.x = target_vel.x
-	velocity.z = target_vel.z
+		velocity.x = target_vel.x
+		velocity.z = target_vel.z
+		
+		move_and_slide()
 
-	move_and_slide()
-
-	if current_climbing_power > 0 and travelled - climbing_start_distance >= props.climbing_max_distance:
-		current_climbing_power = 0
+		if current_climbing_power > 0 and travelled - climbing_start_distance >= props.climbing_max_distance:
+			current_climbing_power = 0
 
 func set_movement_direction(movement_direction: Vector3):
 	current_movement_direction = movement_direction
@@ -264,7 +267,6 @@ func set_movement_direction(movement_direction: Vector3):
 	if current_movement_direction.length() > MOVEMENT_DEADZONE:
 		current_movement_direction = current_movement_direction.normalized()
 		target_movement_speed = lerpf(get_walk_speed_max(), get_sprint_speed_max(), current_sprint_power)
-		
 	else:
 		target_movement_speed = 0
 	pass

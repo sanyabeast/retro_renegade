@@ -19,14 +19,14 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-tools="*res://scripts/singleton/tools.gd"
-app="*res://scripts/singleton/app_manager.gd"
-world="*res://scripts/singleton/world_manager.gd"
-camera_manager="*res://scripts/singleton/camera_manager.gd"
-players="*res://scripts/singleton/player_manager.gd"
-npcs="*res://scripts/singleton/npc_manager.gd"
-hud="*res://scripts/singleton/hud_manager.gd"
-game="*res://scripts/singleton/game_manager.gd"
+tools="*res://scripts/core/tools.gd"
+app="*res://scripts/core/app_manager.gd"
+world="*res://scripts/core/world_manager.gd"
+camera_manager="*res://scripts/core/camera_manager.gd"
+players="*res://scripts/core/player_manager.gd"
+npcs="*res://scripts/core/npc_manager.gd"
+hud="*res://scripts/core/hud_manager.gd"
+game="*res://scripts/core/game_manager.gd"
 dev="*res://scripts/_dev/_dev_manager.gd"
 
 [display]
@@ -48,9 +48,9 @@ folder_colors={
 "res://scenes/levels/": "gray",
 "res://scenes/main/": "gray",
 "res://scripts/": "red",
+"res://scripts/core/": "gray",
 "res://scripts/main/": "gray",
-"res://scripts/resources/": "gray",
-"res://scripts/singleton/": "gray"
+"res://scripts/resources/": "gray"
 }
 
 [global]
