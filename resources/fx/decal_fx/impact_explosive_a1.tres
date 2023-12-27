@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RDecalFX" load_steps=6 format=3 uid="uid://b55un2cj8kl8u"]
+
+[ext_resource type="Script" path="res://scripts/resources/decal_fx.gd" id="1_d83sd"]
+[ext_resource type="Texture2D" uid="uid://jbwnkynyno0l" path="res://assets/textures/decals/explosive_impact_a_albedo.png" id="2_78jw3"]
+[ext_resource type="Texture2D" uid="uid://664g4x74aqpa" path="res://assets/textures/decals/explosive_impact_a_normal.png" id="3_ht7vq"]
+[ext_resource type="Script" path="res://scripts/resources/decal.gd" id="4_r4b4e"]
+
+[sub_resource type="Resource" id="Resource_y2unl"]
+script = ExtResource("4_r4b4e")
+albedo = ExtResource("2_78jw3")
+albedo_min = 0.1
+albedo_max = 0.2
+normal = ExtResource("3_ht7vq")
+emission_energy = 1.0
+modulate = Color(1, 1, 1, 1)
+rotation_min = -180.0
+rotation_max = 180.0
+scale_min = 0.5
+scale_max = 1.0
+
+[resource]
+script = ExtResource("1_d83sd")
+decals = Array[ExtResource("4_r4b4e")]([SubResource("Resource_y2unl")])
+contact_type = 2
+lifetime = 5.0
+contact_trace_distance = 0.5

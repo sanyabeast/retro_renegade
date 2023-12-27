@@ -10,10 +10,16 @@ const MAX_VOLUME_LEVEL: float = 0
 @export var volume_addent: float = 0
 @export var pitch_multiplier: float = 1
 @export var scale_multiplier: float = 1
+@export var direction: Vector3 = Vector3.DOWN
 
 var particle_systems: Array[GPUParticles3D] = []
 var audio_players: Array[AudioStreamPlayer3D] = []
 var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
+var _cooldowns: tools.CooldownManager = tools.CooldownManager.new()
+
+var _decal_ray_cast: RayCast3D
+var _decal_sphere_cast: ShapeCast3D
+var _decal_sphere_cast_shape: SphereShape3D = load("res://resources/extra/shapes/sphere_1m.tres")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -74,6 +80,77 @@ func _spawn_cfx():
 	if cfx.particle_system_variants.size() > 0:
 		_add_particle_system(tools.get_random_element_from_array(cfx.particle_system_variants))	
 	pass
+	
+	if cfx.decal_fxs.size() > 0:
+		for item in cfx.decal_fxs:
+			_add_decal_fx(item)
+
+func _add_decal_fx(props: RDecalFX):
+	_cooldowns.start("decals-timeout", 10)
+	
+	var decal_position: Vector3 = global_position
+	var decal_normal = -direction.normalized()
+	var decal_props: RDecalSettings = tools.get_random_element_from_array(props.decals)
+	
+	match props.contact_type:
+		RDecalFX.ERDecalContactType.Ray:
+			if _decal_ray_cast == null:
+				_decal_ray_cast = RayCast3D.new()
+				_decal_ray_cast.collide_with_bodies = false
+				_decal_ray_cast.collide_with_areas = false
+				add_child(_decal_ray_cast)
+				
+			_decal_ray_cast.global_position = global_position - direction.normalized() / 2
+			_decal_ray_cast.target_position = direction.normalized() * props.contact_trace_distance
+			_decal_ray_cast.force_raycast_update()
+			
+			if _decal_ray_cast.is_colliding():
+				if _decal_ray_cast.get_collider() is StaticBody3D:
+					decal_position = _decal_ray_cast.get_collision_point()
+					decal_normal = _decal_ray_cast.get_collision_normal()
+			pass
+			
+			pass
+		RDecalFX.ERDecalContactType.Sphere:	
+			if _decal_sphere_cast == null:
+				_decal_sphere_cast = ShapeCast3D.new()
+				_decal_sphere_cast.collide_with_bodies = true
+				_decal_sphere_cast.collide_with_areas = false
+				_decal_sphere_cast.shape = _decal_sphere_cast_shape
+				add_child(_decal_sphere_cast)
+				
+			_decal_sphere_cast.scale = Vector3.ONE * props.contact_trace_distance / 2
+			_decal_sphere_cast.global_position = global_position
+			_decal_sphere_cast.force_shapecast_update()
+			
+			if _decal_sphere_cast.is_colliding():
+				for index in _decal_sphere_cast.get_collision_count():
+					if _decal_sphere_cast.get_collider(index) is StaticBody3D:
+						decal_position = _decal_sphere_cast.get_collision_point(index)
+						decal_normal = _decal_sphere_cast.get_collision_normal(index)
+			pass
+		_:
+			pass
+				
+	var decal: Decal = Decal.new()
+	decal.size = Vector3(1, 0.2, 1)
+	decal.texture_albedo = decal_props.albedo
+	decal.texture_normal = decal_props.normal
+	decal.albedo_mix = randf_range(decal_props.albedo_min, decal_props.albedo_max)
+	
+	decal.upper_fade = 2.0
+	decal.lower_fade = 2.0
+	
+	add_child(decal)
+	decal.force_update_transform()
+	decal.global_position = decal_position
+	decal.rotation_degrees.y = randf_range(decal_props.rotation_min, decal_props.rotation_max)
+	decal.scale = Vector3.ONE * (randf_range(decal_props.scale_min, decal_props.scale_max))
+	#decal.global_basis.y = decal_position - decal_normal
+	if decal_normal != Vector3.UP:
+		decal.look_at(decal_position + Vector3.UP, decal_normal)
+	
+	print('spawning decal: %s' % props)
 
 func _add_audio_fx(audio_fx: RAudioFX):
 	var new_audio_player = AudioStreamPlayer3D.new()
@@ -97,10 +174,14 @@ func _add_particle_system(data: PackedScene):
 func _process(delta):
 	if _timer_gate.check("health", 1):
 		check_tasks()
+	
+	dev.draw_gizmo_ray(self, 'cfx-direction', global_position, global_position - direction, Color.PURPLE)	
 		
 	for ap in audio_players:
 		if ap.max_distance > 0:
 			dev.draw_gizmo_sphere(self, 'audio-player%s' % ap.get_instance_id(), ap.global_position, ap.max_distance, Color.CORAL)
+			
+
 
 func check_tasks():
 	var active_particle_systems = 0
@@ -115,7 +196,7 @@ func check_tasks():
 			active_audio_players += 1		
 			
 			
-	if self_destruct:
+	if self_destruct and (not _cooldowns.exists("decals-timeout") or _cooldowns.ready("decals-timeout")):
 		if active_particle_systems == 0 and active_audio_players == 0:
 			dev.logd("ComplexFXController", "self destructing...")
 			queue_free()

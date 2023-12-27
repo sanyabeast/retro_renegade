@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://hxixnus1p2b6"]
+
+[ext_resource type="Texture2D" uid="uid://jbwnkynyno0l" path="res://assets/textures/decals/explosive_impact_a_albedo.png" id="1_j7o8c"]
+[ext_resource type="Texture2D" uid="uid://664g4x74aqpa" path="res://assets/textures/decals/explosive_impact_a_normal.png" id="2_jaolu"]
+
+[node name="BaseDecal" type="Decal"]
+size = Vector3(1, 0.1, 1)
+texture_albedo = ExtResource("1_j7o8c")
+texture_normal = ExtResource("2_jaolu")
+albedo_mix = 0.4
+upper_fade = 8.7637
+lower_fade = 0.270378

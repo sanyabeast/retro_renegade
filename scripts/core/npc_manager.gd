@@ -37,7 +37,7 @@ func _process_npc(character: GameCharacter, delta: float):
 	if _npc_data[character]["timer_gate"].check("switch_target_point", 1):
 		var random_point = world.get_random_reachable_point()
 		#_npc_data[character]["move_target"] = random_point
-		if players.current != null:
+		if players.current != null and character.global_position.distance_to(players.current.global_position) > 4:
 			random_point = players.current.global_position
 		_npc_data[character]["move_target"] = random_point
 		

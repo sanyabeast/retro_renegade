@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dpm7k4yfj5s1m"]
+[gd_scene load_steps=17 format=3 uid="uid://dpm7k4yfj5s1m"]
 
 [ext_resource type="Script" path="res://scripts/main/level.gd" id="1_rsgrl"]
 [ext_resource type="Resource" uid="uid://dybxeo2go05b4" path="res://resources/game/default_game_level_settings.tres" id="2_umqm6"]
@@ -8,11 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://js82arci7thj" path="res://scenes/hud/fps_base_hud.tscn" id="6_cltbw"]
 [ext_resource type="PackedScene" uid="uid://iuh7l0t6ymmj" path="res://scenes/_dev/_dev_hud.tscn" id="7_piuni"]
 [ext_resource type="Resource" uid="uid://b7dpsncuarny4" path="res://resources/world/_surreal_world.tres" id="7_q0f5k"]
-[ext_resource type="PackedScene" path="res://scenes/characters/ybot_sbb_02.tscn" id="9_t436y"]
+[ext_resource type="PackedScene" uid="uid://dl8amuauub3qm" path="res://scenes/characters/xbot_a.tscn" id="9_t436y"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hkvyo"]
 vertices = PackedVector3Array(-4.505, 0.253826, -4.255, -2.755, 0.253826, -4.505, -2.755, 0.253826, -5.255, -4.505, 0.253826, -5.505, -4.755, 0.253826, 3.245, -4.005, 0.253826, -1.255, -4.505, 0.253826, -1.505, -5.255, 0.253826, 3.495, -4.255, 0.253826, 7.495, -4.255, 0.253826, 5.745, -5.255, 0.253826, 5.495, -7.505, 0.253826, 7.495, -4.505, 0.253826, -1.505, -4.505, 0.253826, -4.255, -7.505, 0.253826, -7.505, -7.505, 0.253826, 7.495, -5.255, 0.253826, 3.495, -4.505, 0.253826, -5.505, -4.505, 0.253826, -7.505, -7.505, 0.253826, -7.505, -4.505, 0.253826, -4.255, -4.505, 0.253826, -5.505, -7.505, 0.253826, -7.505, -7.505, 0.253826, 7.495, -5.255, 0.253826, 5.495, -5.255, 0.253826, 3.495, -3.505, 2.25383, -7.505, -3.505, 2.25383, -6.255, -2.255, 2.25383, -6.255, -2.255, 2.25383, -7.505, 5.745, 0.253826, 6.495, 5.995, 0.503826, 6.995, 7.495, 0.253826, 6.495, -2.755, 0.253826, -5.255, -2.755, 0.253826, -4.505, -1.255, 0.253826, -4.255, -1.255, 0.253826, -5.505, 7.495, 0.253826, -7.505, -1.255, 0.253826, -7.505, -1.255, 0.253826, -5.505, 1.495, 0.253826, 4.995, 0.745, 0.253826, 5.245, 0.745, 0.253826, 7.495, 3.995, 0.253826, 7.495, 4.245, 0.253826, 6.495, -1.255, 0.253826, -1.755, 0.245, 0.253826, 3.495, 1.495, 0.253826, 3.745, -1.255, 0.253826, -4.255, 1.495, 0.253826, 3.745, 5.745, 0.253826, 6.495, 7.495, 0.253826, 6.495, 7.495, 0.253826, -7.505, -1.255, 0.253826, -5.505, -1.255, 0.253826, -4.255, 1.495, 0.253826, 3.745, 1.495, 0.253826, 4.995, 4.245, 0.253826, 6.495, 5.745, 0.253826, 6.495, -3.255, 0.253826, -7.255, -3.255, 0.253826, -6.505, -2.505, 0.253826, -6.505, -2.505, 0.253826, -7.255, -3.505, 2.25383, -3.505, -3.505, 2.25383, -2.255, -2.255, 2.25383, -2.255, -2.255, 2.25383, -3.505, -3.255, 0.253826, -3.255, -3.255, 0.253826, -2.505, -2.505, 0.253826, -2.505, -2.505, 0.253826, -3.255, -3.505, 0.253826, 5.495, -4.255, 0.253826, 5.745, -4.255, 0.253826, 7.495, 0.745, 0.253826, 7.495, 0.745, 0.253826, 5.245, -0.255, 0.253826, 4.995, -3.255, 0.253826, 3.745, -3.505, 0.253826, 5.495, -0.255, 0.253826, 4.995, -0.255, 0.253826, 3.745, -3.255, 0.253826, 3.745, -0.255, 0.253826, 3.745, 0.245, 0.253826, 3.495, -1.505, 0.253826, -1.255, -4.005, 0.253826, -1.255, -4.755, 0.253826, 3.245, 0.245, 0.253826, 3.495, -1.255, 0.253826, -1.755, -1.505, 0.253826, -1.255)
 polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 11), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 16), PackedInt32Array(14, 16, 15), PackedInt32Array(19, 18, 17), PackedInt32Array(22, 21, 20), PackedInt32Array(25, 24, 23), PackedInt32Array(29, 28, 26), PackedInt32Array(26, 28, 27), PackedInt32Array(32, 31, 30), PackedInt32Array(33, 36, 34), PackedInt32Array(34, 36, 35), PackedInt32Array(39, 38, 37), PackedInt32Array(41, 40, 42), PackedInt32Array(42, 40, 44), PackedInt32Array(42, 44, 43), PackedInt32Array(46, 45, 47), PackedInt32Array(47, 45, 48), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 54), PackedInt32Array(51, 54, 53), PackedInt32Array(51, 53, 52), PackedInt32Array(56, 55, 57), PackedInt32Array(57, 55, 58), PackedInt32Array(62, 61, 59), PackedInt32Array(59, 61, 60), PackedInt32Array(66, 65, 63), PackedInt32Array(63, 65, 64), PackedInt32Array(70, 69, 67), PackedInt32Array(67, 69, 68), PackedInt32Array(72, 71, 73), PackedInt32Array(73, 71, 76), PackedInt32Array(73, 76, 75), PackedInt32Array(73, 75, 74), PackedInt32Array(80, 79, 77), PackedInt32Array(77, 79, 78), PackedInt32Array(82, 81, 83), PackedInt32Array(83, 81, 86), PackedInt32Array(83, 86, 84), PackedInt32Array(84, 86, 85), PackedInt32Array(89, 88, 87)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ye34y"]
+size = Vector3(13.9967, 9.80722, 13.8644)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2mljf"]
 sky_top_color = Color(0.54902, 0.670588, 1, 1)
@@ -69,11 +72,16 @@ navigation_mesh = SubResource("NavigationMesh_hkvyo")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.01633, 0, 7.53152)
 scene_path = "res://scenes/levels/_practice_range.tscn"
 
-[node name="World" type="Node3D" parent="." node_paths=PackedStringArray("dir_light", "world_env")]
+[node name="Bounds" type="Area3D" parent="Level"]
+monitorable = false
+
+[node name="BoundaryBox" type="CollisionShape3D" parent="Level/Bounds"]
+transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 1, -0.0739354, 3.92436, -0.0719175)
+shape = SubResource("BoxShape3D_ye34y")
+
+[node name="World" type="Node3D" parent="."]
 script = ExtResource("6_7e31n")
 settings = ExtResource("7_q0f5k")
-dir_light = NodePath("DirectionalLight3D")
-world_env = NodePath("WorldEnvironment")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
 environment = SubResource("Environment_xl8aq")

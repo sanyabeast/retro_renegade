@@ -15,11 +15,14 @@ class_name RGameConfig
 @export var first_person_camera_sensitivity: float = 0.1 
 @export var third_person_camera_sensitivity: float = 0.05
 
-@export_group("Character")
+@export_subgroup("Character")
 @export var character_physical_interaction_grab_max_distance: float = 2.5
 @export var character_physical_interaction_grab_fail_distance: float = 0.3
 
-@export_group("Debug Settings")
+@export_subgroup("FX")
+@export var base_decal_scene: PackedScene = preload("res://scenes/base_decal.tscn")
+
+@export_subgroup("Debug Settings")
 @export var dev_labels_view_distance: float = 64
 
 func _init():

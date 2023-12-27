@@ -121,6 +121,17 @@ func spawn_cfx(cfx: RComplexFX, position: Vector3, volume_addent: float = 0, pit
 	_fx_id += 1
 	pass
 
+func spawn_directional_cfx(cfx: RComplexFX, position: Vector3, direction: Vector3, volume_addent: float = 0, pitch_multiplier: float = 1, scale_multiplier: float = 1):
+	assert(env != null, "WorldEnvironmentController must be present on scene to spawn fx")
+	var cfx_node: ComplexFXController = ComplexFXController.new()
+	cfx_node.direction = direction
+	cfx_node.setup(cfx, volume_addent, pitch_multiplier, scale_multiplier)
+	cfx_node.global_position = position
+	cfx_node.name = "CFX %s %s" % [cfx.name, _fx_id]
+	env.add_child(cfx_node)
+	_fx_id += 1
+	pass
+
 # CALLBACKS
 func _check_rigidbodies(rigidbody: RigidBody3D):
 	_rigid_bodies_timer_gates.erase(rigidbody)
@@ -132,14 +143,16 @@ func _check_rigidbodies(rigidbody: RigidBody3D):
 func _handle_rigidbody_collided(target: Node3D, body: RigidBody3D):
 	if _rigid_bodies_timer_gates[body].check("colfx", 1/MAX_IMPACTS_PER_SECOND_FOR_OBJECT):
 		var contact_point = body.global_position
+		var contact_direction = body.linear_velocity
 		
 		if body.get_contact_count() > 0:
 			var state: PhysicsDirectBodyState3D = PhysicsServer3D.body_get_direct_state(body)
 			contact_point = state.get_contact_local_position(0)
+			contact_direction = -state.get_contact_local_normal(0)
 		
 		var impact_strength = pow(clampf((body.linear_velocity.length() / sqrt(body.mass)) / 8, 0, 1), 2)
 		if impact_strength > MIN_IMPACT_STRENGTH:
-			spawn_cfx(app.config.default_collision_cfx, contact_point, 1, 1, 1)
+			spawn_directional_cfx(app.config.default_collision_cfx, contact_point, contact_direction, 1, 1, 1)
 
 # tools
 func get_daytime_formatted_to_24h()->String:
@@ -203,7 +216,7 @@ func _process_out_of_bounds_characters(delta):
 			if direction.y > 0:
 				char.global_position = world.get_random_reachable_point()
 			else:
-				char.global_position = char.global_position.move_toward(char.global_position + direction, pow(distance, 8) * delta)
+				char.global_position = char.global_position.move_toward(char.global_position + direction, pow(distance * 4, 4) * delta)
 				#char.velocity.x = direction.x * pow(distance, 2)
 				#char.velocity.z = direction.z * pow(distance, 2)
 				

@@ -1,9 +1,20 @@
-[gd_resource type="Resource" script_class="RGameConfig" load_steps=3 format=3 uid="uid://c3ni3fotpqy7e"]
+[gd_resource type="Resource" script_class="RGameConfig" load_steps=4 format=3 uid="uid://c3ni3fotpqy7e"]
 
 [ext_resource type="Resource" uid="uid://r4a6y8e721j1" path="res://resources/fx/default_collision.tres" id="1_cfkoe"]
+[ext_resource type="PackedScene" uid="uid://hxixnus1p2b6" path="res://scenes/base_decal.tscn" id="1_fub6s"]
 [ext_resource type="Script" path="res://scripts/config.gd" id="2_8m6rc"]
 
 [resource]
 script = ExtResource("2_8m6rc")
 name = "Default Game Config"
 default_collision_cfx = ExtResource("1_cfkoe")
+imported_omnilight_energy_scale = 5e-05
+imported_omnilight_max_range = 32.0
+imported_spotlight_energy_scale = 0.0005
+imported_spotlight_max_range = 32.0
+first_person_camera_sensitivity = 0.1
+third_person_camera_sensitivity = 0.05
+character_physical_interaction_grab_max_distance = 2.5
+character_physical_interaction_grab_fail_distance = 0.3
+base_decal_scene = ExtResource("1_fub6s")
+dev_labels_view_distance = 64.0
