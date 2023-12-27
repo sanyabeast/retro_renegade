@@ -6590,7 +6590,7 @@ interpolation = 0.75
 target_node = NodePath("../../../../../IK/TBodyRoot/TBody")
 
 [node name="SpineAnchor_BoneAttachment" type="BoneAttachment3D" parent="Body/Scene/ybot_mk0/Armature/Skeleton3D" index="6"]
-transform = Transform3D(0.913858, -0.331889, -0.233907, -0.0318584, 0.515694, -0.856181, 0.404781, 0.78988, 0.460698, -0.00137186, 1.37826, 0.01126)
+transform = Transform3D(0.913858, -0.331889, -0.233908, -0.0318584, 0.515694, -0.85618, 0.404782, 0.789879, 0.460698, -0.00137191, 1.37826, 0.0112599)
 bone_name = "mixamorig_Spine2"
 bone_idx = 3
 

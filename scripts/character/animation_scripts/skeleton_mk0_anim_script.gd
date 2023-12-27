@@ -151,7 +151,7 @@ func _physics_process(delta):
 	var bc = body_controller
 	var character = bc.character
 	
-	var interp_velocity = clampf(_horizontal_velocity_total_interpolated * 4, 0, 8)
+	var interp_velocity = 8
 	#interp_velocity = 4
 	_move_to_direction_factor_interpolated.x = move_toward(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, interp_velocity * delta)
 	_move_to_direction_factor_interpolated.y = move_toward(
@@ -160,7 +160,7 @@ func _physics_process(delta):
 		interp_velocity * delta)
 		
 	_horizontal_velocity_total_interpolated = tools.lerpt(_horizontal_velocity_total_interpolated, bc._current_character_h_velocity + abs(
-		pow(abs(bc._current_character_directional_velocity / 2), 0.5)
+		pow(abs(bc._current_character_directional_velocity / 2), 1)
 	), 0.1)
 
 	pass

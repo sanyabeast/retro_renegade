@@ -65,17 +65,25 @@ func set_level(_level: GameLevel):
 	players.spawn_spots = []
 	
 	if _level != null:
-		_level.bounds.disconnect("body_exited", handle_world_bounds_exit)
-		_level.bounds.disconnect("body_entered", handle_world_bounds_enter)
+		_level.disconnect("on_rigidbody_exited", _handle_rigidbody_exited_bounds)
+		_level.disconnect("on_character_exited", _handle_character_exited_bounds)
+		_level.disconnect("on_character_entered", handle_world_bounds_enter)
 		
 	_out_of_bounds_characters = []
 	
 	level = _level
-	level.bounds.connect("body_exited", handle_world_bounds_exit)
-	level.bounds.connect("body_entered", handle_world_bounds_enter)
+	
+	level.connect("on_rigidbody_exited", _handle_rigidbody_exited_bounds)
+	level.connect("on_character_exited", _handle_character_exited_bounds)
+	level.connect("on_character_entered", handle_world_bounds_enter)
+	
 	_init_node_tree(level)
 
-func handle_world_bounds_exit(body: Node3D):
+func _handle_rigidbody_exited_bounds(body: RigidBody3D):
+	#body.queue_free()
+	pass
+
+func _handle_character_exited_bounds(body: Node3D):
 	if body is GameCharacter:
 		_out_of_bounds_characters.append(body)
 		
@@ -148,9 +156,9 @@ func _init_node_tree(node):
 
 func get_random_reachable_point():
 	var random_point: Vector3 = Vector3(
-		randf_range(-level.bounds.scale.x / 2, level.bounds.scale.x / 2) + level.bounds.global_position.x,
-		randf_range(-level.bounds.scale.y / 2, level.bounds.scale.y / 2) + level.bounds.global_position.y,
-		randf_range(-level.bounds.scale.z / 2, level.bounds.scale.z / 2) + level.bounds.global_position.z
+		randf_range(level.bounds_start.x, level.bounds_stop.x),
+		randf_range(level.bounds_start.y, level.bounds_stop.y),
+		randf_range(level.bounds_start.z, level.bounds_stop.z)
 	)
 	
 	var reachable_point: Vector3 = get_closest_reachable_point(random_point)
@@ -186,10 +194,17 @@ func _process_node(object: Object):
 func _process_out_of_bounds_characters(delta):
 	for char in _out_of_bounds_characters:
 		if char != null and level != null:
-			var direction = char.global_position.direction_to(level.bounds.global_position)
+			var direction = level.direction_to_bounds(char)
+			var distance = level.distance_to_bounds(char)
+			
+			print('direction to bounds: %s, distance: %s' % [direction, distance])
+			
 			print(direction)
-			if char.global_position.y <= level.bounds.global_position.y - level.bounds.scale.y / 2:
+			if direction.y > 0:
 				char.global_position = world.get_random_reachable_point()
 			else:
-				char.freeze_movement = true
-				char.global_position = char.global_position.move_toward(char.global_position + direction, 0.2 * delta)
+				char.global_position = char.global_position.move_toward(char.global_position + direction, pow(distance, 8) * delta)
+				#char.velocity.x = direction.x * pow(distance, 2)
+				#char.velocity.z = direction.z * pow(distance, 2)
+				
+				char.move_and_slide()
