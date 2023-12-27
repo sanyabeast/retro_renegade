@@ -260,10 +260,17 @@ func find_first_node_of_type_recursively(node: Node3D, node_type: ENodeType):
 		if result: 
 			return result
 		
+func lerpt(from: float, to: float, weight: float, threshold: float = 0.1):
+	if abs(to - from) < threshold:
+		return to
+	else:
+		return lerpf(from, to, weight)
 
 		
 static func load_config() -> RGameConfig:
 	return load("res://resources/config.tres");
+
+
 
 # DATA CONTAINERS
 class DataContainer:

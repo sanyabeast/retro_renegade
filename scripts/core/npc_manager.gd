@@ -34,21 +34,20 @@ func _process_npc(character: GameCharacter, delta: float):
 			"timer_gate": tools.TimerGateManager.new()
 		}
 		
-	if _npc_data[character]["timer_gate"].check("switch_target_point", 10):
-		var random_point: Vector3 =  character.global_position + Vector3(
-			randf_range(-64, 64),
-			0,
-			randf_range(-64, 64),
-		)
-		
-		
-		
-		random_point = world.get_random_reachable_point()
-		_npc_data[character]["move_target"] =random_point
+	if _npc_data[character]["timer_gate"].check("switch_target_point", 1):
+		var random_point = world.get_random_reachable_point()
+		#_npc_data[character]["move_target"] = random_point
+		if players.current != null:
+			random_point = players.current.global_position
+		_npc_data[character]["move_target"] = random_point
 		
 		character.nav_agent.target_position = _npc_data[character]["move_target"]
 	
-	_npc_data[character]["look_target"] = _npc_data[character]["look_target"].lerp(_npc_data[character]["move_target"], 0.05)
+	_npc_data[character]["look_target"] = _npc_data[character]["move_target"] + Vector3(
+		randf_range(-16, 16),
+		0,
+		randf_range(-16, 16),
+	)
 	
 	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]

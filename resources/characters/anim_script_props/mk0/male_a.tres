@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RAnimScriptMK0Props" load_steps=2 format=3 uid="uid://bgnaa5oyw6itv"]
+
+[ext_resource type="Script" path="res://scripts/resources/character/anim_script_mk0_props.gd" id="1_3wu57"]
+
+[resource]
+script = ExtResource("1_3wu57")
+move_animation_speed_scale = 1.25
+body_twist_max_angle = 70.0
+body_bend_max_angle = 15.0
+body_tilt_max_angle = 10.0
+body_crouched_twist_max_angle = 25.0
+body_crouched_bend_angle = 15.0
+body_crouched_tilt_max_angle = 5.0
+walk_style = 0.0
+run_style = 0.0
+idle_style = 0.0
+crouch_idle_style = 0.0
+fall_style = 0.0
+vertical_blend_transition_speed = 4.0
+horizontal_blend_transition_speed = 8.0
+force_looping_for_animations = Array[String](["Idle", "Walk", "Fall"])

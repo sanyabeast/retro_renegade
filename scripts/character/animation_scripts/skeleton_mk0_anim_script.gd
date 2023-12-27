@@ -19,6 +19,7 @@ var _target_v_speed_scale: float = 1
 var _target_h_speed_scale: float = 1
 
 var _directional_velocity_factor_interpolated: float = 0
+var _horizontal_velocity_total_interpolated: float = 0
 
 func on_setup():
 	assert(animation_tree != null, "GameCharacterBodyAnimationScriptMK1: animation_tree is required to function")
@@ -54,9 +55,7 @@ func _process(delta):
 			#_current_character_directional_velocity
 			
 			var directional_velocity_factor = _directional_velocity_factor_interpolated
-			var horizontal_velocity_total: float = bc._current_character_h_velocity + abs(
-				directional_velocity_factor * 2
-			)
+			var horizontal_velocity_total: float = _horizontal_velocity_total_interpolated
 			
 			_target_h_blend_value = lerpf(-1, 1, clampf((horizontal_velocity_total) / character.get_sprint_speed_max(), 0, 1))
 			_target_v_blend_value = -1 if character.is_crouching else 0
@@ -91,15 +90,18 @@ func _process(delta):
 				max_bend_angle = props.body_crouched_bend_angle
 				min_bend_angle = props.body_crouched_bend_angle
 			
-			if fz >= -0.1:
-				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(max_twist_angle, -max_twist_angle, (fx + 1) / 2), 180 * delta)
-				bc.ik_controller.body_target_rotation_y = lerpf(-10, 10, (fx + 1) / 2)
-			else:
-				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(-max_twist_angle, max_twist_angle, (fx + 1) / 2) , 180 * delta)
-				bc.ik_controller.body_target_rotation_y = lerpf(10, -10, (fx + 1) / 2)
+			var x_factor: float = (fx + 1) / 2
+			var z_factor: float = (fz + 1) / 2
 			
-			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, (fz + 1) / 2)
-			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, (fx + 1) / 2)
+			if fz >= -0.1:
+				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(max_twist_angle, -max_twist_angle, x_factor), 360 * delta)
+				bc.ik_controller.body_target_rotation_y = lerpf(-10, 10, x_factor)
+			else:
+				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(-max_twist_angle, max_twist_angle, x_factor) , 360 * delta)
+				bc.ik_controller.body_target_rotation_y = lerpf(10, -10, x_factor)
+			
+			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, z_factor)
+			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, x_factor)
 			
 			animation_tree["parameters/move/move_blend_space_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * props.move_animation_speed_scale
 			
@@ -149,13 +151,18 @@ func _physics_process(delta):
 	var bc = body_controller
 	var character = bc.character
 	
-	_move_to_direction_factor_interpolated.x = lerpf(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, 0.025)
-	_move_to_direction_factor_interpolated.y = lerpf(
+	var interp_velocity = clampf(_horizontal_velocity_total_interpolated * 4, 0, 8)
+	#interp_velocity = 4
+	_move_to_direction_factor_interpolated.x = move_toward(_move_to_direction_factor_interpolated.x, character.move_to_body_direction_factor.x, interp_velocity * delta)
+	_move_to_direction_factor_interpolated.y = move_toward(
 		_move_to_direction_factor_interpolated.y, 
 		character.move_to_body_direction_factor.z, 
-		0.025)
+		interp_velocity * delta)
+		
+	_horizontal_velocity_total_interpolated = tools.lerpt(_horizontal_velocity_total_interpolated, bc._current_character_h_velocity + abs(
+		pow(abs(bc._current_character_directional_velocity / 2), 0.5)
+	), 0.1)
 
-	
 	pass
 
 func _handle_object_grab(object: Node3D):

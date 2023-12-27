@@ -1,14 +1,12 @@
 [gd_resource type="Resource" script_class="RGameLevel" load_steps=3 format=3 uid="uid://dybxeo2go05b4"]
 
 [ext_resource type="Script" path="res://scripts/resources/game_level.gd" id="1_1lqap"]
-[ext_resource type="PackedScene" uid="uid://dl8amuauub3qm" path="res://scenes/characters/xbot_a.tscn" id="1_cqram"]
+[ext_resource type="PackedScene" uid="uid://dl4twk4isl7jc" path="res://scenes/characters/ybot_a.tscn" id="1_eqsaq"]
 
 [resource]
 script = ExtResource("1_1lqap")
 name = "Practice Range"
-player_default_class = ExtResource("1_cqram")
+player_default_class = ExtResource("1_eqsaq")
 player_spawn_auto = null
 player_retry_max = null
 default_character_camera_mode = null
-y_kill = -64.0
-y_max = 128.0
