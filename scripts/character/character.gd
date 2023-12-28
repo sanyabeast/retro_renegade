@@ -6,6 +6,9 @@ const MOVEMENT_DEADZONE = 0.1
 var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export var props: RCharacterProperties
+@export var npc_props: RNPCProps
+
+@export_subgroup("Referencies")
 @export var torch: SpotLight3D
 @export var camera_rig: GameCharacterCameraRig
 @export var phys_interaction: GameCharacterPhysicalInteractionManager
@@ -13,6 +16,10 @@ var gravity: float = -1 * ProjectSettings.get_setting("physics/3d/default_gravit
 @export var body_controller: GameCharacterBodyController
 @export var sfx_controller: CharacterSFX
 @export var nav_agent: NavigationAgent3D
+
+var is_npc: bool = false
+
+var cooldowns: tools.CooldownManager = tools.CooldownManager.new()
 
 var current_climbing_power: float = 0
 var current_sprint_power: float = 0
@@ -27,6 +34,12 @@ var current_movement_direction = Vector3.ZERO
 var current_movement_speed: float = 0
 var target_movement_speed: float = 0
 var current_movement_acceleration: float = 0
+## target movement direction
+var movement_direction: Vector3 = Vector3.ZERO
+
+var current_body_rotation: float = 0
+## target body rotation
+var body_rotation: float = 0
 
 var climbing_start_distance: float = 0
 var jump_started: bool = false
@@ -34,24 +47,18 @@ var jump_started: bool = false
 var travelled: float = 0
 var ground_travelled: float = 0
 var air_travelled: float = 0
-
 var ground_time: float = 0
 var air_time: float = 0
-
-var _prev_global_position: Vector3 = Vector3.ZERO
-var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
 var current_vertical_velocity: float = 0
 var current_horizontal_velocity: float = 0
 var current_total_velocity: float = 0
 
 var body_physics_enabled: bool = false
-
-var body_direction: Vector3 = Vector3.FORWARD
-
 var move_to_body_direction_factor: Vector3 = Vector3.ZERO
 
-var cooldowns: tools.CooldownManager = tools.CooldownManager.new()
+var _prev_global_position: Vector3 = Vector3.ZERO
+var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
 signal on_crouch_entered
 signal on_crouch_exited
@@ -94,6 +101,8 @@ func _ready():
 		dev.logd("GameCharacater %s" % name, "creating NavigationAgent3D for character")
 		add_child(nav_agent)
 	
+	if npc_props == null:
+		npc_props = RNPCProps.new()
 
 func _setup_tree(node):
 	# Call the callback function on the current node
@@ -226,7 +235,18 @@ func _physics_process(delta):
 
 func process_movement(delta):
 	if not freeze_movement:
+		
+		if is_npc :
+			current_movement_direction = current_movement_direction.move_toward(movement_direction, npc_props.move_direction_change_speed / (current_horizontal_velocity  + 1) * delta)
+			current_body_rotation = tools.move_toward_deg(current_body_rotation, body_rotation, npc_props.body_direction_change_speed * delta)
+		else:
+			current_movement_direction = movement_direction
+			current_body_rotation = body_rotation
+			
+		rotation_degrees.y = current_body_rotation
+			
 		current_movement_acceleration = 0
+		
 		if is_on_floor():
 			current_movement_acceleration = lerpf(props.walk_acceleration, props.sprint_acceleration, current_sprint_power)
 
@@ -257,28 +277,31 @@ func process_movement(delta):
 		velocity.z = target_vel.z
 		
 		move_and_slide()
-
+		
 		if current_climbing_power > 0 and travelled - climbing_start_distance >= props.climbing_max_distance:
 			current_climbing_power = 0
 
-func set_movement_direction(movement_direction: Vector3):
-	current_movement_direction = movement_direction
+func set_movement_direction(_movement_direction: Vector3):
+	movement_direction = _movement_direction
 	
-	if current_movement_direction.length() > MOVEMENT_DEADZONE:
-		current_movement_direction = current_movement_direction.normalized()
+	if movement_direction.length() > MOVEMENT_DEADZONE:
+		movement_direction = movement_direction.normalized()
 		target_movement_speed = lerpf(get_walk_speed_max(), get_sprint_speed_max(), current_sprint_power)
 	else:
 		target_movement_speed = 0
 	pass
 	
+## degrees
+func set_body_rotation(angle: float):
+	body_rotation = angle
+	
 func set_body_direction(direction: Vector3):
-	body_direction = Vector3(direction.x, 0, direction.z)
-	if body_direction.length() > 0.01:
-		look_at(global_position + body_direction.normalized())
-
+	var angle = tools.rotation_degrees_y_from_direction(Vector3(direction.x, 0, direction.z))
+	set_body_rotation(angle)
+	
 func set_body_direction_target(target: Vector3):
-	set_body_direction(target - global_position)
-
+	set_body_direction(target.direction_to(global_position))
+	
 func look_at_direction(look_direction: Vector3):
 	pass
 	#look_at(global_position + Vector3(look_direction.x, 0, look_direction.y))

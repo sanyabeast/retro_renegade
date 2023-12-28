@@ -24,6 +24,8 @@ func _process(delta):
 	pass
 
 func _process_npc(character: GameCharacter, delta: float):
+	character.is_npc = true
+	
 	if not character in _npc_data:
 		_npc_data[character] = {
 			"move_target": Vector3.ZERO,
@@ -36,18 +38,15 @@ func _process_npc(character: GameCharacter, delta: float):
 		
 	if _npc_data[character]["timer_gate"].check("switch_target_point", 1):
 		var random_point = world.get_random_reachable_point()
-		#_npc_data[character]["move_target"] = random_point
-		if players.current != null and character.global_position.distance_to(players.current.global_position) > 4:
-			random_point = players.current.global_position
 		_npc_data[character]["move_target"] = random_point
-		
+		if players.current != null:
+			random_point = world.get_random_reachable_point_in_square(players.current.global_position, 64)
+			
+			#random_point = players.current.global_position
+			
+		_npc_data[character]["move_target"] = random_point
 		character.nav_agent.target_position = _npc_data[character]["move_target"]
 	
-	_npc_data[character]["look_target"] = _npc_data[character]["move_target"] + Vector3(
-		randf_range(-16, 16),
-		0,
-		randf_range(-16, 16),
-	)
 	
 	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
@@ -63,10 +62,8 @@ func _process_npc(character: GameCharacter, delta: float):
 	move_direction = character.current_movement_direction.lerp(move_direction, 0.15)
 		
 	character.set_movement_direction(move_direction)	
-	character.set_body_direction_target(_npc_data[character]["look_target"])
-	if players.current != null:
-		character.set_body_direction_target(players.current.global_position)
-	character.look_at_direction(_npc_data[character]["look_target"])	
+	character.set_body_direction_target(character.global_position + move_direction)
+	character.look_at_direction(character.global_position + move_direction)	
 	
 	if _npc_data[character]["is_sprint"]:
 		character.start_sprint()

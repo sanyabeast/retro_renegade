@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="RDecalFX" load_steps=6 format=3 uid="uid://b55un2cj8kl8u"]
 
-[ext_resource type="Script" path="res://scripts/resources/decal_fx.gd" id="1_d83sd"]
+[ext_resource type="Script" path="res://scripts/resources/fx/decal_fx.gd" id="1_d83sd"]
 [ext_resource type="Texture2D" uid="uid://jbwnkynyno0l" path="res://assets/textures/decals/explosive_impact_a_albedo.png" id="2_78jw3"]
 [ext_resource type="Texture2D" uid="uid://664g4x74aqpa" path="res://assets/textures/decals/explosive_impact_a_normal.png" id="3_ht7vq"]
-[ext_resource type="Script" path="res://scripts/resources/decal.gd" id="4_r4b4e"]
+[ext_resource type="Script" path="res://scripts/resources/fx/decal.gd" id="4_r4b4e"]
 
 [sub_resource type="Resource" id="Resource_y2unl"]
 script = ExtResource("4_r4b4e")

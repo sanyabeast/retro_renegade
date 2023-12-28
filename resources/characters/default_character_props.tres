@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="RCharacterProperties" load_steps=2 format=3 uid="uid://b6w6445143jol"]
 
-[ext_resource type="Script" path="res://scripts/resources/character_properties.gd" id="1_q7dog"]
+[ext_resource type="Script" path="res://scripts/resources/character/character_properties.gd" id="1_q7dog"]
 
 [resource]
 script = ExtResource("1_q7dog")

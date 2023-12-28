@@ -16,6 +16,7 @@ var input_mode_override: EInputMode = EInputMode.App
 
 func set_player(character: GameCharacter):
 	current = character
+	current.is_npc = false
 	camera_manager.set_camera(current.get_camera())
 	
 func add_spawn_spot(node: Node3D):
@@ -72,16 +73,19 @@ func _process(delta):
 	
 	if current != null and dev != null:
 		dev.print_screen("character_pos", "character xyz: %s" % current.global_position)
-		dev.print_screen("character_vel", "character velocity: %.2f m/s" % current.velocity.length())
-		dev.print_screen("character_crouch", "character crouching: %s" % current.is_crouching)
-		dev.print_screen("character_travelled", "character travelled: %.2f m" % current.travelled)
-		dev.print_screen("character_jump_charge", "character jump charge: %.2f m" % current.cooldowns.progress("jump_charge"))
-		dev.print_screen("character_air_travelled", "character travelled (air): %.2f m" % current.air_travelled)
-		dev.print_screen("character_ground_travelled", "character travelled (ground): %.2f m" % current.ground_travelled)
-		dev.print_screen("character_air_time", "character time (air): %.2f s" % current.air_time)
-		dev.print_screen("character_ground_time", "character time (ground): %.2f s" % current.ground_time)
-		dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((current.travelled - current.climbing_start_distance) if current.is_climbing else 0))
-		dev.print_screen("character_dirvel", "character direcional velocity: %.2f m" % current.body_controller._current_character_directional_velocity)
+		#dev.print_screen("character_vel", "character velocity: %.2f m/s" % current.velocity.length())
+		#dev.print_screen("character_crouch", "character crouching: %s" % current.is_crouching)
+		#dev.print_screen("character_travelled", "character travelled: %.2f m" % current.travelled)
+		#dev.print_screen("character_jump_charge", "character jump charge: %.2f m" % current.cooldowns.progress("jump_charge"))
+		#dev.print_screen("character_air_travelled", "character travelled (air): %.2f m" % current.air_travelled)
+		#dev.print_screen("character_ground_travelled", "character travelled (ground): %.2f m" % current.ground_travelled)
+		#dev.print_screen("character_air_time", "character time (air): %.2f s" % current.air_time)
+		#dev.print_screen("character_ground_time", "character time (ground): %.2f s" % current.ground_time)
+		#dev.print_screen("character_travelled_climb", "character travelled climbing: %.2f m" % ((current.travelled - current.climbing_start_distance) if current.is_climbing else 0))
+		#dev.print_screen("character_dirvel", "character direcional velocity: %.2f m" % current.body_controller._current_character_directional_velocity)
+		dev.print_screen("character_basis_z", "character basis z: %s" % current.global_basis.z)
+		dev.print_screen("character_basis_sz", "character basis z: %s" % tools.rotation_degrees_y_from_direction(current.basis.z))
+		dev.print_screen("character_rot_y", "character rotation y: %s deg" % current.rotation_degrees.y)
 
 func _physics_process(delta):
 	process_user_input()

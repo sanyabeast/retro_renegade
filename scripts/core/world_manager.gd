@@ -210,9 +210,6 @@ func _process_out_of_bounds_characters(delta):
 			var direction = level.direction_to_bounds(char)
 			var distance = level.distance_to_bounds(char)
 			
-			print('direction to bounds: %s, distance: %s' % [direction, distance])
-			
-			print(direction)
 			if direction.y > 0:
 				char.global_position = world.get_random_reachable_point()
 			else:

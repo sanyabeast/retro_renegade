@@ -266,6 +266,18 @@ func lerpt(from: float, to: float, weight: float, threshold: float = 0.1):
 	else:
 		return lerpf(from, to, weight)
 
+func move_toward_deg(from_angle: float, to_angle: float, delta: float)->float:
+	return rad_to_deg(rotate_toward(deg_to_rad(from_angle + 180), deg_to_rad(to_angle + 180), deg_to_rad(delta))) - 180
+
+func rotation_degrees_y_from_direction(direction: Vector3)->float:
+	return rad_to_deg(atan2(direction.x, direction.z))
+	
+# returns the difference (in degrees) between angle1 and angle 2
+# the given angles must be in the range [0, 360)
+# the returned value is in the range (-180, 180]
+func angle_difference(angle1, angle2):
+	var diff = angle2 - angle1
+	return diff if abs(diff) < 180 else diff + (360 * -sign(diff))
 		
 static func load_config() -> RGameConfig:
 	return load("res://resources/config.tres");
@@ -312,7 +324,6 @@ class CooldownManager:
 		func ready()->bool:
 			return progress() >= 1
 		func progress()->float:
-			print(tools.get_time() - started_at, " ", (tools.get_time() - started_at) / duration)
 			return clampf((tools.get_time() - started_at) / duration, 0.0, 1.0)
 		func estimated()->float:
 			return clampf(duration - (tools.get_time() - started_at), 0, duration)

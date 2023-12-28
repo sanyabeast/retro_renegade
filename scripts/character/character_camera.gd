@@ -73,5 +73,5 @@ func process_camera_input(event):
 			pass
 	#  PLAYER
 	if character != null:
-		character.rotate_y(deg_to_rad(event.relative.x * app.config.first_person_camera_sensitivity * -1))
+		character.body_rotation += event.relative.x * app.config.first_person_camera_sensitivity * -1
 		

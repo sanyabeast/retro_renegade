@@ -137,7 +137,6 @@ func _check_ceil(delta):
 		
 		var obj = ceil_rayset.get_first_colliding_ray()
 		if obj != null:
-			print(obj)
 			new_elevation_allowed = false
 	
 	elevation_allowed = new_elevation_allowed

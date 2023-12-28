@@ -150,7 +150,6 @@ func _add_decal_fx(props: RDecalFX):
 	if decal_normal != Vector3.UP:
 		decal.look_at(decal_position + Vector3.UP, decal_normal)
 	
-	print('spawning decal: %s' % props)
 
 func _add_audio_fx(audio_fx: RAudioFX):
 	var new_audio_player = AudioStreamPlayer3D.new()

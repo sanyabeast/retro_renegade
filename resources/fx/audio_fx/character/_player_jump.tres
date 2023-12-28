@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="RAudioFX" load_steps=5 format=3 uid="uid://dvejhqbrf8a20"]
 
 [ext_resource type="AudioStream" uid="uid://begvdd2qgciic" path="res://assets/sound/sfx/jump/345425__artmasterrich__male_jump_02.ogg" id="1_1h1sg"]
-[ext_resource type="Script" path="res://scripts/resources/audio_fx.gd" id="1_6vjrh"]
+[ext_resource type="Script" path="res://scripts/resources/fx/audio_fx.gd" id="1_6vjrh"]
 [ext_resource type="AudioStream" uid="uid://b5ovm1wscc6xb" path="res://assets/sound/sfx/jump/345426__artmasterrich__male_jump_03.ogg" id="2_rcqfo"]
 [ext_resource type="AudioStream" uid="uid://cgbxd0icl7rms" path="res://assets/sound/sfx/jump/345437__artmasterrich__male_jump_01.ogg" id="3_2yjkd"]
 

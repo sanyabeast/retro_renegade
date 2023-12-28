@@ -144,7 +144,7 @@ func _process(delta):
 	_current_character_h_velocity = Vector2(character.velocity.x, character.velocity.z).length()
 	_current_character_v_velocity = character.velocity.y
 	_current_character_total_velocity = character.velocity.length()
-	_current_character_directional_velocity = _prev_body_rotation - character.rotation_degrees.y
+	_current_character_directional_velocity = tools.angle_difference(_prev_body_rotation, character.rotation_degrees.y)
 	
 	# Determine character action type based on climbing state
 	if character.is_climbing:
