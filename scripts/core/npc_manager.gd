@@ -48,10 +48,10 @@ func _process_npc(character: GameCharacter, delta: float):
 		character.nav_agent.target_position = _npc_data[character]["move_target"]
 	
 	
-	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
+	if _npc_data[character]["timer_gate"].check("switch_is_idle", 1) and tools.random_bool2(0.25):
 		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
 	
-	_npc_data[character]["is_sprint"] = character.global_position.distance_to(character.nav_agent.target_position) > 16
+	_npc_data[character]["is_sprint"] = character.global_position.distance_to(character.nav_agent.target_position) > 48
 	_npc_data[character]["is_climbing"]	= character.is_touching_wall()
 		
 	var move_direction: Vector3 = (character.nav_agent.get_next_path_position() - character.global_position).normalized()
