@@ -57,7 +57,7 @@ func get_sun_progress2():
 	
 func get_sun_rotation() -> Vector3:
 	var sun_azimuth = world.day_time * 360.0  # 60 degrees arc
-	var sun_atitude = sin((world.day_time + 0.25) * PI * 2.0) * 60.
+	var sun_atitude = clampf(sin((world.day_time + 0.25) * PI * 2.0) * 2, -1., 1.) * 60.
 	return Vector3(deg_to_rad(sun_atitude), deg_to_rad(sun_azimuth), 0)
 
 func get_sun_energy() -> float:

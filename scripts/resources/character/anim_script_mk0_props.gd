@@ -24,7 +24,17 @@ class_name RAnimScriptMK0Props
 
 @export_subgroup("Extras")
 @export var force_looping_for_animations: Array[String] = [
-	"Idle",
-	"Walk",
-	"Fall"
+	"Idle_A",
+	"Idle_B",
+	"Idle_C",
+	"Walk_A",
+	"Walk_B",
+	"Walk_C",
+	"Run_A",
+	"Run_B",
+	"Run_C",
+	"Crouch_Idle_A",
+	"Crouch_Idle_B",
+	"Fall_A",
+	"Fall_B"
 ]

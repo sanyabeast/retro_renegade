@@ -1,0 +1,151 @@
+[gd_scene load_steps=14 format=3 uid="uid://cclr50tqf1j3f"]
+
+[ext_resource type="Script" path="res://scripts/hud/menu/menu_item_controller.gd" id="1_m1t1n"]
+
+[sub_resource type="Theme" id="Theme_374rh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ef6w"]
+
+[sub_resource type="Animation" id="Animation_1tj8q"]
+resource_name = "Normal"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.121569, 0.121569, 0.121569, 0.380392), Color(0.121569, 0.121569, 0.121569, 0.380392)]
+}
+
+[sub_resource type="Animation" id="Animation_p3kl4"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.121569, 0.121569, 0.121569, 0.380392)]
+}
+
+[sub_resource type="Animation" id="Animation_rkaj7"]
+resource_name = "Selected"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.792157, 0.00392157, 0.129412, 0.643137), Color(0.792157, 0.00392157, 0.129412, 0.643137)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fa7ti"]
+_data = {
+"Normal": SubResource("Animation_1tj8q"),
+"RESET": SubResource("Animation_p3kl4"),
+"Selected": SubResource("Animation_rkaj7")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2psg5"]
+animation = &"Normal"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8o0qq"]
+animation = &"Selected"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qka6m"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_y0t3d"]
+xfade_time = 0.15
+advance_mode = 2
+advance_condition = &"selected"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vg75v"]
+xfade_time = 0.15
+advance_mode = 2
+advance_condition = &"normal"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_cxrom"]
+states/Normal/node = SubResource("AnimationNodeAnimation_2psg5")
+states/Normal/position = Vector2(385, 108)
+states/Selected/node = SubResource("AnimationNodeAnimation_8o0qq")
+states/Selected/position = Vector2(542, 104)
+states/Start/position = Vector2(229, 108)
+transitions = ["Start", "Normal", SubResource("AnimationNodeStateMachineTransition_qka6m"), "Normal", "Selected", SubResource("AnimationNodeStateMachineTransition_y0t3d"), "Selected", "Normal", SubResource("AnimationNodeStateMachineTransition_vg75v")]
+
+[node name="DefaultMenuItem" type="PanelContainer" node_paths=PackedStringArray("label_element", "value_element", "animation_player", "animation_tree")]
+custom_minimum_size = Vector2(0, 30.7)
+anchors_preset = -1
+anchor_right = 0.509
+anchor_bottom = 0.036
+offset_right = 0.599976
+offset_bottom = -0.400002
+theme = SubResource("Theme_374rh")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_6ef6w")
+script = ExtResource("1_m1t1n")
+label_element = NodePath("Control/Label")
+value_element = NodePath("Control/Value")
+animation_player = NodePath("AnimationPlayer")
+animation_tree = NodePath("AnimationTree")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 2
+color = Color(0.121569, 0.121569, 0.121569, 0.380392)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 2
+anchor_left = 0.019
+anchor_top = 0.098
+anchor_right = 0.019
+anchor_bottom = 0.847
+offset_left = -1.773
+offset_top = -0.00860023
+offset_right = 295.227
+offset_bottom = -0.00290298
+pivot_offset = Vector2(0.24, 0)
+text = "Menu Item #1"
+
+[node name="Value" type="Label" parent="Control"]
+layout_mode = 2
+anchor_left = 0.984
+anchor_top = 0.098
+anchor_right = 0.984
+anchor_bottom = 0.847
+offset_left = -181.928
+offset_top = -0.00860023
+offset_right = 0.0719604
+offset_bottom = -0.00290298
+pivot_offset = Vector2(0.24, 0)
+text = "75%
+"
+horizontal_alignment = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_fa7ti")
+}
+autoplay = "Normal"
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_fa7ti")
+}
+tree_root = SubResource("AnimationNodeStateMachine_cxrom")
+anim_player = NodePath("../AnimationPlayer")
+parameters/conditions/normal = false
+parameters/conditions/selected = false
