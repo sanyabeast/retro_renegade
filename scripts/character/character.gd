@@ -140,98 +140,100 @@ func _exit_tree():
 	world.unlink_character(self)
 
 func _process(delta):
-	dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % move_to_body_direction_factor)
-	
-	travelled += (global_position - _prev_global_position).length()
-	
-	# SFX CONTROLLER CACTIONS COMMITTING
-	# LANDING TRACKING
-	
-	# Direction Factor:
-	
-	if not is_touching_floor():
-		ground_travelled = 0
-		ground_time = 0
+	if not game.paused:
+		dev.print_screen("char_move_dir_factor", "Player move direction factor: %s" % move_to_body_direction_factor)
 		
-		air_travelled += (global_position - _prev_global_position).length()
-		air_time += delta
-	else:
-		ground_travelled += (global_position - _prev_global_position).length()
-		ground_time += delta
+		travelled += (global_position - _prev_global_position).length()
 		
-		if air_travelled > 0:
-			var landing_impact: float = clamp(abs(current_vertical_velocity) / 16, 0, 1)
+		# SFX CONTROLLER CACTIONS COMMITTING
+		# LANDING TRACKING
+		
+		# Direction Factor:
+		
+		if not is_touching_floor():
+			ground_travelled = 0
+			ground_time = 0
 			
-			sfx_controller.commit_action(CharacterSFX.EActionType.Landing, landing_impact)
-			if body_controller != null:
-				body_controller.commit_landing(pow(landing_impact, 2))
+			air_travelled += (global_position - _prev_global_position).length()
+			air_time += delta
+		else:
+			ground_travelled += (global_position - _prev_global_position).length()
+			ground_time += delta
 			
-			air_travelled = 0
-			air_time = 0
-			
-			on_landed.emit()
-	
-	# WALKING / SPRINTING / STAYING
-	if is_touching_floor():
-		sfx_controller.commit_action(
-			CharacterSFX.EActionType.Walk, 
-			clampf(Vector2(velocity.x, velocity.z).length() / get_walk_speed_max(), 0, 1)
-		)
-	else:
-		sfx_controller.commit_action(CharacterSFX.EActionType.Walk, 0)
-	
-	if is_sprinting:
-		sfx_controller.commit_action(
-			CharacterSFX.EActionType.Sprint, 
-			_get_walk_to_sprint_progress()
-		)
-	else:
-		sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
+			if air_travelled > 0:
+				var landing_impact: float = clamp(abs(current_vertical_velocity) / 16, 0, 1)
+				
+				sfx_controller.commit_action(CharacterSFX.EActionType.Landing, landing_impact)
+				if body_controller != null:
+					body_controller.commit_landing(pow(landing_impact, 2))
+				
+				air_travelled = 0
+				air_time = 0
+				
+				on_landed.emit()
+		
+		# WALKING / SPRINTING / STAYING
+		if is_touching_floor():
+			sfx_controller.commit_action(
+				CharacterSFX.EActionType.Walk, 
+				clampf(Vector2(velocity.x, velocity.z).length() / get_walk_speed_max(), 0, 1)
+			)
+		else:
+			sfx_controller.commit_action(CharacterSFX.EActionType.Walk, 0)
+		
+		if is_sprinting:
+			sfx_controller.commit_action(
+				CharacterSFX.EActionType.Sprint, 
+				_get_walk_to_sprint_progress()
+			)
+		else:
+			sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
 
-	if jump_started and not is_touching_floor():
-		jump_started = false
-		cooldowns.stop("jump_charge")
+		if jump_started and not is_touching_floor():
+			jump_started = false
+			cooldowns.stop("jump_charge")
 
-	if jump_started and cooldowns.ready("jump_charge"):
-		finish_jump()
-	
+		if jump_started and cooldowns.ready("jump_charge"):
+			finish_jump()
+		
 
-	_prev_global_position = global_position
-	
-	current_vertical_velocity = velocity.y
-	current_horizontal_velocity = Vector2(velocity.x, velocity.z).length()
-	current_total_velocity = velocity.length()
+		_prev_global_position = global_position
+		
+		current_vertical_velocity = velocity.y
+		current_horizontal_velocity = Vector2(velocity.x, velocity.z).length()
+		current_total_velocity = velocity.length()
 	
 func _physics_process(delta):
-	dev.draw_gizmo_ray(self, "char_velocity", global_position + Vector3.UP, global_position + Vector3.UP + velocity.normalized(), Color.CYAN)
-	
-	var horizontal_velocity = Vector3(velocity.x, 0, velocity.z).normalized()
-	
-	if horizontal_velocity.length() > 0.05:
-		move_to_body_direction_factor = Vector3(
-			horizontal_velocity.dot(global_transform.basis.x.normalized()),
-			clampf(velocity.y, -1, 1),
-			-horizontal_velocity.dot(global_transform.basis.z.normalized())
-		)
-	else:
-		move_to_body_direction_factor = Vector3(0, clampf(velocity.y, -1, 1), 0)
-	
-	
-	if is_touching_floor() or not is_touching_wall():
-		stop_climb()
-
-	#process_user_input()
-	if not body_physics_enabled:
-		process_movement(delta)
-	else:
-		pass
-		var anchor_transform: Transform3D = body_controller.get_physics_body_anchor_transform()
-		global_position = anchor_transform.origin
+	if not game.paused:
+		dev.draw_gizmo_ray(self, "char_velocity", global_position + Vector3.UP, global_position + Vector3.UP + velocity.normalized(), Color.CYAN)
 		
-	if current_jump_power > 0:
-		current_jump_power = 0
+		var horizontal_velocity = Vector3(velocity.x, 0, velocity.z).normalized()
+		
+		if horizontal_velocity.length() > 0.05:
+			move_to_body_direction_factor = Vector3(
+				horizontal_velocity.dot(global_transform.basis.x.normalized()),
+				clampf(velocity.y, -1, 1),
+				-horizontal_velocity.dot(global_transform.basis.z.normalized())
+			)
+		else:
+			move_to_body_direction_factor = Vector3(0, clampf(velocity.y, -1, 1), 0)
+		
+		
+		if is_touching_floor() or not is_touching_wall():
+			stop_climb()
 
-	pass
+		#process_user_input()
+		if not body_physics_enabled:
+			process_movement(delta)
+		else:
+			pass
+			var anchor_transform: Transform3D = body_controller.get_physics_body_anchor_transform()
+			global_position = anchor_transform.origin
+			
+		if current_jump_power > 0:
+			current_jump_power = 0
+
+		pass
 
 func process_movement(delta):
 	if not freeze_movement:

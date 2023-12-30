@@ -26,7 +26,7 @@ class_name RGameConfig
 @export var dev_labels_view_distance: float = 64
 
 @export_subgroup("HUD")
-@export var hud_default_state_in_game: Array[String] = ['fps-base']
+@export var hud_default_state_in_game: Array[String] = ['in-game-hud']
 @export var hud_default_state_paused: Array[String] = ['pause-menu']
 
 func _init():

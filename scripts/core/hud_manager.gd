@@ -23,6 +23,7 @@ class HUDStateManager:
 		_set_state(state)
 
 	func _set_state(state: Array[String]):
+		dev.logd("HUDStateManager", "entering state: %s" % (", ".join(state)))
 		for item in current:
 			if not state.has(item):
 				hide(item)
@@ -30,7 +31,7 @@ class HUDStateManager:
 		current = []
 		
 		for item in state:
-			show(item)	
+			add(item)	
 		
 	func _find_next_focused_item():
 		for item in current:
@@ -70,16 +71,16 @@ class HUDStateManager:
 	func link_hud(hud: GameWidget):
 		assert(hud.id != "", "GameWidget ID must be not empty string  (%s)" % hud.name)
 		widgets[hud.id] = hud 
-		if hud.show_on_start:
-			if hud.exclusive:
-				push([hud.id])
-			else:
-				add(hud.id)
+		
+		if hud.add_on_start:
+			add(hud.id)
+		elif hud.show_on_start:
+			show(hud.id)
 		else:
-			if current.has(hud.id):
-				show(hud.id)
-			else:
-				hide(hud.id)
+			hide(hud.id)
+			
+		if current.has(hud.id):
+			show(hud.id)
 
 	func unlink_hud(hud: GameWidget):
 		if widgets.has(hud.id) and widgets[hud.id] == hud:
@@ -112,4 +113,4 @@ func _process(delta):
 			state.focused_widget.accept()
 			
 		if Input.is_action_just_pressed("ui_cancel"):
-			state.focused_widget.cance()
+			state.focused_widget.cancel()
