@@ -30,6 +30,32 @@ func _ready():
 func initialize():
 	_open_directory(menu)
 	pass
+	
+func accept():
+	_handle_accept()
+	pass
+	
+func cancel():
+	if _current_page.get_parent() is GameMenuItemDescriptor:
+		_up()
+	else:
+		super.cancel()
+	pass
+	
+func navigate(direction: Vector2):
+	if direction == Vector2.UP:
+		_items[_selected_item_index].is_selected = false
+		_selected_item_index = _selected_item_index - 1 if _selected_item_index > 0 else _current_page_items_count - 1
+		_items[_selected_item_index].is_selected = true
+	if direction == Vector2.DOWN:
+		_items[_selected_item_index].is_selected = false
+		_selected_item_index = _selected_item_index + 1 if _selected_item_index < _current_page_items_count - 1 else 0
+		_items[_selected_item_index].is_selected = true
+	if direction == Vector2.LEFT:
+		_items[_selected_item_index].prev_value()
+	if direction == Vector2.RIGHT:
+		_items[_selected_item_index].next_value()
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

@@ -32,8 +32,14 @@ func _ready():
 	logd(TAG, "ready")
 	
 	app.tasks.schedule(tools.get_scene(), "test", 5, print_screen.bind("TestMsg", "TestMsg"))
+	app.tasks.schedule(tools.get_scene(), "debug-code", 1, _run_debug_code)
 	
 	pass # Replace with function body.
+
+func _run_debug_code():
+	print(".. DEBUG CODE START ..")
+	print(hud.state.get_widget_with_path(["in-game-hud", "fps-base"]))
+	print(".. DEBUG CODE FINISH ..")
 
 func logd(tag: String, data):
 	print("%s: %s" % [tag, data])
@@ -188,10 +194,12 @@ func _process(delta):
 			show_gizmo_shapes()
 			
 	if Input.is_action_just_pressed("debug_menu"):
-		if hud.state.is_present('debug-menu'):
-			hud.state.add('debug-menu')
+		var dev_hud = hud.state.get_widget("dev-hud")
+		
+		if dev_hud.state.is_present('debug-menu'):
+			dev_hud.state.add('debug-menu')
 		else:
-			hud.state.remove('debug-menu')
+			dev_hud.state.remove('debug-menu')
 	
 	if tools.timer_gate.check('dev-check-orphaned-gizmo', 5):
 		_check_orphaned_gizmo_shapes()

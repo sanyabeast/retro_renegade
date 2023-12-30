@@ -33,11 +33,16 @@ class HUDStateManager:
 		for item in state:
 			add(item)	
 		
-	func _find_next_focused_item():
+	func reset_focused():
+		focused_widget = null
 		for item in current:
 			if widgets[item].interactive:
 				focused_widget = widgets[item]
 				break
+	
+	func unset_focused():
+		focused_widget = null
+			
 	func exists(id: String):
 		return widgets.has(id)
 	func is_present(id: String):
@@ -57,7 +62,7 @@ class HUDStateManager:
 			dev.logd("HUDStateManager", "hiding '%s'" % id)
 			
 			if focused_widget == widgets[id]:
-				_find_next_focused_item()
+				reset_focused()
 		else:
 			dev.logd("HUDStateManager", "Failed to HIDE '%s' - widget does not linked" % id)
 	func add(id: String):
@@ -91,6 +96,21 @@ class HUDStateManager:
 		widgets = {}
 		focused_widget = null	
 		pass
+		
+	func get_widget(id: String):
+		if widgets.has(id):
+			return widgets[id]
+		else:
+			return null
+			
+	func get_widget_with_path(path: Array[String]):
+		var result: GameWidget = get_widget(path.pop_front())
+		
+		while result != null and path.size() > 0:
+			result = result.state.get_widget(path.pop_front())
+			
+		dev.logd("HUDManager", "found % by query: %s" % [result, ",".join(path)])
+		return result
 	
 var state: HUDStateManager = HUDStateManager.new()
 
@@ -114,3 +134,15 @@ func _process(delta):
 			
 		if Input.is_action_just_pressed("ui_cancel"):
 			state.focused_widget.cancel()
+			
+	dev.print_screen("hud-manager-focused", "Widget in focus: %s" % _get_focused_widget_path())
+	
+func _get_focused_widget_path()-> String:
+	var result: String = ""
+	var focused_widget = state.focused_widget
+	
+	while focused_widget != null:
+		result = focused_widget.id  +  "/" + result
+		focused_widget = focused_widget.state.focused_widget
+		
+	return result

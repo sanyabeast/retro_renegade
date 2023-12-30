@@ -11,7 +11,7 @@ class_name  GameWidget
 var state: HUDManager.HUDStateManager = HUDManager.HUDStateManager.new()
 var root_state: HUDManager.HUDStateManager
 
-var iS_focused: bool = false
+var is_focused: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,11 +23,12 @@ func _exit_tree():
 	hud.unlink_hud(self)
 
 func focus():
-	iS_focused = true
+	is_focused = true
+	state._find_next_focused_item()
 	pass
 	
 func blur():
-	iS_focused = false
+	is_focused = false
 	pass
 	
 func navigate(direction: Vector2):
@@ -38,11 +39,15 @@ func navigate(direction: Vector2):
 func accept():
 	if use_local_state and state.focused_widget:
 		state.focused_widget.accept()
+	else:
+		state.reset_focused()
 	pass
 
 func cancel():
 	if use_local_state and state.focused_widget:
 		state.focused_widget.cancel()
+	else:
+		root_state.unset_focused()
 	pass
 
 func _update_root_state():
