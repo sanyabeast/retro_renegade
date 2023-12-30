@@ -19,6 +19,7 @@ anchor_bottom = 0.25
 offset_right = 0.0359955
 offset_bottom = -0.400009
 script = ExtResource("1_344sr")
+id = "debug-menu"
 
 [node name="MenuContainer" type="VBoxContainer" parent="DebugMenu"]
 layout_mode = 1

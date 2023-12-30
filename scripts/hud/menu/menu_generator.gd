@@ -1,4 +1,4 @@
-extends Control
+extends GameWidget
 
 class_name GameMenuGenerator
 
@@ -21,6 +21,7 @@ var allow_input: bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	super._ready()
 	if menu != null and target_container != null and item_template != null:
 		initialize()
 	
@@ -32,28 +33,29 @@ func initialize():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if allow_input:
-		if Input.is_action_just_pressed("ui_up"):
-			_items[_selected_item_index].is_selected = false
-			_selected_item_index = _selected_item_index - 1 if _selected_item_index > 0 else _current_page_items_count - 1
-			_items[_selected_item_index].is_selected = true
-			
-		if Input.is_action_just_pressed("ui_down"):
-			_items[_selected_item_index].is_selected = false
-			_selected_item_index = _selected_item_index + 1 if _selected_item_index < _current_page_items_count - 1 else 0
-			_items[_selected_item_index].is_selected = true
-			
-		if Input.is_action_just_pressed("ui_accept"):
-			_handle_accept()
-			
-		if Input.is_action_just_pressed("ui_cancel"):
-			_up()	
-			
-		if Input.is_action_just_pressed("ui_left"):
-			_items[_selected_item_index].prev_value()
-			
-		if Input.is_action_just_pressed("ui_right"):
-			_items[_selected_item_index].next_value()
+	pass
+	#if allow_input:
+		#if Input.is_action_just_pressed("ui_up"):
+			#_items[_selected_item_index].is_selected = false
+			#_selected_item_index = _selected_item_index - 1 if _selected_item_index > 0 else _current_page_items_count - 1
+			#_items[_selected_item_index].is_selected = true
+			#
+		#if Input.is_action_just_pressed("ui_down"):
+			#_items[_selected_item_index].is_selected = false
+			#_selected_item_index = _selected_item_index + 1 if _selected_item_index < _current_page_items_count - 1 else 0
+			#_items[_selected_item_index].is_selected = true
+			#
+		#if Input.is_action_just_pressed("ui_accept"):
+			#_handle_accept()
+			#
+		#if Input.is_action_just_pressed("ui_cancel"):
+			#_up()	
+			#
+		#if Input.is_action_just_pressed("ui_left"):
+			#_items[_selected_item_index].prev_value()
+			#
+		#if Input.is_action_just_pressed("ui_right"):
+			#_items[_selected_item_index].next_value()
 
 func _start_build_page():
 	#_build_page()

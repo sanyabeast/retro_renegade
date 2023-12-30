@@ -71,6 +71,7 @@ navigation_mesh = SubResource("NavigationMesh_hkvyo")
 [node name="NetherPortal" parent="Level/NavigationRegion3D" instance=ExtResource("5_uo7mq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.01633, 0, 7.53152)
 scene_path = "res://scenes/levels/_practice_range.tscn"
+allowed_groups = ["players"]
 
 [node name="Bounds" type="Area3D" parent="Level"]
 monitorable = false

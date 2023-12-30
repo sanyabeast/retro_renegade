@@ -8,6 +8,8 @@ class_name WorldEnvironmentController
 @export var world_environment: WorldEnvironment
 @export var sun: DirectionalLight3D
 
+signal on_before_travel(scene_path: String)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	_setup_tree(self)
@@ -62,3 +64,7 @@ func get_sun_rotation() -> Vector3:
 
 func get_sun_energy() -> float:
 	return lerpf(0.5, 1 , max(0.0, sin((world.day_time + 0.25) * 2.0 * PI)))
+
+func travel(scene_path: String):
+	on_before_travel.emit(scene_path)
+	tools.load_scene(scene_path)

@@ -55,6 +55,7 @@ settings = ExtResource("2_uouj1")
 [node name="NetherPortal" parent="Level" instance=ExtResource("5_t8rg4")]
 transform = Transform3D(-0.441287, 0, -0.897366, 0, 1, 0, 0.897366, 0, -0.441287, -9.61317, 0, 1.05921)
 scene_path = "res://scenes/levels/_practice_range.tscn"
+allowed_groups = ["players"]
 
 [node name="Bounds" type="Area3D" parent="."]
 monitorable = false

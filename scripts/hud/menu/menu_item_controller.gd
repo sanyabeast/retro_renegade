@@ -18,7 +18,6 @@ var descriptor: GameMenuItemDescriptor
 @export var range_value: float = 0
 
 
-
 func _ready():
 	animation_tree.active = true
 	#animation_player.play("Selected")

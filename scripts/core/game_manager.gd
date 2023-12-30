@@ -3,8 +3,11 @@ extends Node
 class_name GameManager
 
 var player_retry_current: int = 0
+var game_speed: float = 1
 
 @onready var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
+
+var paused: bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -19,3 +22,18 @@ func _process(delta):
 				players.respawn_player()
 				pass
 		
+	if Input.is_action_just_pressed("pause"):
+		if paused:
+			resume()
+		else:
+			pause()
+		
+func resume():
+	paused = false
+	hud.state.replace(app.config.hud_default_state_in_game)
+	game_speed = 1
+	
+func pause():
+	paused = true
+	hud.state.replace(app.config.hud_default_state_paused)
+	game_speed = 0

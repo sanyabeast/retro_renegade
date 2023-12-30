@@ -5,14 +5,6 @@ class_name PlayerManager
 var spawn_spots: Array[Node3D] = []
 var current: GameCharacter = null
 
-enum EInputMode {
-	App,
-	CharacterControl,
-	DontOverride
-}
-
-var input_mode: EInputMode = EInputMode.CharacterControl
-var input_mode_override: EInputMode = EInputMode.App
 
 func set_player(character: GameCharacter):
 	current = character
@@ -69,8 +61,6 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	update_mouse_mode()
-	
 	if current != null and dev != null:
 		dev.print_screen("character_pos", "character xyz: %s" % current.global_position)
 		#dev.print_screen("character_vel", "character velocity: %.2f m/s" % current.velocity.length())
@@ -89,105 +79,82 @@ func _process(delta):
 
 func _physics_process(delta):
 	process_user_input()
-	
-func update_mouse_mode():
-	var _input_mode = input_mode if input_mode_override == EInputMode.DontOverride else input_mode_override
-	
-	match _input_mode:
-		EInputMode.App:
-			if Input.get_mouse_mode() != Input.MOUSE_MODE_VISIBLE:
-				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		EInputMode.CharacterControl:
-			if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	
+
 func process_user_input():
-	var _input_mode = input_mode if input_mode_override == EInputMode.DontOverride else input_mode_override
-	
-	match _input_mode:
-		EInputMode.App:
-			pass
-		EInputMode.CharacterControl:
-			if current != null:
-				var props: RCharacterProperties = current.props
-				# CLIMBING
-				if props.allow_climbing:
-					if Input.is_action_pressed('jump'):
-						current.start_climb()
-					
-				# JUMPING
-				if props.allow_jump:
-					if Input.is_action_just_released("jump"):
-						current.finish_jump()	
-					else:
-						if Input.is_action_pressed('jump'):
-							current.start_jump()
-						else:
-							current.cancel_jump()
-					
-				# SPRINGING
-				if props.allow_sprint:
-					if props.flip_sprint_walk:
-						if Input.is_action_pressed("sprint"):
-							current.stop_sprint()
-						else:
-							current.start_sprint()
-					else:
-						if Input.is_action_pressed("sprint"):
-							current.start_sprint()
-						else:
-							current.stop_sprint()
-				# CROUCHING
-				if Input.is_action_pressed("crouch"):
-					current.start_crouch()
-				if not Input.is_action_pressed("crouch"):
-					current.stop_crouch()
-					
-				# PHYSICAL INTERACTION
-				if Input.is_action_just_pressed("grab"):
-					current.start_grab()
+	if app.is_character_input_mode():
+		if current != null:
+			var props: RCharacterProperties = current.props
+			# CLIMBING
+			if props.allow_climbing:
+				if Input.is_action_pressed('jump'):
+					current.start_climb()
 				
-				if not Input.is_action_pressed("grab"):
-					current.stop_grab()
-					
-				if Input.is_action_just_pressed("throw"):
-					current.start_throw()
-					
-				# MOVEMENT DIRECTION AND TARGET SPEEDS
-				var movement_direction: Vector3 = Vector3.ZERO
-
-				if Input.is_action_pressed("forward"):
-					movement_direction -= current.global_transform.basis.z
-				if Input.is_action_pressed("backward"):
-					movement_direction +=  current.global_transform.basis.z
-				if Input.is_action_pressed("right"):
-					movement_direction +=  current.global_transform.basis.x
-				if Input.is_action_pressed("left"):
-					movement_direction -=  current.global_transform.basis.x
-					
-				current.set_movement_direction(movement_direction)	
-
-				# EXTRAS
-				if Input.is_action_just_pressed("ui_cancel"):
-					if (Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED):
-						input_mode_override = EInputMode.App
-
-				if Input.is_action_just_pressed("torch"):
-					current.set_torch_visible(not current.is_torch_visible())
-
-				# DEV
-				if Input.is_action_just_pressed("dev0"):
-					if current.body_physics_enabled:
-						current.stop_body_physics()
+			# JUMPING
+			if props.allow_jump:
+				if Input.is_action_just_released("jump"):
+					current.finish_jump()	
+				else:
+					if Input.is_action_pressed('jump'):
+						current.start_jump()
 					else:
-						current.start_body_physics()
+						current.cancel_jump()
+				
+			# SPRINGING
+			if props.allow_sprint:
+				if props.flip_sprint_walk:
+					if Input.is_action_pressed("sprint"):
+						current.stop_sprint()
+					else:
+						current.start_sprint()
+				else:
+					if Input.is_action_pressed("sprint"):
+						current.start_sprint()
+					else:
+						current.stop_sprint()
+			# CROUCHING
+			if Input.is_action_pressed("crouch"):
+				current.start_crouch()
+			if not Input.is_action_pressed("crouch"):
+				current.stop_crouch()
+				
+			# PHYSICAL INTERACTION
+			if Input.is_action_just_pressed("grab"):
+				current.start_grab()
+			
+			if not Input.is_action_pressed("grab"):
+				current.stop_grab()
+				
+			if Input.is_action_just_pressed("throw"):
+				current.start_throw()
+				
+			# MOVEMENT DIRECTION AND TARGET SPEEDS
+			var movement_direction: Vector3 = Vector3.ZERO
+
+			if Input.is_action_pressed("forward"):
+				movement_direction -= current.global_transform.basis.z
+			if Input.is_action_pressed("backward"):
+				movement_direction +=  current.global_transform.basis.z
+			if Input.is_action_pressed("right"):
+				movement_direction +=  current.global_transform.basis.x
+			if Input.is_action_pressed("left"):
+				movement_direction -=  current.global_transform.basis.x
+				
+			current.set_movement_direction(movement_direction)	
+
+			if Input.is_action_just_pressed("torch"):
+				current.set_torch_visible(not current.is_torch_visible())
+
+			# DEV
+			if Input.is_action_just_pressed("dev0"):
+				if current.body_physics_enabled:
+					current.stop_body_physics()
+				else:
+					current.start_body_physics()
 			
 
 func _input(event):
-	if current != null:
-		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			current.process_camera_input(event)
-			
-		if event is InputEventMouseButton:
-			if input_mode_override != EInputMode.DontOverride and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-				input_mode_override = EInputMode.DontOverride
+	if app.is_character_input_mode():
+		if current != null:
+			if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+				current.process_camera_input(event)
+	

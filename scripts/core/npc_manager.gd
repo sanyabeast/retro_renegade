@@ -13,9 +13,10 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	for character in world.characters:
-		if force_everybody_npc or players.allow_npc(character):
-			_process_npc(character, delta)
+	if not game.paused:
+		for character in world.characters:
+			if force_everybody_npc or players.allow_npc(character):
+				_process_npc(character, delta)
 			
 	if tools.timer_gate.check("npc_health_task", 10):
 		for key in _npc_data:

@@ -1,4 +1,4 @@
-extends Control
+extends GameWidget
 
 var menu_items = []
 var current_selection = 0
@@ -57,6 +57,7 @@ func load_random_scene():
 	pass	
 
 func _ready():
+	super._ready()
 	var menu_container = $MenuContainer # Update with your VBoxContainer's name
 	for action in actions:
 		var label = Label.new()
@@ -68,22 +69,23 @@ func _ready():
 	hide()
 
 func _input(event):
-	if event.is_action_pressed("debug_menu"):
-		if is_visible():
-			#game.resume()
-			hide()
-		else:
-			#game.pause()
-			show()
-			select_item(0)
-	
-	if is_visible():
-		if event.is_action_pressed("ui_down"):
-			select_item((current_selection + 1) % menu_items.size())
-		elif event.is_action_pressed("ui_up"):
-			select_item((current_selection - 1 + menu_items.size()) % menu_items.size())
-		elif event.is_action_pressed("ui_accept"):
-			execute_action(current_selection)
+	pass
+	#if event.is_action_pressed("debug_menu"):
+		#if is_visible():
+			##game.resume()
+			#hide()
+		#else:
+			##game.pause()
+			#show()
+			#select_item(0)
+	#
+	#if is_visible():
+		#if event.is_action_pressed("ui_down"):
+			#select_item((current_selection + 1) % menu_items.size())
+		#elif event.is_action_pressed("ui_up"):
+			#select_item((current_selection - 1 + menu_items.size()) % menu_items.size())
+		#elif event.is_action_pressed("ui_accept"):
+			#execute_action(current_selection)
 
 func select_item(index):
 	var label: Label = menu_items[current_selection]

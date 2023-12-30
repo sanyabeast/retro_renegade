@@ -1,11 +1,11 @@
-extends Control
+extends GameWidget
 
 class_name FPSBaseHUD
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	hud.fps_base = self
+	super._ready()
 	pass  # Replace with function body.
 
 

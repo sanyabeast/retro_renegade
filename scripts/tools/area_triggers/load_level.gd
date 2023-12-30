@@ -13,5 +13,6 @@ func _ready():
 
 func enter_action():
 	dev.logd("AreaTriggerLoadLevel", "entered")
-	tools.load_scene(scene_path)
+	world.travel(scene_path)
+	
 		

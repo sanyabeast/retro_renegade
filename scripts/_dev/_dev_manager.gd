@@ -186,6 +186,12 @@ func _process(delta):
 			hide_gizmo_shapes()
 		else:
 			show_gizmo_shapes()
+			
+	if Input.is_action_just_pressed("debug_menu"):
+		if hud.is_present('debug-menu'):
+			hud.hide('debug-menu')
+		else:
+			hud.show('debug-menu')
 	
 	if tools.timer_gate.check('dev-check-orphaned-gizmo', 5):
 		_check_orphaned_gizmo_shapes()
