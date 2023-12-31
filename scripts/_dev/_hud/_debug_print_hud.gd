@@ -1,4 +1,4 @@
-extends Control
+extends GameWidget
 
 class_name DebugPrint
 

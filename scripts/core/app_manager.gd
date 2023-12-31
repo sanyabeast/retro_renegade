@@ -2,17 +2,19 @@ extends Node
 class_name AppManager
 
 enum EInputMode {
-	Character,
-	CharacterAndMenu,
-	Menu,
-	MenuAndPointer
+	NOOP,
+	CHARACTER,
+	CHARACTER_AND_MENU,
+	MENU,
+	MENU_AND_POINTER
 }
 
 var config: RGameConfig = load("res://resources/config.tres")
 var tasks: tools.TaskPlanner = tools.TaskPlanner.new()
-var input_mode: EInputMode = EInputMode.CharacterAndMenu
-var in_game_input_mode: EInputMode = EInputMode.CharacterAndMenu
-var pause_menu_input_mode: EInputMode = EInputMode.Menu
+var input_mode: EInputMode = EInputMode.CHARACTER_AND_MENU
+var in_game_input_mode: EInputMode = EInputMode.CHARACTER_AND_MENU
+var pause_menu_input_mode: EInputMode = EInputMode.MENU
+var input_mode_override: EInputMode = EInputMode.NOOP
 var focused: bool = false
 
 
@@ -24,10 +26,10 @@ func _ready():
 	world.connect("on_before_travel", _handle_travel)
 
 func is_character_input_mode():
-	return input_mode == EInputMode.Character or input_mode == EInputMode.CharacterAndMenu
+	return get_current_input_mode() == EInputMode.CHARACTER or input_mode == EInputMode.CHARACTER_AND_MENU
 
 func is_menu_input_mode():
-	return input_mode == EInputMode.Menu or input_mode == EInputMode.MenuAndPointer or input_mode == EInputMode.CharacterAndMenu	
+	return get_current_input_mode() == EInputMode.MENU or input_mode == EInputMode.MENU_AND_POINTER or input_mode == EInputMode.CHARACTER_AND_MENU	
 
 func _physics_process(delta):
 	tasks.update()
@@ -53,21 +55,30 @@ func capture_pointer():
 	if focused and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+func get_current_input_mode() -> EInputMode:
+	return input_mode if input_mode_override == EInputMode.NOOP else input_mode_override
+
 func _update_mouse_mode():
-	
-	match input_mode:
-		EInputMode.MenuAndPointer:
+	match get_current_input_mode():
+		EInputMode.MENU_AND_POINTER:
 			release_pointer()
 		_:
 			capture_pointer()
 	
-
 func elease_pointer():
 	pass
 
 func _input(event):	
 		if event is InputEventMouseButton:
 			focused = true
+
+func override_input_mode(_input_mode: EInputMode):
+	dev.logd("AppManager", "setting input mode override to '%s'" % _input_mode)
+	input_mode_override = _input_mode
+
+func stop_input_mode_override():
+	dev.logd("AppManager", "STOP input mode override")
+	input_mode_override = EInputMode.NOOP
 
 func _notification(what):
 	match what:

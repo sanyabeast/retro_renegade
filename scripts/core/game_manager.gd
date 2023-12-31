@@ -24,11 +24,12 @@ func _process(delta):
 				pass
 		
 	if Input.is_action_just_pressed("pause"):
-		if paused:
-			resume()
-		else:
-			pause()
-		
+		if not hud.cancel_action_locked:
+			if paused:
+				resume()
+			else:
+				pause()
+
 func resume():
 	paused = false
 	hud.state.replace(app.config.hud_default_state_in_game)

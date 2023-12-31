@@ -102,6 +102,11 @@ panning_strength = 0.1
 [node name="FPSBaseHUD" parent="." instance=ExtResource("6_cltbw")]
 
 [node name="_DevHUD" parent="." instance=ExtResource("7_piuni")]
+show_on_start = false
+add_on_start = false
+input_mode = 0
+hide_on_blur = false
+initial_state = Array[String]([])
 
 [node name="YBotSB01" parent="." instance=ExtResource("9_t436y")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.57432, 0, -0.584531)

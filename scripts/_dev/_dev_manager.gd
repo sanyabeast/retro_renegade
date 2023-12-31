@@ -196,9 +196,12 @@ func _process(delta):
 	if Input.is_action_just_pressed("debug_menu"):
 		var dev_hud = hud.state.get_widget("dev-hud")
 		
-		if dev_hud.state.is_present('debug-menu'):
+		if not dev_hud.state.is_present('debug-menu'):
+			dev.logd("DevManager", 'showing debug menu')
 			dev_hud.state.add('debug-menu')
+			hud.focus(dev_hud)
 		else:
+			dev.logd("DevManager", 'hiding debug menu')
 			dev_hud.state.remove('debug-menu')
 	
 	if tools.timer_gate.check('dev-check-orphaned-gizmo', 5):

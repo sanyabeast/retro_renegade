@@ -6,59 +6,84 @@ class_name  GameWidget
 @export var interactive: bool = false
 @export var show_on_start: bool = false
 @export var add_on_start: bool = false
+@export var input_mode: AppManager.EInputMode = AppManager.EInputMode.NOOP
+@export var hide_on_blur: bool = false
 
-@export var use_local_state: bool = false
+@export_subgroup("States")
+@export var initial_state: Array[String] = []
+
+@export_subgroup("Misc")
+@export var cancel_to_parent: bool = false
+
 var state: HUDManager.HUDStateManager = HUDManager.HUDStateManager.new()
-var root_state: HUDManager.HUDStateManager
+var parent_state: HUDManager.HUDStateManager
 
 var is_focused: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	_update_root_state()
-	root_state.link_hud(self)
+	state.widget = self
+	_update_parent_state()
+	parent_state.link_hud(self)
+	state.replace(initial_state)
+	
 	pass # Replace with function body.
 
 func _exit_tree():
-	hud.unlink_hud(self)
+	parent_state.unlink_hud(self)
 
-func focus():
-	is_focused = true
-	state._find_next_focused_item()
+func handle_focus():
+	if not is_focused:
+		dev.logd("GameWidget", "widget '%s' RECEIVES focus" % id)
+		is_focused = true
+		state.reset_focus()
+		if input_mode != AppManager.EInputMode.NOOP:
+			app.override_input_mode(input_mode)
+		
 	pass
 	
-func blur():
-	is_focused = false
+func handle_blur():
+	if is_focused:
+		dev.logd("GameWidget", "widget '%s' LOSES focus" % id)
+		is_focused = false
+		state.blur()
+		app.stop_input_mode_override()
+		
 	pass
 	
 func navigate(direction: Vector2):
-	if use_local_state and state.focused_widget:
+	if state.focused_widget != null:
 		state.focused_widget.navigate(direction)
+	else:
+		state.reset_focus()
 	pass
 
 func accept():
-	if use_local_state and state.focused_widget:
+	if state.focused_widget != null:
 		state.focused_widget.accept()
 	else:
-		state.reset_focused()
+		state.reset_focus()
 	pass
 
 func cancel():
-	if use_local_state and state.focused_widget:
+	if state.focused_widget != null:
 		state.focused_widget.cancel()
 	else:
-		root_state.unset_focused()
+		if cancel_to_parent:
+			parent_state.blur()
+		else:
+			hud.blur()
 	pass
 
-func _update_root_state():
+func _update_parent_state():
 	var parent = get_parent()
 	while parent != null:
-		if parent is GameWidget and parent.use_local_state:
-			root_state = parent.state
+		if parent is GameWidget:
+			parent_state = parent.state
+			dev.logd("GameWidget", "widget '%s' will be linked to WIDGET '%s'" % [id, parent.id])
 			break;
 		parent = parent.get_parent()
 		
-	if root_state == null:
-		root_state = hud.state
-	
-	print(root_state)
+	if parent_state == null:
+		parent_state = hud.state
+		dev.logd("GameWidget", "widget '%s' will be linked to ROOT" % [id])

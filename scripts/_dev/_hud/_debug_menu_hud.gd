@@ -66,26 +66,19 @@ func _ready():
 		menu_items.append(label)
 	
 	select_item(0)
-	hide()
 
 func _input(event):
 	pass
-	#if event.is_action_pressed("debug_menu"):
-		#if is_visible():
-			##game.resume()
-			#hide()
-		#else:
-			##game.pause()
-			#show()
-			#select_item(0)
-	#
-	#if is_visible():
-		#if event.is_action_pressed("ui_down"):
-			#select_item((current_selection + 1) % menu_items.size())
-		#elif event.is_action_pressed("ui_up"):
-			#select_item((current_selection - 1 + menu_items.size()) % menu_items.size())
-		#elif event.is_action_pressed("ui_accept"):
-			#execute_action(current_selection)
+
+func navigate(direction: Vector2):
+	if direction == Vector2.UP:
+		select_item((current_selection - 1 + menu_items.size()) % menu_items.size())
+	elif direction == Vector2.DOWN:
+		select_item((current_selection + 1) % menu_items.size())
+	pass
+
+func accept():
+	execute_action(current_selection)
 
 func select_item(index):
 	var label: Label = menu_items[current_selection]
