@@ -1,8 +1,7 @@
 extends GameCharacterBodyAnimationScript
 
-class_name HumanoidAdventureAnimScript
+class_name GameCharacterBodyAnimationScriptMK0
 
-@export var props: RAnimScriptMK0Props
 @export var body_scene_root_node: Node3D
 
 var _current_climb_animation_speed_scale: float = 1
@@ -20,17 +19,28 @@ var _target_h_speed_scale: float = 1
 
 var _directional_velocity_factor_interpolated: float = 0
 var _horizontal_velocity_total_interpolated: float = 0
+var _vertical_velocity_total_interpolated: float = 0
+
+
+@export var basic_movement_scale: float = 2
+@export var basic_movement_scale_max: float = 4
+
+@export var body_twist_max_angle: float = 70
+@export var body_bend_max_angle: float = 15
+@export var body_tilt_max_angle: float = 10
+
+@export var body_crouched_twist_max_angle: float = 25
+@export var body_crouched_bend_angle: float = 15
+@export var body_crouched_tilt_max_angle: float = 5
+
+
+@export_subgroup("Transitions and Blending")
+@export var vertical_blend_transition_speed: float = 4
+@export var horizontal_blend_transition_speed: float = 8
 
 func on_setup():
 	assert(animation_tree != null, "GameCharacterBodyAnimationScriptMK1: animation_tree is required to function")
 	assert(animation_player != null, "GameCharacterBodyAnimationScriptMK1: animation_player is required to function")
-	
-	# forcing loop mode for specified animations
-	if animation_player != null:
-		for anim_name in props.force_looping_for_animations:
-			var anim: Animation = animation_player.get_animation(anim_name)
-			if anim != null:
-				anim.set_loop_mode(Animation.LOOP_LINEAR)
 	
 	pass
 	
@@ -38,15 +48,15 @@ func _process(delta):
 	var bc = body_controller
 	var character = bc.character
 	
-	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, props.horizontal_blend_transition_speed * delta)
-	_current_v_blend_value = move_toward(_current_v_blend_value, _target_v_blend_value, props.vertical_blend_transition_speed * delta)
+	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, horizontal_blend_transition_speed * delta)
+	_current_v_blend_value = move_toward(_current_v_blend_value, _target_v_blend_value, vertical_blend_transition_speed * delta)
 			
-	_current_h_speed_scale = move_toward(_current_h_speed_scale, _target_h_speed_scale, props.horizontal_blend_transition_speed * delta)
-	_current_v_speed_scale = move_toward(_current_v_speed_scale, _target_v_speed_scale, props.vertical_blend_transition_speed * delta)
+	_current_h_speed_scale = move_toward(_current_h_speed_scale, _target_h_speed_scale, horizontal_blend_transition_speed * delta)
+	_current_v_speed_scale = move_toward(_current_v_speed_scale, _target_v_speed_scale, vertical_blend_transition_speed * delta)
 	
 	_directional_velocity_factor_interpolated = move_toward(_directional_velocity_factor_interpolated, clampf(bc._current_character_directional_velocity, -1, 1), 16 * delta)
 
-	animation_tree["parameters/conditions/move"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
+	animation_tree["parameters/conditions/basic"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
 	animation_tree["parameters/conditions/climb"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Climb
 	
 	# OBJECT HOLDING
@@ -67,7 +77,7 @@ func _process(delta):
 			_target_h_speed_scale = 1
 			_target_v_speed_scale = 1
 			
-			animation_tree["parameters/move/move_blend_space/blend_position"] = Vector2(
+			animation_tree["parameters/basic/blend_position"] = Vector2(
 				_current_h_blend_value,
 				_current_v_blend_value
 			)
@@ -81,14 +91,14 @@ func _process(delta):
 			fx += pow(directional_velocity_factor, 3) 
 			fx = clamp(fx, -1, 1)
 			
-			var max_twist_angle: float = props.body_crouched_twist_max_angle if character.is_crouching else props.body_twist_max_angle
-			var max_bend_angle = props.body_bend_max_angle
-			var min_bend_angle = -props.body_bend_max_angle
-			var max_tilt_angle: float = props.body_crouched_tilt_max_angle if character.is_crouching else props.body_tilt_max_angle
+			var max_twist_angle: float = body_crouched_twist_max_angle if character.is_crouching else body_twist_max_angle
+			var max_bend_angle = body_bend_max_angle
+			var min_bend_angle = -body_bend_max_angle
+			var max_tilt_angle: float = body_crouched_tilt_max_angle if character.is_crouching else body_tilt_max_angle
 			
 			if character.is_crouching:
-				max_bend_angle = props.body_crouched_bend_angle
-				min_bend_angle = props.body_crouched_bend_angle
+				max_bend_angle = body_crouched_bend_angle
+				min_bend_angle = body_crouched_bend_angle
 			
 			var x_factor: float = (fx + 1) / 2
 			var z_factor: float = (fz + 1) / 2
@@ -103,14 +113,9 @@ func _process(delta):
 			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, z_factor)
 			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, x_factor)
 			
-			animation_tree["parameters/move/move_blend_space_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * props.move_animation_speed_scale
-			
-			# STYLES
-			animation_tree["parameters/move/move_blend_space/2/blend_position"] = props.walk_style
-			animation_tree["parameters/move/move_blend_space/3/blend_position"] = props.run_style
-			animation_tree["parameters/move/move_blend_space/4/blend_position"] = props.idle_style
-			animation_tree["parameters/move/move_blend_space/5/blend_position"] = props.crouch_idle_style
-			animation_tree["parameters/move/move_blend_space/7/fall_ab_blend/blend_amount"] = (props.fall_style + 1) / 2
+			animation_tree["parameters/basic/1/walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
+			animation_tree["parameters/basic/2/run_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
+			animation_tree["parameters/basic/4/crouch_walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
 			
 			bc.ik_controller.body_target_interpolation = 0.5
 			
@@ -121,10 +126,10 @@ func _process(delta):
 			fx = _move_to_direction_factor_interpolated.x
 			fz = _move_to_direction_factor_interpolated.y
 			
-			var max_twist_angle: float = props.body_twist_max_angle
-			var max_bend_angle = props.body_bend_max_angle
-			var min_bend_angle = -props.body_bend_max_angle
-			var max_tilt_angle: float = props.body_tilt_max_angle
+			var max_twist_angle: float = body_twist_max_angle
+			var max_bend_angle = body_bend_max_angle
+			var min_bend_angle = -body_bend_max_angle
+			var max_tilt_angle: float = body_tilt_max_angle
 			
 			if fz >= -0.1:
 				body_scene_root_node.rotation_degrees.y = move_toward(body_scene_root_node.rotation_degrees.y, lerpf(max_twist_angle, -max_twist_angle, (fx + 1) / 2), 180 * delta)
@@ -135,6 +140,8 @@ func _process(delta):
 			
 			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, (fz + 1) / 2)
 			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, (fx + 1) / 2)
+			
+			animation_tree["parameters/climb/climb_scale/scale"] = _vertical_velocity_total_interpolated / 5
 			
 			#body_scene_root_node.rotation_degrees.y = 0
 			#bc.ik_controller.body_target_rotation_x = 0
@@ -160,6 +167,10 @@ func _physics_process(delta):
 		interp_velocity * delta)
 		
 	_horizontal_velocity_total_interpolated = tools.lerpt(_horizontal_velocity_total_interpolated, bc._current_character_h_velocity + abs(
+		pow(abs(bc._current_character_directional_velocity / 2), 1)
+	), 0.1)
+	
+	_vertical_velocity_total_interpolated = tools.lerpt(_vertical_velocity_total_interpolated, bc._current_character_v_velocity + abs(
 		pow(abs(bc._current_character_directional_velocity / 2), 1)
 	), 0.1)
 
