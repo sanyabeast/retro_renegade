@@ -8,7 +8,7 @@
 [ext_resource type="Shape3D" uid="uid://c6fyoprfe7qt1" path="res://resources/extra/shapes/standard_humanoid_collision_capsule_crouch.tres" id="5_r20ev"]
 [ext_resource type="Resource" uid="uid://i1k2bf4m4ssn" path="res://resources/characters/sfx_pfofiles/default_character_sfx_profile.tres" id="5_yr86q"]
 [ext_resource type="Script" path="res://scripts/character/character_sfx.gd" id="6_1kv4k"]
-[ext_resource type="AnimationNodeStateMachine" uid="uid://gmg6i88uymyd" path="res://resources/characters/anim_profiles/skeleton_mk0_anim_state_machine.tres" id="6_mbnxq"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://bqmrdgup7a5pp" path="res://resources/characters/anim_fsm/humanoid_adventure_a1.tres" id="6_mbnxq"]
 [ext_resource type="Script" path="res://scripts/character/default_character_anim_script.gd" id="7_bvgww"]
 [ext_resource type="Script" path="res://scripts/character/character_physical_interaction.gd" id="7_yjrbf"]
 [ext_resource type="Script" path="res://scripts/character/character_body.gd" id="8_h8ymd"]
@@ -544,7 +544,16 @@ libraries = {
 }
 tree_root = ExtResource("6_mbnxq")
 anim_player = NodePath("../AnimationPlayer")
+parameters/conditions/climb = false
+parameters/conditions/move = false
+parameters/climb/climb_scale/scale = 1.0
 parameters/move/move_blend_space/blend_position = Vector2(-0.0897704, -0.358779)
+parameters/move/move_blend_space/1/crouch_run_scaler/scale = 1.0
+parameters/move/move_blend_space/2/blend_position = 0
+parameters/move/move_blend_space/3/blend_position = 0
+parameters/move/move_blend_space/4/blend_position = 0
+parameters/move/move_blend_space/5/blend_position = 0
+parameters/move/move_blend_space/7/fall_ab_blend/blend_amount = 0
 parameters/move/move_blend_space_scale/scale = 1.0
 
 [node name="SFX" type="Node3D" parent="Body" node_paths=PackedStringArray("jump_audiostream", "footsteps_audiostream")]

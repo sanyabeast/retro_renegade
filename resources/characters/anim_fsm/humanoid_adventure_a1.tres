@@ -1,7 +1,7 @@
-[gd_resource type="AnimationNodeStateMachine" load_steps=33 format=3 uid="uid://b6svrhln7gvh7"]
+[gd_resource type="AnimationNodeStateMachine" load_steps=33 format=3 uid="uid://bqmrdgup7a5pp"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t3pth"]
-animation = &"Climb"
+animation = &"adventure/Climb"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_tsbdf"]
 
@@ -9,15 +9,15 @@ animation = &"Climb"
 nodes/climb_main/node = SubResource("AnimationNodeAnimation_t3pth")
 nodes/climb_main/position = Vector2(60, 120)
 nodes/climb_scale/node = SubResource("AnimationNodeTimeScale_tsbdf")
-nodes/climb_scale/position = Vector2(200, 100)
-nodes/output/position = Vector2(340, 120)
+nodes/climb_scale/position = Vector2(420, 120)
+nodes/output/position = Vector2(640, 100)
 node_connections = [&"climb_scale", 0, &"climb_main", &"output", 0, &"climb_scale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hv8qd"]
-animation = &"Crouch_Walk"
+animation = &"adventure/Crouch_Walk"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_cy22v"]
-animation = &"Crouch_Walk"
+animation = &"adventure/Crouch_Walk"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_gnfkj"]
 
@@ -30,13 +30,13 @@ nodes/output/position = Vector2(720, 120)
 node_connections = [&"crouch_run_scaler", 0, &"crouch_run_base", &"output", 0, &"crouch_run_scaler"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7arvb"]
-animation = &"Walk_A"
+animation = &"adventure/Walk_A"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kqn2j"]
-animation = &"Walk_B"
+animation = &"adventure/Walk_B"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4kgmc"]
-animation = &"Walk_C"
+animation = &"adventure/Walk_C"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_sanxu"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_7arvb")
@@ -48,13 +48,13 @@ blend_point_2/pos = 1.0
 sync = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i8uh3"]
-animation = &"Run_A"
+animation = &"adventure/Run_A"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qigs2"]
-animation = &"Run_B"
+animation = &"adventure/Run_B"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_08ece"]
-animation = &"Run_C"
+animation = &"adventure/Run_C"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_ycv33"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_i8uh3")
@@ -66,10 +66,10 @@ blend_point_2/pos = 1.0
 sync = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fcxjy"]
-animation = &"Idle_A"
+animation = &"adventure/Idle_A"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_c7mrh"]
-animation = &"Idle_B"
+animation = &"adventure/Idle_B"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_emlbw"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_fcxjy")
@@ -79,10 +79,10 @@ blend_point_1/pos = 1.0
 sync = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d6pjo"]
-animation = &"Crouch_Idle_A"
+animation = &"adventure/Crouch_Idle_A"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2ahqh"]
-animation = &"Crouch_Idle_B"
+animation = &"adventure/Crouch_Idle_B"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_lsah6"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_d6pjo")
@@ -91,15 +91,15 @@ blend_point_1/node = SubResource("AnimationNodeAnimation_2ahqh")
 blend_point_1/pos = 1.0
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_13m7i"]
-animation = &"Fall_A"
+animation = &"adventure/Fall_A"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2tcy5"]
-animation = &"Fall_A"
+animation = &"adventure/Fall_A"
 
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_pjobi"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_g0oqn"]
-animation = &"Fall_B"
+animation = &"adventure/Fall_B"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ddidl"]
 graph_offset = Vector2(-106.464, -46.5762)
