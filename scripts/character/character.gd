@@ -238,9 +238,17 @@ func _physics_process(delta):
 func process_movement(delta):
 	if not freeze_movement:
 		
-		if is_npc :
-			current_movement_direction = current_movement_direction.move_toward(movement_direction, npc_props.move_direction_change_speed / (current_horizontal_velocity  + 1) * delta)
-			current_body_rotation = tools.move_toward_deg(current_body_rotation, body_rotation, npc_props.body_direction_change_speed * delta)
+		if is_npc:
+			var p = _get_horizontal_speed_progress()
+			current_movement_direction = current_movement_direction.move_toward(
+				movement_direction, 
+				lerpf(npc_props.move_direction_change_speed_min, npc_props.move_direction_change_speed_max, pow(1 - p, 2)) * delta
+			)
+			current_body_rotation = tools.move_toward_deg(
+				current_body_rotation, 
+				body_rotation, 
+				lerpf(npc_props.body_direction_change_speed_min, npc_props.body_direction_change_speed_max, pow(1 - p, 2)) * delta
+			)
 		else:
 			current_movement_direction = movement_direction
 			current_body_rotation = body_rotation
@@ -456,3 +464,6 @@ func get_walk_speed_min()->float:
 
 func _get_walk_to_sprint_progress()->float:
 	return clampf((Vector2(velocity.x, velocity.z).length() - get_walk_speed_max()) / (get_sprint_speed_max() - get_walk_speed_max()), 0, 1)
+
+func _get_horizontal_speed_progress()-> float:
+	return clampf(current_horizontal_velocity / props.sprint_speed_max, 0, 1)
