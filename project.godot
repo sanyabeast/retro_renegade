@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="RetroRenegade"
+config/name="Retro Renegade"
+config/version="0.1.0"
 run/main_scene="res://scenes/levels/_practice_range.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 run/max_fps=120
@@ -56,6 +57,13 @@ folder_colors={
 [global]
 
 game_config_path="res://resources/config.tres"
+
+[importer_defaults]
+
+animation_library={
+"animation/fps": 60.0,
+"import_script/path": "res://scripts/_dev/_import_script.gd"
+}
 
 [input]
 
@@ -149,10 +157,12 @@ common/max_physics_steps_per_frame=16
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+global_illumination/voxel_gi/quality=1
 scaling_3d/mode=2
 scaling_3d/scale=0.66
 scaling_3d/fsr_sharpness=1.0
 textures/decals/filter=0
 textures/light_projectors/filter=0
+global_illumination/sdfgi/probe_ray_count=2
 anti_aliasing/quality/screen_space_aa=1
 anti_aliasing/quality/use_taa=true
