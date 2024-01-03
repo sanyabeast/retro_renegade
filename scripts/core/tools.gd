@@ -9,7 +9,8 @@ enum ENodeType {
 }
 
 func get_time()->float:
-	return Time.get_ticks_msec() / 1000.0
+	return game.time
+	#return Time.get_ticks_msec() / 1000.0
 
 # Recursive function to get all descendants with a specific substring in their names
 func get_descendants_with_substring(root: Node, substring: String, matching_nodes: Array) -> Array:

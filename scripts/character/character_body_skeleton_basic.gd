@@ -3,8 +3,8 @@ extends GameCharacterBodyController
 class_name GameCharacterBodyControllerSkeletonBasic
 
 @export_subgroup("Skeletong Pin Points to Bone Attachment")
-@export var head_bone_name: String = "mixamorig_Head"
-@export var hips_bone_name: String = "mixamorig_Hips"
+@export var head_bone_name: String = "Head"
+@export var hips_bone_name: String = "Hips"
 
 @export_subgroup("IK")
 @export var ik_controller: GameCharacterBodyIKController

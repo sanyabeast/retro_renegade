@@ -25,7 +25,7 @@ func _ready():
 	pass # Replace with function body.
 
 func _process(delta):
-	day_time += (delta / day_duration) * game.game_speed;
+	day_time += (delta / day_duration) * game.speed;
 	day_time = fmod(day_time, 1)
 	
 	dev.print_screen("rigids", "rigid bodies: %s pts" % rigid_bodies.size())

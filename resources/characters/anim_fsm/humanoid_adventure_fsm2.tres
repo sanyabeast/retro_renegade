@@ -1,0 +1,110 @@
+[gd_resource type="AnimationNodeBlendTree" load_steps=22 format=3 uid="uid://s7telo08dcv7"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xb0hf"]
+animation = &"basic/Stand"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dcyjt"]
+animation = &"crouch/Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0vsjg"]
+animation = &"basic/Walk"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_vn543"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_1y4ig"]
+nodes/output/position = Vector2(460, 140)
+nodes/walk_main/node = SubResource("AnimationNodeAnimation_0vsjg")
+nodes/walk_main/position = Vector2(108, 109)
+nodes/walk_scale/node = SubResource("AnimationNodeTimeScale_vn543")
+nodes/walk_scale/position = Vector2(287, 174)
+node_connections = [&"output", 0, &"walk_scale", &"walk_scale", 0, &"walk_main"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i45hq"]
+animation = &"basic/Run"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_8q0tj"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_jnquj"]
+nodes/output/position = Vector2(520, 120)
+nodes/run_main/node = SubResource("AnimationNodeAnimation_i45hq")
+nodes/run_main/position = Vector2(80, 100)
+nodes/run_scale/node = SubResource("AnimationNodeTimeScale_8q0tj")
+nodes/run_scale/position = Vector2(262, 170)
+node_connections = [&"output", 0, &"run_scale", &"run_scale", 0, &"run_main"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vt60d"]
+animation = &"crouch/Walk"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_efkge"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_372tq"]
+nodes/crouch_walk_main/node = SubResource("AnimationNodeAnimation_vt60d")
+nodes/crouch_walk_main/position = Vector2(60, 120)
+nodes/crouch_walk_scale/node = SubResource("AnimationNodeTimeScale_efkge")
+nodes/crouch_walk_scale/position = Vector2(260, 202)
+nodes/output/position = Vector2(480, 120)
+node_connections = [&"crouch_walk_scale", 0, &"crouch_walk_main", &"output", 0, &"crouch_walk_scale"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t366a"]
+animation = &"fall/Straight"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_lqgw6"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_xb0hf")
+blend_point_0/pos = Vector2(-1, 0)
+blend_point_1/node = SubResource("AnimationNodeAnimation_dcyjt")
+blend_point_1/pos = Vector2(-1, -1)
+blend_point_2/node = SubResource("AnimationNodeBlendTree_1y4ig")
+blend_point_2/pos = Vector2(0, 0)
+blend_point_3/node = SubResource("AnimationNodeBlendTree_jnquj")
+blend_point_3/pos = Vector2(1, 0)
+blend_point_4/node = SubResource("AnimationNodeBlendTree_372tq")
+blend_point_4/pos = Vector2(0, -1)
+blend_point_5/node = SubResource("AnimationNodeAnimation_t366a")
+blend_point_5/pos = Vector2(0, 1)
+sync = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3squi"]
+animation = &"climb/Wall_Up"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_s2xxx"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_1r0rh"]
+nodes/climb_main/node = SubResource("AnimationNodeAnimation_3squi")
+nodes/climb_main/position = Vector2(120, 120)
+nodes/climb_scale/node = SubResource("AnimationNodeTimeScale_s2xxx")
+nodes/climb_scale/position = Vector2(300, 120)
+nodes/output/position = Vector2(460, 140)
+node_connections = [&"climb_scale", 0, &"climb_main", &"output", 0, &"climb_scale"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lkwhr"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4t20q"]
+xfade_time = 0.25
+advance_mode = 2
+advance_condition = &"climb"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fq72x"]
+xfade_time = 0.25
+advance_mode = 2
+advance_condition = &"basic"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_juoiv"]
+states/End/position = Vector2(814, 110)
+states/Start/position = Vector2(188, 110)
+states/basic/node = SubResource("AnimationNodeBlendSpace2D_lqgw6")
+states/basic/position = Vector2(407, 110)
+states/climb/node = SubResource("AnimationNodeBlendTree_1r0rh")
+states/climb/position = Vector2(609, 110)
+transitions = ["Start", "basic", SubResource("AnimationNodeStateMachineTransition_lkwhr"), "basic", "climb", SubResource("AnimationNodeStateMachineTransition_4t20q"), "climb", "basic", SubResource("AnimationNodeStateMachineTransition_fq72x")]
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_uqmun"]
+
+[resource]
+graph_offset = Vector2(-23, 72)
+nodes/main/node = SubResource("AnimationNodeStateMachine_juoiv")
+nodes/main/position = Vector2(180, 100)
+nodes/main_scale/node = SubResource("AnimationNodeTimeScale_uqmun")
+nodes/main_scale/position = Vector2(340, 100)
+nodes/output/position = Vector2(500, 100)
+node_connections = [&"main_scale", 0, &"main", &"output", 0, &"main_scale"]

@@ -3,7 +3,10 @@ extends Node
 class_name GameManager
 
 var player_retry_current: int = 0
-var game_speed: float = 1
+var speed: float = 1
+var time: float = 0
+var _target_speed: float = 0
+var _speed_change_transition: float = 8
 
 @onready var _timer_gate: tools.TimerGateManager = tools.TimerGateManager.new()
 
@@ -29,13 +32,16 @@ func _process(delta):
 				resume()
 			else:
 				pause()
+				
+	time += delta * speed
+	speed = move_toward(speed, _target_speed, _speed_change_transition * delta)
 
 func resume():
 	paused = false
 	hud.state.replace(app.config.hud_default_state_in_game)
-	game_speed = 1
+	_target_speed = 1
 	
 func pause():
 	paused = true
 	hud.state.replace(app.config.hud_default_state_paused)
-	game_speed = 0
+	_target_speed = 0

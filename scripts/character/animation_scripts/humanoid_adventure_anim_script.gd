@@ -48,6 +48,8 @@ func _process(delta):
 	var bc = body_controller
 	var character = bc.character
 	
+	animation_tree["parameters/main_scale/scale"] = game.speed
+	
 	_current_h_blend_value = move_toward(_current_h_blend_value, _target_h_blend_value, horizontal_blend_transition_speed * delta)
 	_current_v_blend_value = move_toward(_current_v_blend_value, _target_v_blend_value, vertical_blend_transition_speed * delta)
 			
@@ -56,8 +58,8 @@ func _process(delta):
 	
 	_directional_velocity_factor_interpolated = move_toward(_directional_velocity_factor_interpolated, clampf(bc._current_character_directional_velocity, -1, 1), 16 * delta)
 
-	animation_tree["parameters/conditions/basic"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
-	animation_tree["parameters/conditions/climb"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Climb
+	animation_tree["parameters/main/conditions/basic"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Move
+	animation_tree["parameters/main/conditions/climb"] = bc.current_action_type == GameCharacterBodyController.ECharacterBodyActionType.Climb
 	
 	# OBJECT HOLDING
 	match bc.current_action_type:
@@ -77,7 +79,7 @@ func _process(delta):
 			_target_h_speed_scale = 1
 			_target_v_speed_scale = 1
 			
-			animation_tree["parameters/basic/blend_position"] = Vector2(
+			animation_tree["parameters/main/basic/blend_position"] = Vector2(
 				_current_h_blend_value,
 				_current_v_blend_value
 			)
@@ -113,9 +115,9 @@ func _process(delta):
 			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, z_factor)
 			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, x_factor)
 			
-			animation_tree["parameters/basic/1/walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
-			animation_tree["parameters/basic/2/run_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
-			animation_tree["parameters/basic/4/crouch_walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
+			animation_tree["parameters/main/basic/2/walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
+			animation_tree["parameters/main/basic/3/run_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
+			animation_tree["parameters/main/basic/4/crouch_walk_scale/scale"] = (-1 if character.move_to_body_direction_factor.z < -0.1 else 1) * basic_movement_scale
 			
 			bc.ik_controller.body_target_interpolation = 0.5
 			
@@ -141,7 +143,7 @@ func _process(delta):
 			bc.ik_controller.body_target_rotation_x = lerpf(-max_bend_angle, max_bend_angle, (fz + 1) / 2)
 			bc.ik_controller.body_target_rotation_z = lerpf(-max_tilt_angle, max_tilt_angle, (fx + 1) / 2)
 			
-			animation_tree["parameters/climb/climb_scale/scale"] = _vertical_velocity_total_interpolated / 5
+			animation_tree["parameters/main/climb/climb_scale/scale"] = _vertical_velocity_total_interpolated / 5
 			
 			#body_scene_root_node.rotation_degrees.y = 0
 			#bc.ik_controller.body_target_rotation_x = 0
