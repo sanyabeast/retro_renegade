@@ -17,6 +17,7 @@ var descriptor: GameMenuItemDescriptor
 @export var select_value: String = ""
 @export var range_value: float = 0
 
+var controller: GameMenuGenerator
 
 func _ready():
 	animation_tree.active = true
@@ -63,7 +64,8 @@ func next_value():
 				descriptor.range_max
 			)
 		
-	descriptor.on_select.emit(self)	
+	descriptor.on_select.emit(self)
+	controller.submit(self)
 	_update_value()
 	pass
 	
@@ -81,7 +83,8 @@ func prev_value():
 				descriptor.range_min, 
 				descriptor.range_max
 			)
-	descriptor.on_select.emit(self)		
+	descriptor.on_select.emit(self)
+	controller.submit(self)
 	_update_value()
 	pass
 

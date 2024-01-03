@@ -75,6 +75,12 @@ func cancel():
 			hud.blur()
 	pass
 
+func display():
+	show()
+	
+func conceal():
+	hide()
+
 func _update_parent_state():
 	var parent = get_parent()
 	while parent != null:

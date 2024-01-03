@@ -10,6 +10,7 @@ enum EGameMenuItemType {
 	SEPARATOR,
 }
 
+@export var id: String = ""
 @export var label: String = ""
 @export var type: EGameMenuItemType = EGameMenuItemType.BUTTON
 
@@ -27,3 +28,10 @@ enum EGameMenuItemType {
 @export var range_max: float = 100
 
 signal on_select(item: GameMenuItemController)
+
+func _init():
+	#assert(id != "", "GameMenuItemDescriptor: ID must be not empty string %s" % self)
+	print(self)
+
+func _to_string():
+	return "GameMenuItemDescriptor(id=%s, name=%s, label=%s, instance_id=%s)" % [id, name, label, get_instance_id()]

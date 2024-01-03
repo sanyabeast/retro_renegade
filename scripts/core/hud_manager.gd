@@ -66,7 +66,7 @@ class HUDStateManager:
 		
 	func show(id: String):
 		if widgets.has(id):
-			widgets[id].show()
+			widgets[id].display()
 			dev.logd("HUDStateManager", "showing '%s'" % id)
 			if widgets[id].interactive:
 				hud.focus(widgets[id])
@@ -75,7 +75,7 @@ class HUDStateManager:
 			
 	func hide(id: String):
 		if widgets.has(id):
-			widgets[id].hide()
+			widgets[id].conceal()
 			dev.logd("HUDStateManager", "hiding '%s'" % id)
 			
 			if focused_widget == widgets[id]:
