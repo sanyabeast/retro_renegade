@@ -28,6 +28,7 @@ players="*res://scripts/core/player_manager.gd"
 npcs="*res://scripts/core/npc_manager.gd"
 hud="*res://scripts/core/hud_manager.gd"
 game="*res://scripts/core/game_manager.gd"
+actions="*res://scripts/core/actions_manager.gd"
 dev="*res://scripts/_dev/_dev_manager.gd"
 
 [display]

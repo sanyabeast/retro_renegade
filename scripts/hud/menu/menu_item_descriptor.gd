@@ -14,6 +14,7 @@ enum EGameMenuItemType {
 @export var label: String = ""
 @export var type: EGameMenuItemType = EGameMenuItemType.BUTTON
 
+@export_category("Values")
 @export_subgroup("Toggle")
 @export var toggle_initial: bool
 
@@ -27,6 +28,13 @@ enum EGameMenuItemType {
 @export var range_min: float = 0
 @export var range_max: float = 100
 
+@export_subgroup("Data")
+@export var data: Dictionary = {}
+
+@export_subgroup("Actions")
+@export var actions: Array[RAction]
+
+
 signal on_select(item: GameMenuItemController)
 
 func _init():
@@ -34,4 +42,4 @@ func _init():
 	print(self)
 
 func _to_string():
-	return "GameMenuItemDescriptor(id=%s, name=%s, label=%s, instance_id=%s)" % [id, name, label, get_instance_id()]
+	return "GameMenuItemDescriptor(id=%s, name=%s, label=%s, instance_id=%s, data=%s)" % [id, name, label, get_instance_id(), data]

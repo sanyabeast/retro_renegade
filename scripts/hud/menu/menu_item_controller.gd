@@ -40,7 +40,6 @@ func initialize(_menu_controller: GameMenuGenerator, _descriptor: GameMenuItemDe
 	label_element.text = label_text
 	pass
 
-
 func _process(delta):
 	#animation_player.play("Selected")
 	pass
@@ -97,7 +96,6 @@ func _init_value():
 		GameMenuItemDescriptor.EGameMenuItemType.RANGE:
 			range_value = descriptor.range_initial
 		
-		
 func _update_value():
 	match descriptor.type:
 		GameMenuItemDescriptor.EGameMenuItemType.TOGGLE:
@@ -120,3 +118,25 @@ func _update_range_value():
 	
 func _update_noop_value():
 	value_element.text = ""
+
+func get_value():
+	var val = null
+	match descriptor.type:
+		GameMenuItemDescriptor.EGameMenuItemType.TOGGLE:
+			val = toggle_value
+		GameMenuItemDescriptor.EGameMenuItemType.SELECT:
+			val = select_value
+		GameMenuItemDescriptor.EGameMenuItemType.RANGE:
+			val = range_value
+	return val	
+	
+func get_action_payload(action_index: int = 0)->Dictionary:
+	var result: Dictionary = descriptor.data.duplicate()
+	var action: RAction = descriptor.actions[action_index]
+	result["value"] = get_value()
+	result.merge(action.data, true)
+	
+	return result
+	
+func _to_string():
+	return "GameMenuItemController(value=%s, descriptor=%s, data=%s)" % [get_value(), descriptor]
