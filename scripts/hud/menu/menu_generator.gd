@@ -123,6 +123,6 @@ func _handle_accept():
 		_items[selected_index].next_value()
 
 func submit(item: GameMenuItemController):
-	dev.logd("GameMenuGenerator", "item submit %s" % item)
+	dev.logd("GameMenuGenerator", "item submit %s, actions count: %s" % [item, item.descriptor.actions.size()])
 	
 	
