@@ -184,7 +184,7 @@ func _process(delta):
 		if is_sprinting:
 			sfx_controller.commit_action(
 				CharacterSFX.EActionType.Sprint, 
-				_get_walk_to_sprint_progress()
+				get_sprint_speed_progress()
 			)
 		else:
 			sfx_controller.commit_action(CharacterSFX.EActionType.Sprint, 0	)
@@ -239,7 +239,7 @@ func process_movement(delta):
 	if not freeze_movement:
 		
 		if is_npc:
-			var p = _get_horizontal_speed_progress()
+			var p = get_horizontal_speed_progress()
 			current_movement_direction = current_movement_direction.move_toward(
 				movement_direction, 
 				lerpf(npc_props.move_direction_change_speed_min, npc_props.move_direction_change_speed_max, pow(1 - p, 2)) * delta
@@ -456,14 +456,23 @@ func get_hold_anchor():
 func get_sprint_speed_max()->float:
 	return props.sprint_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_sprint_speed_max
 
+func get_current_speed_max()->float:
+	return get_sprint_speed_max() if is_sprinting else get_walk_speed_max()
+
 func get_walk_speed_max()->float:
 	return props.walk_speed_max if move_to_body_direction_factor.z >= -0.1 else props.back_walk_speed_max
 
 func get_walk_speed_min()->float:
 	return props.walk_speed_min if move_to_body_direction_factor.z >= -0.1 else props.back_walk_speed_min
 
-func _get_walk_to_sprint_progress()->float:
+func get_sprint_speed_progress()->float:
 	return clampf((Vector2(velocity.x, velocity.z).length() - get_walk_speed_max()) / (get_sprint_speed_max() - get_walk_speed_max()), 0, 1)
 
-func _get_horizontal_speed_progress()-> float:
-	return clampf(current_horizontal_velocity / props.sprint_speed_max, 0, 1)
+func get_walk_speed_progress()->float:
+	return clampf(Vector2(velocity.x, velocity.z).length() / get_walk_speed_max(), 0, 1)
+
+func get_horizontal_speed_progress()-> float:
+	if current_horizontal_velocity < get_walk_speed_max():
+		return lerpf(0, 0.5, get_walk_speed_progress())
+	else:
+		return lerpf(0.5, 1, get_sprint_speed_progress())

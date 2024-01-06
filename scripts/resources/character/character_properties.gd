@@ -9,16 +9,16 @@ class_name RCharacterProperties
 @export var allow_dash: bool = true
 
 @export_subgroup("Walk")
-@export var walk_speed_min: float = 3
-@export var walk_speed_max: float = 6
-@export var walk_acceleration: float = 4
-@export var back_walk_speed_min: float = 1
-@export var back_walk_speed_max: float = 3
+@export var walk_speed_min: float = 1
+@export var walk_speed_max: float = 4.5
+@export var walk_acceleration: float = 3
+@export var back_walk_speed_min: float = 0.5
+@export var back_walk_speed_max: float = 1.5
 
 @export_subgroup("Sprint")
-@export var sprint_acceleration: float = 4
-@export var sprint_speed_max: float = 12
-@export var back_sprint_speed_max: float = 6
+@export var sprint_acceleration: float = 5
+@export var sprint_speed_max: float = 7
+@export var back_sprint_speed_max: float = 4
 
 @export_subgroup("Crouch")
 @export var crouching_walk_penalty: float = 0.75

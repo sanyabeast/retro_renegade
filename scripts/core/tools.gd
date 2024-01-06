@@ -284,6 +284,8 @@ static func load_config() -> RGameConfig:
 	return load("res://resources/config.tres");
 
 
+func polarity(val: float)->float:
+		return -1 if val < 0 else 1
 
 # DATA CONTAINERS
 class DataContainer:
@@ -463,6 +465,7 @@ class TaskPlanner:
 	func schedule_replace(owner: Node3D, id: String, timeout: float, finish_callback):
 		cancel(owner, id)
 		schedule(owner, id, timeout, finish_callback)
+	
 	
 	func cancel(owner: Node3D, id):
 		if current != null and current.owner == owner:

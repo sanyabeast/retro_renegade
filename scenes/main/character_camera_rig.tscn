@@ -17,6 +17,6 @@ far = 256.0
 [node name="CameraRig3P" type="Node3D" parent="."]
 
 [node name="Camera3P" type="Camera3D" parent="CameraRig3P"]
-transform = Transform3D(1, 0, 0, 0, 0.999048, 0.0436194, 0, -0.0436194, 0.999048, 0.892966, -0.350527, 2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.8, 2)
 fov = 80.0
 far = 256.0

@@ -41,7 +41,7 @@ func _process_npc(character: GameCharacter, delta: float):
 		var random_point = world.get_random_reachable_point()
 		_npc_data[character]["move_target"] = random_point
 		if players.current != null:
-			random_point = world.get_random_reachable_point_in_square(players.current.global_position, 64)
+			random_point = world.get_random_reachable_point_in_square(players.current.global_position, 128)
 			
 			#random_point = players.current.global_position
 			
@@ -49,8 +49,10 @@ func _process_npc(character: GameCharacter, delta: float):
 		character.nav_agent.target_position = _npc_data[character]["move_target"]
 	
 	
-	if _npc_data[character]["timer_gate"].check("switch_is_idle", 1) and tools.random_bool2(0.25):
-		_npc_data[character]["is_idle"] = !_npc_data[character]["is_idle"]
+	if _npc_data[character]["timer_gate"].check("switch_is_idle", 5):
+		_npc_data[character]["is_idle"] = tools.random_bool2(0.25)
+	
+	
 	
 	_npc_data[character]["is_sprint"] = character.global_position.distance_to(character.nav_agent.target_position) > 48
 	_npc_data[character]["is_climbing"]	= character.is_touching_wall()
@@ -62,6 +64,8 @@ func _process_npc(character: GameCharacter, delta: float):
 		
 	move_direction = character.current_movement_direction.lerp(move_direction, 0.15)
 		
+		
+	character.set_torch_visible(false)
 	character.set_movement_direction(move_direction)	
 	character.set_body_direction_target(character.global_position + move_direction)
 	character.look_at_direction(character.global_position + move_direction)	
