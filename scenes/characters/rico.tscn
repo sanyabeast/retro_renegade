@@ -164,7 +164,7 @@ interpolation = 0.75
 target_node = NodePath("../../../../../IK/TBodyRoot/TBody")
 
 [node name="SpineAnchor_BoneAttachment" type="BoneAttachment3D" parent="Body/Scene/rico/GLTF_created_0/GeneralSkeleton" index="5"]
-transform = Transform3D(0.998886, 0.0426737, 0.0201271, -0.041962, 0.998522, -0.0345475, -0.0215716, 0.0336645, 0.9992, 0.0473534, 1.3597, -0.0217998)
+transform = Transform3D(0.998886, 0.0426736, 0.0201272, -0.0419619, 0.998522, -0.0345476, -0.0215717, 0.0336645, 0.9992, 0.0473534, 1.3597, -0.0217997)
 bone_name = "UpperChest"
 bone_idx = 3
 
